@@ -1,0 +1,39 @@
+<div class="login-container">
+
+  <h1>Evaluador Financiero</h1>
+
+  <div class="input-group">
+    <label>Usuario</label>
+
+    <input
+      type="text"
+      [(ngModel)]="username"
+    >
+  </div>
+
+  <div class="input-group">
+    <label>Contraseña</label>
+
+    <input
+      type="password"
+      [(ngModel)]="password"
+    >
+  </div>
+
+  <button
+    (click)="login()"
+    [disabled]="isLoading"
+  >
+    <span *ngIf="!isLoading">
+      Ingresar
+    </span>
+    <span
+      *ngIf="isLoading"
+      class="loading-content"
+    >
+      <span class="spinner"></span>
+      Ingresando...
+    </span>
+  </button>
+
+</div>

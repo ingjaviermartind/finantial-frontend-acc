@@ -1,0 +1,129 @@
+<!-- <h2>Evaluador Financiero</h2> -->
+<br>
+<div class="evaluator-container">
+  <!-- ========================= -->
+  <!-- Panel superior            -->
+  <!-- ========================= -->
+  <div class="top-panel">
+    <!-- Panel izquierdo -->
+    <div class="left-panel">
+      <form [formGroup]="form">
+        <!-- ========================= -->
+        <!-- INPUTS BASE               -->
+        <!-- ========================= -->
+        <label>Departamento</label>
+        <select
+          formControlName="department"
+          (change)="onDepartmentChange($event)">
+          <option value="">
+            Seleccione un departamento
+          </option>
+          <option
+            *ngFor="let dept of departments"
+            [value]="dept.id">
+            {{ dept.name }}
+          </option>
+        </select>
+        <label>Municipio</label>
+        <select
+          formControlName="municipality"
+          (change)="onMunicipalityChange($event)">
+          <option value="">
+            Seleccione un municipio
+          </option>
+          <option
+            *ngFor="let mun of municipalities"
+            [value]="mun.id">
+            {{ mun.name }}
+          </option>
+        </select>
+        <!-- ========================= -->
+        <!-- CARD + INPUTS EXTRA (1)   -->
+        <!-- ========================= -->
+        <div
+          class="municipality-card"
+          *ngIf="selectedMunicipality">
+          <p>
+            <strong>DANE:</strong>
+            {{ selectedMunicipality.dane }}
+          </p>
+          <label>
+            Capacidad (Mbps)
+          </label>
+          <input
+            type="number"
+            formControlName="bandwidth"
+            placeholder="Ej: 500">
+          <label>
+            Tiempo contrato (meses)
+          </label>
+          <input
+            type="number"
+            formControlName="contractTime"
+            placeholder="Ej: 36">
+          <button
+            type="button"
+            class="calculate-btn"
+            (click)="calculate()"
+            [disabled]="!canShowResults">
+            Calcular
+          </button>
+        </div>
+      </form>
+    </div>
+    <!-- ========================= -->
+    <!-- PANEL DERECHA (2)         -->
+    <!-- ========================= -->
+    <div
+      class="results-panel"
+      *ngIf="showResults">
+      <h3>Resultado</h3>
+      <p>Precio mensual</p>
+      <p>Valor por Mbps</p>
+      <p>Indicador financiero</p>
+      <p>Sensibilidad</p>
+      <p>Calculadora</p>
+    </div>
+  </div>
+  <!-- ========================= -->
+  <!-- TABLA (3)                 -->
+  <!-- ========================= -->
+  <div
+    class="services-table"
+    *ngIf="selectedMunicipality">
+    <div *ngIf="loadingServices">
+      Cargando servicios...
+    </div>
+    <table
+      *ngIf="!loadingServices && services.length > 0">
+      <thead>
+        <tr>
+          <th>Razón Social</th>
+          <th>Capacidad</th>
+          <th>Tarifa</th>
+          <th>Valor/Mbps</th>
+          <th>Fin Permanencia</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let service of services">
+          <td>{{ service["Razón Social"] }}</td>
+          <td>{{ service["Capacidad"] }}</td>
+          <td>
+            {{ service["Tarifa"] | currency:'COP':'symbol':'1.0-0' }}
+          </td>
+          <td>
+            {{ service["Vlr x Mbps"] | currency:'COP':'symbol':'1.0-2' }}
+          </td>
+          <td>
+            {{ service["Fecha Fin Permanencia"] | date:'dd/MM/yyyy' }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p *ngIf="!loadingServices && services.length === 0">
+      No se encontraron servicios para este municipio.
+    </p>
+  </div>
+</div>
+<!-- EOF -->

@@ -1,0 +1,171 @@
+// $Aztk_deepBlue: #074057;
+
+// .form-container {
+
+//   display: flex;
+//   flex-direction: column;
+//   max-width: 300px;
+//   gap: 5px;
+
+// }
+
+// select {
+
+//   padding: 8px;
+//   border-radius: 6px;
+
+// }
+
+// .municipality-card {
+//   margin-top: 20px;
+//   padding: 15px;
+//   border: 1px solid #ddd;
+//   border-radius: 10px;
+//   background-color: #f8f9fa;
+//   width: 120px;
+
+// }
+
+// .services-table {
+//   margin-top: 20px;
+//   overflow-x: auto;
+// }
+// table {
+//   width: 100%;
+//   border-collapse: collapse;
+// }
+// th {
+//   background: $Aztk_deepBlue;
+//   color: white;
+//   padding: 10px;
+//   text-align: left;
+// }
+// td {
+//   padding: 10px;
+//   border-bottom: 1px solid #ddd;
+// }
+// tbody tr:nth-child(even) {
+//   background: #f7f7f7;
+// }
+// tbody tr:hover {
+//   background: #e9f3ff;
+// }
+$Aztk_deepBlue: #074057;
+
+.evaluator-container{
+    display:flex;
+    flex-direction:column;
+    gap:25px;
+}
+
+.top-panel{
+
+    display:flex;
+    gap:30px;
+    align-items:flex-start;
+
+}
+
+.left-panel{
+
+    width:320px;
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+
+}
+
+form{
+
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+
+}
+
+select,
+input{
+
+    padding:8px;
+    border-radius:6px;
+
+}
+
+.results-panel{
+
+    flex:1;
+
+    min-height:250px;
+
+    padding:20px;
+
+    border:1px solid #ddd;
+
+    border-radius:10px;
+
+    background:#f8f9fa;
+
+}
+
+.municipality-card p {
+  margin: 2px;
+}
+
+.municipality-card{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding:10px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    background:#f8f9fa;
+}
+
+.services-table{
+
+    overflow-x:auto;
+
+}
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+th{
+
+    background:$Aztk_deepBlue;
+
+    color:white;
+
+    padding:10px;
+
+    text-align:left;
+
+}
+
+td{
+
+    padding:10px;
+
+    border-bottom:1px solid #ddd;
+
+}
+
+tbody tr:nth-child(even){
+
+    background:#f7f7f7;
+
+}
+
+tbody tr:hover{
+
+    background:#e9f3ff;
+
+}
+//
+// EOF
+//
