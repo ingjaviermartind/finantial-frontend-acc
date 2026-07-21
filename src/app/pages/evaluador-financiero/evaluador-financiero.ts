@@ -6,6 +6,12 @@ import { Department } from '../../services/department';
 import { Municipality } from '../../services/municipality';
 import { Services } from '../../services/services';
 
+import { PricingService } from '../../services/pricing';
+import {
+  PricingRequest,
+  PricingResponse
+} from '../../models/pricing';
+
 @Component({
   selector: 'app-evaluador-financiero',
   standalone: true,
@@ -25,6 +31,8 @@ export class EvaluadorFinanciero implements OnInit {
   loadingServices = false;
   showResults = false;
   loadingCalculation = false;
+  pricingResult?: PricingResponse
+  showFloor = false;
   selectedMunicipality: any = null;
   
   constructor(
@@ -32,6 +40,7 @@ export class EvaluadorFinanciero implements OnInit {
     private departmentService : Department,
     private municipalityService : Municipality,
     private servicesService : Services,
+    private pricingService : PricingService,
     private cdr : ChangeDetectorRef
   ){}
 
@@ -110,26 +119,99 @@ export class EvaluadorFinanciero implements OnInit {
       this.municipalities.find(
         m => m.id === municipalityId
       );
+      
       this.services = []
       this.loadingServices = true;
       this.showResults = false;
-      console.log(this.loadingServices);
       this.servicesService.getByMunicipality(municipalityId).subscribe({
         next: data => {
           this.services = [...data];
           this.loadingServices = false;
           this.cdr.detectChanges();
-          console.log(this.services);
         },
         error : err => {
           this.loadingServices = false;
           console.error(err)
+          this.cdr.detectChanges();
         }
       });
   }
 
   calculate() : void {
-    this.showResults = true;
+    if (this.form.invalid || !this.selectedMunicipality) {
+      this.form.markAllAsTouched();
+      return;
+    }
+    const request: PricingRequest = {
+      municipality_id: this.selectedMunicipality.id,
+      capacity_mbps: this.form.value.bandwidth,
+      contract_time: this.form.value.contractTime,
+      initial_income: 0
+    };
+    this.showResults = false;
+    this.pricingResult = undefined;
+    this.loadingCalculation = true;
+    this.pricingService.evaluate(request).subscribe({
+      next: (response) => {
+        this.pricingResult = response;
+        this.showResults = true;
+        this.loadingCalculation = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error(err);
+        this.loadingCalculation = false;
+        this.cdr.detectChanges();
+      }
+    
+    });
+  }
+
+  get displayedPrice() {
+    if (!this.pricingResult) {
+      return null;
+    }
+
+    return this.showFloor
+      ? this.pricingResult.floor
+      : this.pricingResult.suggested;
+  }
+
+  get canTogglePrice(): boolean {
+    return !!this.pricingResult?.predicted.approved;
+  }
+
+  togglePrice(): void {
+    this.showFloor = !this.showFloor;
+  }
+
+  get marketSourceLabel(): string {
+    switch (this.pricingResult?.market_source) {
+      case 'municipality':
+        return 'Municipio';
+      case 'department':
+        return 'Departamento';
+      case 'national':
+        return 'Nacional';
+      default:
+        return '-';
+    }
+  }
+
+  get historicalReference(): string {
+    if (!this.pricingResult) {
+      return '';
+    }
+    switch (this.pricingResult.market_source) {
+      case 'municipality':
+        return `Basado en ${this.pricingResult.market_sample} servicios del municipio.`;
+      case 'department':
+        return `Basado en ${this.pricingResult.market_sample} servicios del departamento.`;
+      case 'national':
+        return `Basado en ${this.pricingResult.market_sample} servicios a nivel nacional.`;
+      default:
+        return '';
+    }
   }
 
 }

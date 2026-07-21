@@ -59,52 +59,106 @@ $Aztk_deepBlue: #074057;
 }
 
 .top-panel{
-
     display:flex;
     gap:30px;
     align-items:flex-start;
-
 }
 
 .left-panel{
-
     width:320px;
     display:flex;
     flex-direction:column;
     gap:20px;
-
 }
 
 form{
-
     display:flex;
     flex-direction:column;
     gap:8px;
-
 }
 
 select,
 input{
-
     padding:8px;
     border-radius:6px;
+}
+
+.municipality-info{
+
+    margin-bottom:12px;
+
+    color:#7a7a7a;
+
+    font-size:.9rem;
+
+    line-height:1.4;
+
+}
+
+.municipality-info div{
+
+    margin-bottom:2px;
+
+}
+
+.municipality-info div:first-child{
+
+    font-weight:600;
+    color:#555;
 
 }
 
 .results-panel{
-
-    flex:1;
-
-    min-height:250px;
-
-    padding:20px;
-
+    width: 340px;
+    flex-shrink: 0;
+    padding: 18px;
     border:1px solid #ddd;
-
     border-radius:10px;
-
     background:#f8f9fa;
+}
 
+.results-panel h3{
+    margin-top:0;
+    margin-bottom:12px;
+}
+
+.results-panel hr{
+    margin:16px 0;
+}
+
+.result-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin:8px 0;
+}
+
+.details-btn{
+    margin-top:12px;
+    padding:0;
+    background:none;
+    border:none;
+    color:$Aztk_deepBlue;
+    cursor:pointer;
+    font-weight:600;
+}
+
+.details-btn:hover{
+    text-decoration:underline;
+}
+
+.reference-text{
+    margin-bottom:12px;
+    color:#666;
+    font-size:.9rem;
+}
+
+.result-row span{
+    color:#666;
+}
+
+.result-row strong{
+    font-weight:600;
 }
 
 .municipality-card p {
