@@ -68,9 +68,17 @@
               class="dropdown-item"
               routerLink="/variables"
               (click)="showUserMenu=false">
-              ⚙ Variables
+              Variables
           </button>
       }
+
+       <button
+          class="dropdown-item"
+          routerLink="/change-password"
+          (click)="toggleUserMenu()">
+          Cambiar contraseña
+        </button>
+
       <button
         class="dropdown-item"
         (click)="logout()">

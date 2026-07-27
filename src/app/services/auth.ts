@@ -75,4 +75,16 @@ export class Auth {
     this.UserService.clearUser();
     this.router.navigate(['/login']);
   }
+  changePassword(
+    currentPassword: string,
+    newPassword: string
+  ) {
+    return this.http.post(
+      `${environment.apiUrl}/change-password/`,
+      {
+        current_password: currentPassword,
+        new_password: newPassword
+      }
+    );
+  }
 }

@@ -1,11 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Auth } from '../../services/auth';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../services/user'
-import { tap } from 'rxjs';
-import { LoginResponse } from '../../models/login-response';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -22,19 +21,26 @@ export class Login {
   constructor(
     private auth: Auth,
     private UserService : UserService,
-    private router: Router
+    private router: Router,
+    private cdr : ChangeDetectorRef,
   ) {}
 
   isLoading = false;
 
   login() {
     this.isLoading = true;
+
     this.auth.login(
       this.username,
       this.password
-    ).subscribe({
+    )
+    .pipe(
+      finalize(() => this.cdr.detectChanges())
+    )
+    .subscribe({
       next: () => {
-        this.router.navigate(['/evaluator']); //main
+        this.router.navigate(['/evaluator']);
+        this.isLoading = false;
       },
       error: (error) => {
         console.error(error);
