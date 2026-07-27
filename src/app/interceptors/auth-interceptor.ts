@@ -18,7 +18,7 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
   }
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (![401, 403].includes(error.status)) {
+      if (error.status !== 401) {
         return throwError(() => error);
       }
       if (req.url.includes('/token/refresh/')) {

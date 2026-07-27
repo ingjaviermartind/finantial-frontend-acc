@@ -1,0 +1,89 @@
+<div class="variables-container">
+
+    <h2>Variables Financieras</h2>
+
+    @if(isLoading){
+
+        <p>Cargando...</p>
+
+    }
+
+    @else{
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Nombre</th>
+                    <th>Valor</th>
+                    <th>Unidad</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                @for(variable of variables; track variable.id){
+
+                    <tr>
+
+                        <td>
+
+                            @if(isModified(variable)){
+                                <span class="modified-dot">🟠</span>
+                            }
+
+                            {{ variable.name }}
+
+                        </td>
+
+                        <td>
+
+                            <input
+                                type="number"
+                                min="0"
+                                [(ngModel)]="variable.value"
+                                class="value-input"
+                                [class.modified-input]="isModified(variable)">
+
+                        </td>
+
+                        <td>{{ variable.unit }}</td>
+
+                    </tr>
+
+                }
+
+            </tbody>
+
+        </table>
+
+        @if(hasChanges()){
+
+            <div class="actions">
+
+                <button
+                    class="cancel-btn"
+                    (click)="cancelChanges()">
+
+                    Cancelar
+
+                </button>
+
+                <button
+                    class="save-btn"
+                    (click)="saveChanges()">
+                    Guardar cambios
+
+                </button>
+
+            </div>
+
+        }
+
+    }
+
+</div>

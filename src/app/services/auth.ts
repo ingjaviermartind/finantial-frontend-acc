@@ -2,20 +2,36 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Router } from '@angular/router';
+import { UserService } from './user';
+import { tap } from 'rxjs/operators';
+import { LoginResponse } from '../models/login-response';
 
 @Injectable({
   providedIn: 'root'
 })
 export class Auth {
-  //private apiUrl = `${environment.apiUrl}/token/`;
   private apiUrl = `${environment.apiUrl}/token/`;
   private refreshUrl = `${environment.apiUrl}/token/refresh/`
-  constructor(private http: HttpClient, private router : Router) {}
+  constructor(
+    private http: HttpClient, 
+    private router : Router, 
+    private UserService : UserService
+  ) {}
   login(username: string, password: string) {
-    return this.http.post(this.apiUrl, {
-      username,
-      password
-    });
+    return this.http.post<LoginResponse>(
+      this.apiUrl,
+      {
+        username,
+        password
+      }
+    ).pipe(
+      tap(response => this.saveSession(response))
+    );
+  }
+  private saveSession(response: LoginResponse): void {
+    this.setAccessToken(response.access);
+    this.setRefreshToken(response.refresh);
+    this.UserService.setUser(response.user);
   }
   refreshToken() {
     const refresh = localStorage.getItem('refresh_token')
@@ -56,6 +72,7 @@ export class Auth {
     localStorage.removeItem(
       'refresh_token'
     );
+    this.UserService.clearUser();
     this.router.navigate(['/login']);
   }
 }

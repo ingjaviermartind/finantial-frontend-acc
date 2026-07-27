@@ -3,6 +3,9 @@ import { FormsModule } from '@angular/forms';
 import { Auth } from '../../services/auth';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { UserService } from '../../services/user'
+import { tap } from 'rxjs';
+import { LoginResponse } from '../../models/login-response';
 
 @Component({
   selector: 'app-login',
@@ -11,12 +14,14 @@ import { CommonModule } from '@angular/common';
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
+
 export class Login {
   username = '';
   password = '';
 
   constructor(
     private auth: Auth,
+    private UserService : UserService,
     private router: Router
   ) {}
 
@@ -28,23 +33,22 @@ export class Login {
       this.username,
       this.password
     ).subscribe({
-      next:(response : any) => {
-        this.auth.setAccessToken(response.access);
-        this.auth.setRefreshToken(response.refresh);
-        this.router.navigate(['/main'])
+      next: () => {
+        this.router.navigate(['/evaluator']); //main
       },
       error: (error) => {
         console.error(error);
         alert('Credenciales inválidas');
+        this.isLoading = false;
       }
-    })
+    });
   }
 
   ngOnInit() {
       const token = this.auth.getAccessToken();
       if (token) {
         this.router.navigate([
-          '/main'
+          '/evaluator' //main
         ]);
       }
     }

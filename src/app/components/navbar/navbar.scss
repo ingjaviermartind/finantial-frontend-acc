@@ -8,8 +8,8 @@ $Aztk_deepBlue: #074057;
   border-bottom: 1px solid #ddd;
   background-color: $Aztk_deepBlue;
   color: white;
-
 }
+
 .brand h2 {
   margin: 0;
   font-size: 1.2rem;
@@ -18,23 +18,106 @@ $Aztk_deepBlue: #074057;
 .nav-links {
   display: flex;
   gap: 24px;
-
 }
 
 .nav-links a {
   color: white;
   text-decoration: none;
   font-weight: 500;
-
 }
 
 .nav-links a:hover {
   text-decoration: underline;
 }
 
+/* ===========================
+   Usuario
+=========================== */
+
+.user-menu {
+  position: relative;
+}
+
+.user-button {
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: .95rem;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: background .2s;
+}
+
+.user-button:hover {
+  background: rgba(255,255,255,.15);
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+
+  width: 280px;
+
+  background: white;
+  color: #333;
+
+  border-radius: 10px;
+  overflow: hidden;
+
+  box-shadow: 0 8px 20px rgba(0,0,0,.18);
+
+  z-index: 1000;
+}
+
+.user-info {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.user-info strong {
+  font-size: .95rem;
+}
+
+.user-info small {
+  color: #666;
+  font-size: .8rem;
+}
+
+.dropdown hr {
+  margin: 0;
+  border: none;
+  border-top: 1px solid #eee;
+}
+
+.dropdown-item {
+  width: 100%;
+  padding: 12px 16px;
+
+  background: white;
+  border: none;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition: background .2s;
+}
+
+.dropdown-item:hover {
+  background: #f5f5f5;
+}
+
+/* ===========================
+   Botones generales
+=========================== */
+
 button {
   cursor: pointer;
-  padding: 8px 14px;
   border: none;
   border-radius: 6px;
 }

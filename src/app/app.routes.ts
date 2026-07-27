@@ -5,7 +5,7 @@ import { MainLayout } from './layouts/main-layout/main-layout';
 import { Main } from './pages/main/main';
 import { EvaluadorFinanciero } from './pages/evaluador-financiero/evaluador-financiero';
 import { Cotizaciones } from './pages/cotizaciones/cotizaciones';
-
+import { FinancialVariables } from './pages/financial-variables/financial-variables';
 
 export const routes: Routes = [
   {
@@ -35,7 +35,12 @@ export const routes: Routes = [
       {
         path: 'quotes',
         component: Cotizaciones
+      },
+      {
+        path: 'variables',
+        component: FinancialVariables
       }
+
     ]
   }
 ];
