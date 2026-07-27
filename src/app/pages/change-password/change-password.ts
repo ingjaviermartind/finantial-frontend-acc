@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Auth } from '../../services/auth';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-change-password',
@@ -21,18 +22,18 @@ export class ChangePassword {
   confirmPassword = '';
 
   isLoading = false;
-
+  showNewPassword = false;
+  showConfirmPassword = false;
   constructor(
     private auth: Auth,
-    private router: Router
+    private router: Router,
+    private cdr : ChangeDetectorRef
   ) {}
 
   changePassword(): void {
 
     if (this.newPassword !== this.confirmPassword) {
-
       alert('Las contraseñas no coinciden.');
-
       return;
 
     }
@@ -42,37 +43,43 @@ export class ChangePassword {
     this.auth.changePassword(
       this.currentPassword,
       this.newPassword
-    ).subscribe({
-
+    )
+    .pipe(
+      finalize(() => this.cdr.detectChanges())
+    )
+    .subscribe({
       next: () => {
-
         this.isLoading = false;
-
         alert(
           'Contraseña actualizada correctamente.'
         );
-
         this.router.navigate([
           '/evaluator'
         ]);
-
       },
-
       error: (error) => {
-
         this.isLoading = false;
-
         console.error(error);
-
-        alert(
-          error.error?.detail ??
-          'No fue posible actualizar la contraseña.'
-        );
-
+        const passwordErrors = error.error?.new_password;
+        if(passwordErrors){
+          alert(passwordErrors.join('\n'));
+        }
+        else{
+          alert(
+            error.error?.detail ??
+            'No fue posible actualizar la contraseña.'
+          );
+        }
+        
       }
-
     });
-
   }
 
+  toggleNewPassword(): void {
+    this.showNewPassword = !this.showNewPassword;
+  }
+
+  toggleConfirmPassword(): void {
+    this.showConfirmPassword = !this.showConfirmPassword;
+  }
 }
