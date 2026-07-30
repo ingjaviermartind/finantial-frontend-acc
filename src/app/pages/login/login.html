@@ -13,11 +13,25 @@
 
   <div class="input-group">
     <label>Contraseña</label>
+    <div class="password-field">
+      <input
+          [type]="showPassword ? 'text' : 'password'"
+          [(ngModel)]="password">
+      <button
+          type="button"
+          class="eye-button"
+          (mousedown)="showPassword = true"
+          (mouseup)="showPassword = false"
+          (mouseleave)="showPassword = false"
+          (touchstart)="showPassword = true"
+          (touchend)="showPassword = false">
 
-    <input
-      type="password"
-      [(ngModel)]="password"
-    >
+          <span class="material-symbols-outlined">
+              visibility
+          </span>
+          
+      </button>
+    </div>
   </div>
 
   <button

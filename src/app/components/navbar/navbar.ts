@@ -4,6 +4,7 @@ import { Auth } from '../../services/auth';
 import { UserService } from '../../services/user';
 import { User } from '../../models/user';
 import { CommonModule } from '@angular/common';
+import { HostListener } from '@angular/core';
 
 @Component({
   selector: 'app-navbar',
@@ -27,12 +28,18 @@ export class Navbar {
     this.user = this.userService.getUser();
   }
 
-  toggleUserMenu(): void {
+  toggleUserMenu(event: MouseEvent): void {
+    event.stopPropagation();
     this.showUserMenu = !this.showUserMenu;
   }
 
   logout(): void {
     this.auth.logout();
+  }
+
+  @HostListener('document:click')
+  onDocumentClick(): void {
+    this.showUserMenu = false;
   }
 
 }

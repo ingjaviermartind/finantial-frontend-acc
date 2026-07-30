@@ -76,69 +76,82 @@
     <!-- ========================= -->
     <!-- PANEL DERECHA (2)         -->
     <!-- ========================= -->
-    <div class="results-panel"
-      *ngIf="selectedMunicipality && showResults && pricingResult">
-      <h3>
-        {{ showFloor ? '💰 Precio piso' : '💰 Precio recomendado' }}
-      </h3>
-      <div class="result-row">
+    <div
+      class="results-panel"
+      *ngIf="selectedMunicipality && (loadingCalculation || showResults)">
+
+      @if(loadingCalculation){
+        <div class="loading-results">
+          <div class="spinner"></div>
+          <p>Calculando propuesta financiera...</p>
+        </div>
+      }
+
+      @else if(showResults && pricingResult){
+        <h3>
+          {{ showFloor ? '💰 Precio piso' : '💰 Precio recomendado' }}
+        </h3>
+        <div class="result-row">
           <span>Precio mensual</span>
           <strong>
-              {{ displayedPrice?.price_monthly | currency:'COP':'symbol':'1.0-2' }}
+            {{ displayedPrice?.price_monthly | currency:'COP':'symbol':'1.0-2' }}
           </strong>
-      </div>
-      <div class="result-row">
+        </div>
+        <div class="result-row">
           <span>Precio por Mbps</span>
           <strong>
-              {{ displayedPrice?.price_per_mbps | currency:'COP':'symbol':'1.0-2' }}
+            {{ displayedPrice?.price_per_mbps | currency:'COP':'symbol':'1.0-2' }}
           </strong>
-      </div>
-      
-      <button
-        *ngIf="canTogglePrice"
-        type="button"
-        class="details-btn"
-        (click)="togglePrice()">
-        ⇄ {{ showFloor ? 'Precio recomendado' : 'Precio piso' }}
-      </button>
-      <hr>
-      <h3>📊 Referencia histórica</h3>
-      <p class="reference-text">
-        {{ historicalReference }}
-      </p>
-      
-      <div class="result-row">
+        </div>
+        <button
+          *ngIf="canTogglePrice"
+          type="button"
+          class="details-btn"
+          (click)="togglePrice()">
+          ⇄ {{ showFloor ? 'Precio recomendado' : 'Precio piso' }}
+        </button>
+        <hr>
+
+        <h3>📊 Referencia histórica</h3>
+
+        <p class="reference-text">
+          {{ historicalReference }}
+        </p>
+
+        <div class="result-row">
           <span>Precio promedio</span>
           <strong>
-              {{ pricingResult.mean_price_mbps
-                  | currency:'COP':'symbol':'1.0-2' }}
-              / Mbps
+            {{ pricingResult.mean_price_mbps | currency:'COP':'symbol':'1.0-2' }}
+            / Mbps
           </strong>
-      </div>
-      <div class="result-row">
+        </div>
+
+        <div class="result-row">
           <span>Desviación estándar</span>
           <strong>
-              {{ pricingResult.market_std
-                  | currency:'COP':'symbol':'1.0-2' }}
-              / Mbps
+            {{ pricingResult.market_std | currency:'COP':'symbol':'1.0-2' }}
+            / Mbps
           </strong>
-      </div>
-      <div class="result-row">
+        </div>
+
+        <div class="result-row">
           <span>Mediana</span>
           <strong>
-              {{ pricingResult.median_price_mbps
-                  | currency:'COP':'symbol':'1.0-2' }}
-              / Mbps
+            {{ pricingResult.median_price_mbps | currency:'COP':'symbol':'1.0-2' }}
+            / Mbps
           </strong>
-      </div>
-      <div class="result-row">
+        </div>
+
+        <div class="result-row">
           <span>Tarifario</span>
           <strong>
-              {{ pricingResult.reference_price_mbps
-                  | currency:'COP':'symbol':'1.0-2' }}
-              / Mbps
+            {{ pricingResult.reference_price_mbps | currency:'COP':'symbol':'1.0-2' }}
+            / Mbps
           </strong>
-      </div>
+        </div>
+
+      }
+
     </div>
   </div>
   <!-- ========================= -->
@@ -147,9 +160,14 @@
   <div
     class="services-table"
     *ngIf="selectedMunicipality">
+
     <div *ngIf="loadingServices">
-      Cargando servicios...
+        <div class="loading-results">
+          <div class="spinner"></div>
+          <p>Cargando servicios...</p>
+        </div>
     </div>
+
     <table
       *ngIf="!loadingServices && services.length > 0">
       <thead>

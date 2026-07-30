@@ -26,6 +26,7 @@ export class Login {
   ) {}
 
   isLoading = false;
+  showPassword = false;
 
   login() {
     this.isLoading = true;

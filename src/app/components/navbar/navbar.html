@@ -24,7 +24,7 @@
 
     <button
       class="user-button"
-      (click)="toggleUserMenu()">
+      (click)="toggleUserMenu($event)">
 
       {{ user?.first_name }}
       <!-- ▼ -->
@@ -33,7 +33,8 @@
 
     <div
       class="dropdown"
-      *ngIf="showUserMenu">
+      *ngIf="showUserMenu"
+      (click)="$event.stopPropagation()">
 
       <div class="user-info">
 
@@ -75,7 +76,7 @@
        <button
           class="dropdown-item"
           routerLink="/change-password"
-          (click)="toggleUserMenu()">
+          (click)="showUserMenu=false">
           Cambiar contraseña
         </button>
 

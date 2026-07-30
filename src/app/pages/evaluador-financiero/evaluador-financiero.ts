@@ -12,6 +12,8 @@ import {
   PricingResponse
 } from '../../models/pricing';
 
+import { finalize } from 'rxjs/operators';
+
 @Component({
   selector: 'app-evaluador-financiero',
   standalone: true,
@@ -123,16 +125,18 @@ export class EvaluadorFinanciero implements OnInit {
       this.services = []
       this.loadingServices = true;
       this.showResults = false;
-      this.servicesService.getByMunicipality(municipalityId).subscribe({
+      this.servicesService.getByMunicipality(municipalityId).pipe(
+        finalize(() => {
+          this.loadingServices = false;
+          this.cdr.markForCheck(); // o detectChanges()
+        })
+      )
+      .subscribe({
         next: data => {
           this.services = [...data];
-          this.loadingServices = false;
-          this.cdr.detectChanges();
         },
-        error : err => {
-          this.loadingServices = false;
-          console.error(err)
-          this.cdr.detectChanges();
+        error: err => {
+          console.error(err);
         }
       });
   }
@@ -151,19 +155,20 @@ export class EvaluadorFinanciero implements OnInit {
     this.showResults = false;
     this.pricingResult = undefined;
     this.loadingCalculation = true;
-    this.pricingService.evaluate(request).subscribe({
-      next: (response) => {
+    this.pricingService.evaluate(request).pipe(
+      finalize(() => {
+        this.loadingCalculation = false;
+        this.cdr.markForCheck();
+      })
+    )
+    .subscribe({
+      next: response => {
         this.pricingResult = response;
         this.showResults = true;
-        this.loadingCalculation = false;
-        this.cdr.detectChanges();
       },
-      error: (err) => {
+      error: err => {
         console.error(err);
-        this.loadingCalculation = false;
-        this.cdr.detectChanges();
       }
-    
     });
   }
 

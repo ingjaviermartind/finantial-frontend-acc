@@ -1,55 +1,3 @@
-// $Aztk_deepBlue: #074057;
-
-// .form-container {
-
-//   display: flex;
-//   flex-direction: column;
-//   max-width: 300px;
-//   gap: 5px;
-
-// }
-
-// select {
-
-//   padding: 8px;
-//   border-radius: 6px;
-
-// }
-
-// .municipality-card {
-//   margin-top: 20px;
-//   padding: 15px;
-//   border: 1px solid #ddd;
-//   border-radius: 10px;
-//   background-color: #f8f9fa;
-//   width: 120px;
-
-// }
-
-// .services-table {
-//   margin-top: 20px;
-//   overflow-x: auto;
-// }
-// table {
-//   width: 100%;
-//   border-collapse: collapse;
-// }
-// th {
-//   background: $Aztk_deepBlue;
-//   color: white;
-//   padding: 10px;
-//   text-align: left;
-// }
-// td {
-//   padding: 10px;
-//   border-bottom: 1px solid #ddd;
-// }
-// tbody tr:nth-child(even) {
-//   background: #f7f7f7;
-// }
-// tbody tr:hover {
-//   background: #e9f3ff;
-// }
 $Aztk_deepBlue: #074057;
 
 .evaluator-container{
@@ -69,6 +17,8 @@ $Aztk_deepBlue: #074057;
     display:flex;
     flex-direction:column;
     gap:20px;
+
+    margin-top:-20px;
 }
 
 form{
@@ -219,6 +169,48 @@ tbody tr:hover{
 
     background:#e9f3ff;
 
+}
+
+.loading-results{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    min-height:260px;
+    gap:16px;
+    color:#666;
+}
+
+.spinner{
+    width:42px;
+    height:42px;
+    border:4px solid #d8e3e8;
+    border-top:4px solid $Aztk_deepBlue;
+    border-radius:50%;
+    animation:spin .8s linear infinite;
+}
+
+@keyframes spin{
+    from{
+        transform:rotate(0deg);
+    }
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+.calculate-btn{
+    margin-top:12px;
+    padding:10px 16px;
+
+    border:none;
+    border-radius:8px;
+
+    background:$Aztk_deepBlue;
+    color:white;
+
+    font-size:.95rem;
+    font-weight:600;
 }
 //
 // EOF

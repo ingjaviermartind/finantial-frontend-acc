@@ -1,0 +1,23 @@
+:host{
+    display:block;
+    height:100vh;
+}
+
+.layout{
+    display:flex;
+    flex-direction:column;
+    height:100%;
+    // overflow:hidden;
+}
+
+.main-content{
+    display:flex;
+    flex:1;
+}
+
+.page-content{
+    flex:1;
+    padding:32px;
+    overflow:auto;
+    background:#FCFDFD; // el mismo fondo que usas en login
+}
