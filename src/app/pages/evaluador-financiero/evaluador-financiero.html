@@ -149,46 +149,83 @@
   <!-- TABLA (3)                 -->
   <!-- ========================= -->
   <div
-    class="services-table"
-    *ngIf="selectedMunicipality">
+  class="services-table"
+  *ngIf="selectedMunicipality">
 
-    <div *ngIf="loadingServices">
-        <div class="loading-results">
-          <div class="spinner"></div>
-          <p>Cargando servicios...</p>
-        </div>
+  <!-- Loading -->
+  <div *ngIf="loadingServices">
+    <div class="loading-results">
+      <div class="spinner"></div>
+      <p>Cargando servicios...</p>
     </div>
-
-    <table
-      *ngIf="!loadingServices && services.length > 0">
-      <thead>
-        <tr>
-          <th>Razón Social</th>
-          <th>Capacidad</th>
-          <th>Tarifa</th>
-          <th>Valor/Mbps</th>
-          <th>Fin Permanencia</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let service of services">
-          <td>{{ service["Razón Social"] }}</td>
-          <td>{{ service["Capacidad"] }}</td>
-          <td>
-            {{ service["Tarifa"] | currency:'COP':'symbol':'1.0-0' }}
-          </td>
-          <td>
-            {{ service["Vlr x Mbps"] | currency:'COP':'symbol':'1.0-2' }}
-          </td>
-          <td>
-            {{ service["Fecha Fin Permanencia"] | date:'dd/MM/yyyy' }}
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <p *ngIf="!loadingServices && services.length === 0">
-      No se encontraron servicios para este municipio.
-    </p>
   </div>
+
+
+  <!-- Error backend -->
+  <div 
+    *ngIf="!loadingServices && servicesError"
+    class="error-message">
+
+    <p
+      class="table-message error">
+      {{ servicesError }}
+    </p>
+
+  </div>
+
+
+  <!-- Tabla -->
+  <table
+    *ngIf="!loadingServices && !servicesError && services.length > 0">
+
+    <thead>
+      <tr>
+        <th>Razón Social</th>
+        <th>Capacidad</th>
+        <th>Tarifa</th>
+        <th>Valor/Mbps</th>
+        <th>Fin Permanencia</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let service of services">
+
+        <td>
+          {{ service["Razón Social"] }}
+        </td>
+
+        <td>
+          {{ service["Capacidad"] }}
+        </td>
+
+        <td>
+          {{ service["Tarifa"] | currency:'COP':'symbol':'1.0-0' }}
+        </td>
+
+        <td>
+          {{ service["Vlr x Mbps"] | currency:'COP':'symbol':'1.0-2' }}
+        </td>
+
+        <td>
+          {{ service["Fecha Fin Permanencia"] | date:'dd/MM/yyyy' }}
+        </td>
+
+      </tr>
+    </tbody>
+
+  </table>
+
+
+  <!-- Sin datos -->
+  <p
+    class="table-message"
+    *ngIf="!loadingServices && !servicesError && services.length === 0">
+
+    No se encontraron servicios para este municipio.
+
+  </p>
+
+</div>
 </div>
 <!-- EOF -->

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-
+import { ServicesResponse } from '../models/services';
 @Injectable({
   providedIn: 'root',
 })
@@ -10,9 +10,9 @@ import { environment } from '../../environments/environment';
 export class Services {
   private baseUrl = `${environment.apiUrl}/services/`;
   constructor(private http: HttpClient) {}
-  getByMunicipality(municipalityId: string): Observable<any[]> {
-    return this.http.get<any[]>(
-      `${this.baseUrl}${municipalityId}/`
+  getByMunicipality(id: string): Observable<ServicesResponse> {
+    return this.http.get<ServicesResponse>(
+      `${this.baseUrl}${id}/`
     );
   }
 }

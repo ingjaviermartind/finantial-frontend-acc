@@ -36,7 +36,8 @@ export class EvaluadorFinanciero implements OnInit {
   pricingResult?: PricingResponse
   showFloor = false;
   selectedMunicipality: any = null;
-  private appRef = inject(ApplicationRef);
+  servicesError: string | null | undefined = null;
+
   constructor(
     private fb: FormBuilder,
     private departmentService : Department,
@@ -47,69 +48,103 @@ export class EvaluadorFinanciero implements OnInit {
 
 
   ngOnInit(): void {
-    this.form = this.fb.group({
-      department: [''],
-      municipality: [{ value: '', disabled: true }],
-      bandwidth: [
-        null,
-        [
-          Validators.required,
-          Validators.min(1)
-        ]
-      ],
-      contractTime: [
-        null,
-        [
-          Validators.required,
-          Validators.min(1)
-        ]
-      ],
-      sensitivity: [null]
+
+  this.form = this.fb.group({
+    department: [''],
+    municipality: [{ value: '', disabled: true }],
+    bandwidth: [
+      null,
+      [
+        Validators.required,
+        Validators.min(1)
+      ]
+    ],
+    contractTime: [
+      null,
+      [
+        Validators.required,
+        Validators.min(1)
+      ]
+    ],
+    sensitivity: [null]
+  });
+
+
+  this.loadDepartments();
+  this.form.get('municipality')!.reset();
+
+  // Cambio de departamento
+  this.form.get('department')!.valueChanges.subscribe(deptId => {
+  this.selectedMunicipality = null;
+  this.services = [];
+  this.showResults = false;
+  this.municipalities = [];
+  this.form.get('municipality')!.reset();
+  this.form.get('municipality')!.disable();
+  if (!deptId) {
+    return;
+  }
+  this.municipalityService.getByDepartment(deptId)
+    .subscribe(data => {
+      this.municipalities = [...data].sort(
+        (a, b) => a.name.localeCompare(b.name)
+      );
+      this.form.get('municipality')!.enable();
     });
+});
 
-    this.loadDepartments();
-    this.form.get('municipality')!.reset();
 
-    this.form.get('department')!.valueChanges.subscribe(deptId => {
+  // Cambio de municipio
+  this.form.get('municipality')!.valueChanges.subscribe(municipalityId => {
+    if (!municipalityId) {
       this.selectedMunicipality = null;
       this.services = [];
-      this.showResults = false;
-      this.municipalities = [];
-      this.form.get('municipality')!.reset();
-      this.form.get('municipality')!.disable();
-      if (!deptId) {
-        return;
-      }
-      this.municipalityService.getByDepartment(deptId)
-        .subscribe(data => {
-          this.municipalities = [...data].sort(
-            (a, b) => a.name.localeCompare(b.name)
-          );
-          this.form.get('municipality')!.enable();
-        });
-    });
+      return;
+    }
+    this.selectedMunicipality =
+      this.municipalities.find(
+        m => m.id === municipalityId
+      );
+    this.services = [];
+    this.servicesError = null;
+    this.loadingServices = true;
+    this.showResults = false;
+    this.servicesService
+      .getByMunicipality(municipalityId)
+      .pipe(
+        finalize(() => {
+          this.loadingServices = false;
+        })
+      )
+      .subscribe({
+        next: response => {
+          if (response.success) {
+            this.services = response.data;
+          } else {
+            this.servicesError = response.message;
+          }
+        },
 
-    this.form.get('municipality')!.valueChanges.subscribe(municipalityId => {
-      if (!municipalityId) {
-        this.selectedMunicipality = null;
-        this.services = [];
-        return;
-      }
-      this.selectedMunicipality =
-        this.municipalities.find(m => m.id === municipalityId);
-      this.services = [];
-      this.loadingServices = true;
-      this.showResults = false;
-      this.servicesService.getByMunicipality(municipalityId)
-        .pipe(
-          finalize(() => this.loadingServices = false)
-        )
-        .subscribe({
-          next: data => this.services = [...data],
-          error: err => console.error(err)
-        });
-    });
-  }
+        error: err => {
+          if (err.error?.code === 'DATABASE_ERROR') {
+            this.servicesError =
+              'Error de conexión con la base de datos. Intente nuevamente más tarde.';
+            return;
+          }
+          if (err.error?.code === 'MUNICIPALITY_NOT_FOUND') {
+            this.servicesError =
+              'El municipio no existe o fue eliminado.';
+            return;
+          }
+          this.servicesError =
+            err.error?.message ??
+            'Error inesperado consultando servicios.';
+        }
+      });
+
+  });
+
+}
 
   get canShowResults(): boolean {
     return !!this.selectedMunicipality &&
