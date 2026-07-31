@@ -92,13 +92,13 @@
           <div class="result-row">
             <span>Precio mensual</span>
             <strong>
-              {{ displayedPrice?.price_monthly | currency:'COP':'symbol':'1.0-2' }}
+              {{ displayedPrice?.price_monthly | currency:'COP':'':'1.0-2' }} COP
             </strong>
           </div>
           <div class="result-row">
             <span>Precio por Mbps</span>
             <strong>
-              {{ displayedPrice?.price_per_mbps | currency:'COP':'symbol':'1.0-2' }}
+              {{ displayedPrice?.price_per_mbps | currency:'COP':'':'1.0-2' }} COP
             </strong>
           </div>
           <button
@@ -116,29 +116,25 @@
           <div class="result-row">
             <span>Precio promedio</span>
             <strong>
-              {{ pricingResult.mean_price_mbps | currency:'COP':'symbol':'1.0-2' }}
-              / Mbps
+              {{ pricingResult.mean_price_mbps | currency:'COP':'':'1.0-2' }}  COP/Mbps
             </strong>
           </div>
           <div class="result-row">
             <span>Desviación estándar</span>
             <strong>
-              {{ pricingResult.market_std | currency:'COP':'symbol':'1.0-2' }}
-              / Mbps
+              {{ pricingResult.market_std | currency:'COP':'':'1.0-2' }}  COP/Mbps
             </strong>
           </div>
           <div class="result-row">
             <span>Mediana</span>
             <strong>
-              {{ pricingResult.median_price_mbps | currency:'COP':'symbol':'1.0-2' }}
-              / Mbps
+              {{ pricingResult.median_price_mbps | currency:'COP':'':'1.0-2' }}  COP/Mbps
             </strong>
           </div>
           <div class="result-row">
             <span>Tarifario</span>
             <strong>
-              {{ pricingResult.reference_price_mbps | currency:'COP':'symbol':'1.0-2' }}
-              / Mbps
+              {{ pricingResult.reference_price_mbps | currency:'COP':'':'1.0-2' }}  COP/Mbps
             </strong>
           </div>
         }
@@ -200,11 +196,11 @@
         </td>
 
         <td>
-          {{ service["Tarifa"] | currency:'COP':'symbol':'1.0-0' }}
+          {{ service["Tarifa"] | currency:'COP':'':'1.0-0' }} COP
         </td>
 
         <td>
-          {{ service["Vlr x Mbps"] | currency:'COP':'symbol':'1.0-2' }}
+          {{ service["Vlr x Mbps"] | currency:'COP':'':'1.0-2' }} COP
         </td>
 
         <td>
