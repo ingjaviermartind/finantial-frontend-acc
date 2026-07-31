@@ -26,8 +26,7 @@ export class ChangePassword {
   showConfirmPassword = false;
   constructor(
     private auth: Auth,
-    private router: Router,
-    private cdr : ChangeDetectorRef
+    private router: Router
   ) {}
 
   changePassword(): void {
@@ -43,9 +42,6 @@ export class ChangePassword {
     this.auth.changePassword(
       this.currentPassword,
       this.newPassword
-    )
-    .pipe(
-      finalize(() => this.cdr.detectChanges())
     )
     .subscribe({
       next: () => {

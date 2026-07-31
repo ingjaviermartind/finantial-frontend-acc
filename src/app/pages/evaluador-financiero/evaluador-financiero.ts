@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
+import { Component, ChangeDetectorRef, OnInit, ApplicationRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
@@ -36,14 +36,13 @@ export class EvaluadorFinanciero implements OnInit {
   pricingResult?: PricingResponse
   showFloor = false;
   selectedMunicipality: any = null;
-  
+  private appRef = inject(ApplicationRef);
   constructor(
     private fb: FormBuilder,
     private departmentService : Department,
     private municipalityService : Municipality,
     private servicesService : Services,
-    private pricingService : PricingService,
-    private cdr : ChangeDetectorRef
+    private pricingService : PricingService    
   ){}
 
 
@@ -58,22 +57,58 @@ export class EvaluadorFinanciero implements OnInit {
           Validators.min(1)
         ]
       ],
-      contractTime:[
+      contractTime: [
         null,
         [
           Validators.required,
-          Validators.min(1) 
+          Validators.min(1)
         ]
       ],
       sensitivity: [null]
     });
 
     this.loadDepartments();
+    this.form.get('municipality')!.reset();
 
-    // this.form.get('municipality')?.valueChanges.subscribe(value => {
-    //   console.log('Municipio seleccionado:', value);
-    // });
+    this.form.get('department')!.valueChanges.subscribe(deptId => {
+      this.selectedMunicipality = null;
+      this.services = [];
+      this.showResults = false;
+      this.municipalities = [];
+      this.form.get('municipality')!.reset();
+      this.form.get('municipality')!.disable();
+      if (!deptId) {
+        return;
+      }
+      this.municipalityService.getByDepartment(deptId)
+        .subscribe(data => {
+          this.municipalities = [...data].sort(
+            (a, b) => a.name.localeCompare(b.name)
+          );
+          this.form.get('municipality')!.enable();
+        });
+    });
 
+    this.form.get('municipality')!.valueChanges.subscribe(municipalityId => {
+      if (!municipalityId) {
+        this.selectedMunicipality = null;
+        this.services = [];
+        return;
+      }
+      this.selectedMunicipality =
+        this.municipalities.find(m => m.id === municipalityId);
+      this.services = [];
+      this.loadingServices = true;
+      this.showResults = false;
+      this.servicesService.getByMunicipality(municipalityId)
+        .pipe(
+          finalize(() => this.loadingServices = false)
+        )
+        .subscribe({
+          next: data => this.services = [...data],
+          error: err => console.error(err)
+        });
+    });
   }
 
   get canShowResults(): boolean {
@@ -88,56 +123,6 @@ export class EvaluadorFinanciero implements OnInit {
         this.departments = [...data].sort(
           (a, b) => a.name.localeCompare(b.name)
         );
-        this.cdr.detectChanges();
-      });
-  }
-
-  onDepartmentChange(event : Event) {
-    const deptId = (event.target as HTMLSelectElement).value;
-    this.selectedMunicipality = null;
-    this.form.patchValue({
-      municipality:''
-    });
-    
-    if(!deptId) {
-      this.municipalities = [];
-      this.form.get('municipality')?.disable();
-      return;
-    }
-
-    this.municipalityService.getByDepartment(deptId)
-      .subscribe(data => {
-        this.municipalities = [...data].sort(
-          (a, b) => a.name.localeCompare(b.name)
-        );
-        this.form.get('municipality')?.enable();
-      });
-  }
-
-  onMunicipalityChange(event: Event) {
-    const municipalityId =
-      (event.target as HTMLSelectElement).value;
-    this.selectedMunicipality =
-      this.municipalities.find(
-        m => m.id === municipalityId
-      );
-      
-      this.services = []
-      this.loadingServices = true;
-      this.showResults = false;
-      this.servicesService.getByMunicipality(municipalityId).pipe(
-        finalize(() => {
-          this.loadingServices = false;
-          this.cdr.markForCheck(); // o detectChanges()
-        })
-      )
-      .subscribe({
-        next: data => {
-          this.services = [...data];
-        },
-        error: err => {
-          console.error(err);
-        }
       });
   }
 
@@ -158,17 +143,13 @@ export class EvaluadorFinanciero implements OnInit {
     this.pricingService.evaluate(request).pipe(
       finalize(() => {
         this.loadingCalculation = false;
-        this.cdr.markForCheck();
       })
-    )
-    .subscribe({
+    ).subscribe({
       next: response => {
         this.pricingResult = response;
         this.showResults = true;
       },
-      error: err => {
-        console.error(err);
-      }
+      error: err => console.error(err)
     });
   }
 
@@ -176,7 +157,6 @@ export class EvaluadorFinanciero implements OnInit {
     if (!this.pricingResult) {
       return null;
     }
-
     return this.showFloor
       ? this.pricingResult.floor
       : this.pricingResult.suggested;

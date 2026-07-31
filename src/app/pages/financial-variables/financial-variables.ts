@@ -22,8 +22,7 @@ export class FinancialVariables {
   isLoading = true;
 
   constructor(
-    private financialVariableService: FinancialVariableService,
-    private cdr : ChangeDetectorRef
+    private financialVariableService: FinancialVariableService
   ) {}
 
   ngOnInit(): void {
@@ -45,7 +44,6 @@ export class FinancialVariables {
           this.variables = response;
           this.originalVariables = structuredClone(response);
           this.isLoading = false;
-          this.cdr.detectChanges();
 
         },
 
@@ -53,7 +51,6 @@ export class FinancialVariables {
 
           console.error(error);
           this.isLoading = false;
-          this.cdr.detectChanges();
 
         }
 
@@ -105,7 +102,6 @@ export class FinancialVariables {
             alert(
                 'Variables actualizadas correctamente.'
             );
-            this.cdr.detectChanges();
         },
         error: (error) => {
             console.error(error);

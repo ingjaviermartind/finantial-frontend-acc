@@ -20,9 +20,7 @@ export class Login {
 
   constructor(
     private auth: Auth,
-    private UserService : UserService,
     private router: Router,
-    private cdr : ChangeDetectorRef,
   ) {}
 
   isLoading = false;
@@ -34,9 +32,6 @@ export class Login {
     this.auth.login(
       this.username,
       this.password
-    )
-    .pipe(
-      finalize(() => this.cdr.detectChanges())
     )
     .subscribe({
       next: () => {

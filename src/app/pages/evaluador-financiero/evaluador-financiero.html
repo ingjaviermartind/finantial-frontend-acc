@@ -13,8 +13,8 @@
         <!-- ========================= -->
         <label>Departamento</label>
         <select
-          formControlName="department"
-          (change)="onDepartmentChange($event)">
+          formControlName="department">
+          <!-- (change)="onDepartmentChange($event)"> -->
           <option value="">
             Seleccione un departamento
           </option>
@@ -26,9 +26,9 @@
         </select>
         <label>Municipio</label>
         <select
-          formControlName="municipality"
-          (change)="onMunicipalityChange($event)">
-          <option value="">
+          formControlName="municipality">
+          <!-- (change)="onMunicipalityChange($event)"> -->
+          <option [ngValue]="null">
             Seleccione un municipio
           </option>
           <option
@@ -76,83 +76,74 @@
     <!-- ========================= -->
     <!-- PANEL DERECHA (2)         -->
     <!-- ========================= -->
-    <div
-      class="results-panel"
-      *ngIf="selectedMunicipality && (loadingCalculation || showResults)">
-
-      @if(loadingCalculation){
-        <div class="loading-results">
-          <div class="spinner"></div>
-          <p>Calculando propuesta financiera...</p>
-        </div>
-      }
-
-      @else if(showResults && pricingResult){
-        <h3>
-          {{ showFloor ? '💰 Precio piso' : '💰 Precio recomendado' }}
-        </h3>
-        <div class="result-row">
-          <span>Precio mensual</span>
-          <strong>
-            {{ displayedPrice?.price_monthly | currency:'COP':'symbol':'1.0-2' }}
-          </strong>
-        </div>
-        <div class="result-row">
-          <span>Precio por Mbps</span>
-          <strong>
-            {{ displayedPrice?.price_per_mbps | currency:'COP':'symbol':'1.0-2' }}
-          </strong>
-        </div>
-        <button
-          *ngIf="canTogglePrice"
-          type="button"
-          class="details-btn"
-          (click)="togglePrice()">
-          ⇄ {{ showFloor ? 'Precio recomendado' : 'Precio piso' }}
-        </button>
-        <hr>
-
-        <h3>📊 Referencia histórica</h3>
-
-        <p class="reference-text">
-          {{ historicalReference }}
-        </p>
-
-        <div class="result-row">
-          <span>Precio promedio</span>
-          <strong>
-            {{ pricingResult.mean_price_mbps | currency:'COP':'symbol':'1.0-2' }}
-            / Mbps
-          </strong>
-        </div>
-
-        <div class="result-row">
-          <span>Desviación estándar</span>
-          <strong>
-            {{ pricingResult.market_std | currency:'COP':'symbol':'1.0-2' }}
-            / Mbps
-          </strong>
-        </div>
-
-        <div class="result-row">
-          <span>Mediana</span>
-          <strong>
-            {{ pricingResult.median_price_mbps | currency:'COP':'symbol':'1.0-2' }}
-            / Mbps
-          </strong>
-        </div>
-
-        <div class="result-row">
-          <span>Tarifario</span>
-          <strong>
-            {{ pricingResult.reference_price_mbps | currency:'COP':'symbol':'1.0-2' }}
-            / Mbps
-          </strong>
-        </div>
-
-      }
-
-    </div>
+    @if (selectedMunicipality && (loadingCalculation || showResults)) {
+      <div class="results-panel">
+        <!-- *ngIf="selectedMunicipality && (loadingCalculation || showResults)"> -->
+        @if(loadingCalculation){
+          <div class="loading-results">
+            <div class="spinner"></div>
+            <p>Calculando propuesta financiera...</p>
+          </div>
+        }
+        @else if(showResults && pricingResult){
+          <h3>
+            {{ showFloor ? '💰 Precio piso' : '💰 Precio recomendado' }}
+          </h3>
+          <div class="result-row">
+            <span>Precio mensual</span>
+            <strong>
+              {{ displayedPrice?.price_monthly | currency:'COP':'symbol':'1.0-2' }}
+            </strong>
+          </div>
+          <div class="result-row">
+            <span>Precio por Mbps</span>
+            <strong>
+              {{ displayedPrice?.price_per_mbps | currency:'COP':'symbol':'1.0-2' }}
+            </strong>
+          </div>
+          <button
+            *ngIf="canTogglePrice"
+            type="button"
+            class="details-btn"
+            (click)="togglePrice()">
+            ⇄ {{ showFloor ? 'Precio recomendado' : 'Precio piso' }}
+          </button>
+          <hr>
+          <h3>📊 Referencia histórica</h3>
+          <p class="reference-text">
+            {{ historicalReference }}
+          </p>
+          <div class="result-row">
+            <span>Precio promedio</span>
+            <strong>
+              {{ pricingResult.mean_price_mbps | currency:'COP':'symbol':'1.0-2' }}
+              / Mbps
+            </strong>
+          </div>
+          <div class="result-row">
+            <span>Desviación estándar</span>
+            <strong>
+              {{ pricingResult.market_std | currency:'COP':'symbol':'1.0-2' }}
+              / Mbps
+            </strong>
+          </div>
+          <div class="result-row">
+            <span>Mediana</span>
+            <strong>
+              {{ pricingResult.median_price_mbps | currency:'COP':'symbol':'1.0-2' }}
+              / Mbps
+            </strong>
+          </div>
+          <div class="result-row">
+            <span>Tarifario</span>
+            <strong>
+              {{ pricingResult.reference_price_mbps | currency:'COP':'symbol':'1.0-2' }}
+              / Mbps
+            </strong>
+          </div>
+        }
+      </div>
+    }
   </div>
   <!-- ========================= -->
   <!-- TABLA (3)                 -->
