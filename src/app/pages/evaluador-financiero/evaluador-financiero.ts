@@ -1,6 +1,6 @@
 import { Component, ChangeDetectorRef, OnInit, ApplicationRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { Department } from '../../services/department';
 import { Municipality } from '../../services/municipality';
@@ -19,7 +19,8 @@ import { finalize } from 'rxjs/operators';
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FormsModule
   ],
   templateUrl: './evaluador-financiero.html',
   styleUrl: './evaluador-financiero.scss',
@@ -30,6 +31,14 @@ export class EvaluadorFinanciero implements OnInit {
   departments: any[] = [];
   municipalities: any[] = [];
   services: any [] = [];
+  filteredServices : any[] = [];
+
+  subsegments: string[] = [];
+  capacityRanges: string[] = [];
+
+  selectedSubsegment = '';
+  selectedCapacityRange = '';
+
   loadingServices = false;
   showResults = false;
   loadingCalculation = false;
@@ -77,6 +86,7 @@ export class EvaluadorFinanciero implements OnInit {
   this.form.get('department')!.valueChanges.subscribe(deptId => {
   this.selectedMunicipality = null;
   this.services = [];
+
   this.showResults = false;
   this.municipalities = [];
   this.form.get('municipality')!.reset();
@@ -106,6 +116,10 @@ export class EvaluadorFinanciero implements OnInit {
         m => m.id === municipalityId
       );
     this.services = [];
+    this.selectedSubsegment = '';
+    this.selectedCapacityRange = '';
+    this.subsegments = [];
+    this.capacityRanges = [];
     this.servicesError = null;
     this.loadingServices = true;
     this.showResults = false;
@@ -120,6 +134,11 @@ export class EvaluadorFinanciero implements OnInit {
         next: response => {
           if (response.success) {
             this.services = response.data;
+            this.selectedSubsegment = '';
+            this.selectedCapacityRange = '';
+            this.loadServiceFilters();
+            this.applyServiceFilters();
+            // console.log(response.data);
           } else {
             this.servicesError = response.message;
           }
@@ -233,7 +252,38 @@ export class EvaluadorFinanciero implements OnInit {
         return '';
     }
   }
+  applyServiceFilters(): void {
+    this.filteredServices = this.services.filter(service => {
 
+      const matchesSubsegment =
+        !this.selectedSubsegment ||
+        service['subsegment'] === this.selectedSubsegment;
+
+      const matchesCapacity =
+        !this.selectedCapacityRange ||
+        service['Rango Capacidad'] === this.selectedCapacityRange;
+
+      return matchesSubsegment && matchesCapacity;
+    });
+  }
+
+  loadServiceFilters(): void {
+    this.subsegments = [
+      ...new Set(
+        this.services
+          .map(service => service['subsegment'])
+          .filter(value => value)
+      )
+    ].sort();
+
+    this.capacityRanges = [
+      ...new Set(
+        this.services
+          .map(service => service['Rango Capacidad'])
+          .filter(value => value)
+      )
+    ];
+  }
 }
 //
 // EOF

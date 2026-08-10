@@ -148,75 +148,169 @@
   class="services-table"
   *ngIf="selectedMunicipality">
 
-  <!-- Loading -->
   <div *ngIf="loadingServices">
+
     <div class="loading-results">
       <div class="spinner"></div>
       <p>Cargando servicios...</p>
     </div>
+
   </div>
 
+  <div
+    *ngIf="!loadingServices && services.length > 0"
+    class="services-content">
 
-  <!-- Error backend -->
-  <div 
-    *ngIf="!loadingServices && servicesError"
-    class="error-message">
+    <!-- FILTROS -->
+    <div class="services-filters">
 
+      <div class="filter-group">
+
+        <label for="subsegment">
+          Segmentación
+        </label>
+
+        <select
+          id="subsegment"
+          [(ngModel)]="selectedSubsegment"
+          (ngModelChange)="applyServiceFilters()">
+
+          <option value="">
+            Todos
+          </option>
+
+          <option
+            *ngFor="let subsegment of subsegments"
+            [value]="subsegment">
+
+            {{ subsegment }}
+
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="filter-group">
+
+        <label for="capacityRange">
+          Rango de capacidad
+        </label>
+
+        <select
+          id="capacityRange"
+          [(ngModel)]="selectedCapacityRange"
+          (ngModelChange)="applyServiceFilters()">
+
+          <option value="">
+            Todos
+          </option>
+
+          <option
+            *ngFor="let range of capacityRanges"
+            [value]="range">
+
+            {{ range }}
+
+          </option>
+
+        </select>
+
+      </div>
+
+    </div>
+
+
+    <!-- CONTADOR -->
+    <div class="services-summary">
+
+      <span>
+        {{ filteredServices.length }}
+        servicios encontrados
+      </span>
+
+    </div>
+
+
+    <!-- TABLA -->
+    <table
+      *ngIf="filteredServices.length > 0">
+
+      <thead>
+
+        <tr>
+          <th>Razón Social</th>
+          <th>Segmentación</th>
+          <th>Capacidad</th>
+          <th>Tarifa</th>
+          <th>Valor/Mbps</th>
+          <th>Fin Permanencia</th>
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        <tr *ngFor="let service of filteredServices">
+
+          <td>
+            {{ service["Razón Social"] }}
+          </td>
+
+          <td>
+            {{ service["subsegment"] || 'Sin segmentar' }}
+          </td>
+
+          <td>
+            {{ service["Capacidad"] }}
+          </td>
+
+          <td>
+            {{ service["Tarifa"] | currency:'COP':'':'1.0-0' }} COP
+          </td>
+
+          <td>
+            {{ service["Vlr x Mbps"] | currency:'COP':'':'1.0-2' }} COP
+          </td>
+
+          <td>
+            {{ service["Fecha Fin Permanencia"] | date:'dd/MM/yyyy' }}
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+
+    <!-- FILTRO SIN RESULTADOS -->
     <p
-      class="table-message error">
-      {{ servicesError }}
+      *ngIf="filteredServices.length === 0"
+      class="table-message">
+
+      No hay servicios que coincidan con los filtros seleccionados.
+
     </p>
 
   </div>
 
 
-  <!-- Tabla -->
-  <table
-    *ngIf="!loadingServices && !servicesError && services.length > 0">
-
-    <thead>
-      <tr>
-        <th>Razón Social</th>
-        <th>Capacidad</th>
-        <th>Tarifa</th>
-        <th>Valor/Mbps</th>
-        <th>Fin Permanencia</th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <tr *ngFor="let service of services">
-
-        <td>
-          {{ service["Razón Social"] }}
-        </td>
-
-        <td>
-          {{ service["Capacidad"] }}
-        </td>
-
-        <td>
-          {{ service["Tarifa"] | currency:'COP':'':'1.0-0' }} COP
-        </td>
-
-        <td>
-          {{ service["Vlr x Mbps"] | currency:'COP':'':'1.0-2' }} COP
-        </td>
-
-        <td>
-          {{ service["Fecha Fin Permanencia"] | date:'dd/MM/yyyy' }}
-        </td>
-
-      </tr>
-    </tbody>
-
-  </table>
-
-
-  <!-- Sin datos -->
+  <!-- ERROR -->
   <p
-    class="table-message"
-    *ngIf="!loadingServices && !servicesError && services.length === 0">
+    *ngIf="!loadingServices && servicesError"
+    class="table-message error">
+
+    {{ servicesError }}
+
+  </p>
+
+
+  <!-- MUNICIPIO SIN SERVICIOS -->
+  <p
+    *ngIf="!loadingServices && !servicesError && services.length === 0"
+    class="table-message">
 
     No se encontraron servicios para este municipio.
 

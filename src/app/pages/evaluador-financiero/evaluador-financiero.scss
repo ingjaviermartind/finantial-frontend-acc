@@ -224,6 +224,45 @@ tbody tr:hover{
   color: #b42318;
   font-weight: 500;
 }
+
+services-filters {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 12px;
+  padding: 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #f8f9fa;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 180px;
+}
+
+.filter-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #555;
+}
+
+.filter-group select {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: white;
+  color: #333;
+}
+
+.services-summary {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+  color: #666;
+  font-size: 0.85rem;
+}
 //
 // EOF
 //
