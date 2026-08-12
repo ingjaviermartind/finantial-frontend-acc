@@ -1,94 +1,128 @@
 <div class="navbar">
 
+  <!-- ===================== -->
+  <!-- BRAND -->
+  <!-- ===================== -->
+
   <div class="brand">
-    <!-- <h2>Evaluador Financiero Pricing</h2> -->
+    <!-- Logo ACC -->
   </div>
+
+
+  <!-- ===================== -->
+  <!-- NAVIGATION -->
+  <!-- ===================== -->
 
   <div class="nav-links">
 
-    <!-- <a routerLink="/main">
-      Inicio
-    </a> -->
+    <!-- PRICING -->
+    @if (userService.hasArea('pricing')) {
+      <a routerLink="/evaluator">
+        Evaluador
+      </a>
+    }
+    <!-- PREVENTA -->
+    @if (userService.hasArea('preventa')) {
+      <a routerLink="/pre-sales">
+        Preventas
+      </a>
+      <a routerLink="/feasibility">
+        Viabilización
+      </a>
+    }
 
-    <a routerLink="/evaluator">
-      Evaluador
-    </a>
 
-    <!-- <a routerLink="/quotes">
-      Cotizaciones
-    </a> -->
-
+    <!-- RETENCIÓN -->
+    @if (userService.hasArea('retencion')) {
+      <a routerLink="/retention">
+        Retención
+      </a>
+    }
   </div>
+
+
+  <!-- ===================== -->
+  <!-- USER MENU -->
+  <!-- ===================== -->
 
   <div class="user-menu">
 
     <button
       class="user-button"
       (click)="toggleUserMenu($event)">
-
       {{ user?.first_name }}
-      <!-- ▼ -->
-
     </button>
 
-    <div
-      class="dropdown"
-      *ngIf="showUserMenu"
-      (click)="$event.stopPropagation()">
 
-      <div class="user-info">
+    @if (showUserMenu) {
+      <div
+        class="dropdown"
+        (click)="$event.stopPropagation()">
+        <div class="user-info">
+          <strong>
+            {{ user?.first_name }}
+            {{ user?.last_name }}
+          </strong>
+          <small>
+            {{ user?.email }}
+          </small>
+          <small>
+            {{ user?.cargo }} · {{ user?.area }}
+          </small>
+        </div>
+        <hr>
 
-        <strong>
-          {{ user?.first_name }}
-          {{ user?.last_name }}
-        </strong>
 
-        <small>
-          {{ user?.email }}
-        </small>
+        <!-- VARIABLES -->
+        <!-- Solo usuarios del grupo admin -->
 
-        <small>
-          {{ user?.cargo }} · {{ user?.area }}
-        </small>
+        @if (userService.isAdmin()) {
+          @if (userService.hasArea('pricing')) {
+            <button
+              class="dropdown-item"
+              routerLink="/pricing-variables"
+              (click)="showUserMenu = false">
+              Variables
+            </button>
+          }
+
+          @if (userService.hasArea('preventa')) {
+            <button
+              class="dropdown-item"
+              routerLink="/preventa-variables"
+              (click)="showUserMenu = false">
+              Variables
+            </button>
+          }
+
+        }
+
+
+        <!-- CAMBIAR CONTRASEÑA -->
+
+        <button
+          class="dropdown-item"
+          routerLink="/change-password"
+          (click)="showUserMenu = false">
+
+          Cambiar contraseña
+
+        </button>
+
+
+        <!-- LOGOUT -->
+
+        <button
+          class="dropdown-item"
+          (click)="logout()">
+
+          Cerrar sesión
+
+        </button>
 
       </div>
 
-      <hr>
-
-      <!--
-      <button class="dropdown-item">
-        👤 Mi perfil
-      </button>
-
-      <button class="dropdown-item">
-        ⚙ Configuración
-      </button>
-      -->
-      @if(userService.isAdmin()){
-          <button
-              class="dropdown-item"
-              routerLink="/variables"
-              (click)="showUserMenu=false">
-              Variables
-          </button>
-      }
-
-       <button
-          class="dropdown-item"
-          routerLink="/change-password"
-          (click)="showUserMenu=false">
-          Cambiar contraseña
-        </button>
-
-      <button
-        class="dropdown-item"
-        (click)="logout()">
-
-        <!--🚪--> Cerrar sesión 
-
-      </button>
-
-    </div>
+    }
 
   </div>
 

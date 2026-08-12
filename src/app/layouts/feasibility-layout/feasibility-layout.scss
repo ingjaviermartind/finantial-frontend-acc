@@ -1,0 +1,10 @@
+.feasibility-layout {
+  display: flex;
+  min-height: calc(100vh - 60px);
+}
+
+.feasibility-content {
+  flex: 1;
+  padding: 30px;
+  overflow-x: auto;
+}

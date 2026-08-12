@@ -9,7 +9,7 @@ import { Sidebar } from '../../components/sidebar/sidebar';
   imports: [
     RouterOutlet,
     Navbar,
-    Sidebar
+    // Sidebar
   ],
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.scss',

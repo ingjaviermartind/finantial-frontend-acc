@@ -21,6 +21,7 @@ export class Login {
   constructor(
     private auth: Auth,
     private router: Router,
+    private userService : UserService
   ) {}
 
   isLoading = false;
@@ -35,7 +36,8 @@ export class Login {
     )
     .subscribe({
       next: () => {
-        this.router.navigate(['/evaluator']);
+        // this.router.navigate(['/evaluator']);
+        this.redirectByArea();
         this.isLoading = false;
       },
       error: (error) => {
@@ -49,10 +51,23 @@ export class Login {
   ngOnInit() {
       const token = this.auth.getAccessToken();
       if (token) {
-        this.router.navigate([
-          '/evaluator' //main
-        ]);
+        // this.router.navigate([
+        //   '/evaluator' //main
+        // ]);
+        this.redirectByArea();
       }
+    }
+    private redirectByArea() : void {
+        const routes: Record<string, string> = {
+        pricing: '/evaluator',
+        preventa: '/pre-sales',
+        retencion: '/main'
+      };
+
+      const user = this.userService.getUser();
+      const route = routes[user?.area ?? ''];
+
+      this.router.navigate([route ?? '/main']);
     }
 
 }
