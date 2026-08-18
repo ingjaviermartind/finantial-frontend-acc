@@ -1,28 +1,61 @@
 $Aztk_deepBlue: #074057;
 
 .feasibility-sidebar {
-  width: 250px;
-  flex-shrink: 0;
+  position: relative;
 
-  background: white;
+  width: 250px;
+  min-width: 250px;
+  height: 100%;
+
+  background: #fff;
   border-right: 1px solid #e1e6e9;
 
-  padding: 28px 18px;
+  transition:
+    width 0.25s ease,
+    min-width 0.25s ease;
+
+  z-index: 10;
 }
 
+.feasibility-sidebar:not(.expanded) {
+  width: 64px;
+  min-width: 64px;
+}
+
+
+/* ========================= */
+/* CONTENIDO */
+/* ========================= */
+
+.sidebar-inner {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 28px 18px;
+
+  overflow: hidden;
+}
+
+
+/* ========================= */
+/* HEADER */
+/* ========================= */
+
 .sidebar-header {
-  padding: 0 12px 25px;
-  border-bottom: 1px solid #e5e7e9;
+  padding-bottom: 20px;
   margin-bottom: 20px;
+
+  border-bottom: 1px solid #e5e7e9;
+
+  white-space: nowrap;
 }
 
 .sidebar-title {
   display: block;
 
-  font-size: 1.15rem;
-  font-weight: 700;
-
   color: $Aztk_deepBlue;
+
+  font-size: 1.05rem;
+  font-weight: 700;
 }
 
 .sidebar-subtitle {
@@ -30,9 +63,15 @@ $Aztk_deepBlue: #074057;
 
   margin-top: 4px;
 
-  font-size: .8rem;
   color: #7a7a7a;
+
+  font-size: .78rem;
 }
+
+
+/* ========================= */
+/* NAV */
+/* ========================= */
 
 .sidebar-nav {
   display: flex;
@@ -43,9 +82,14 @@ $Aztk_deepBlue: #074057;
 .sidebar-nav a {
   display: flex;
   align-items: center;
+
   gap: 12px;
 
-  padding: 11px 12px;
+  width: 100%;
+  box-sizing: border-box;
+
+  min-height: 46px;
+  padding: 8px 10px;
 
   border-radius: 8px;
 
@@ -54,6 +98,8 @@ $Aztk_deepBlue: #074057;
 
   font-size: .92rem;
   font-weight: 500;
+
+  white-space: nowrap;
 
   transition:
     background .15s ease,
@@ -68,18 +114,23 @@ $Aztk_deepBlue: #074057;
 .sidebar-nav a.active {
   background: #e8f1f4;
   color: $Aztk_deepBlue;
+
   font-weight: 600;
 }
+
+
+/* ========================= */
+/* NÚMEROS */
+/* ========================= */
 
 .step {
   display: flex;
   align-items: center;
   justify-content: center;
 
-  width: 27px;
-  height: 27px;
-
-  flex-shrink: 0;
+  width: 30px;
+  min-width: 30px;
+  height: 30px;
 
   border-radius: 50%;
 
@@ -93,4 +144,91 @@ $Aztk_deepBlue: #074057;
 .sidebar-nav a.active .step {
   background: $Aztk_deepBlue;
   color: white;
+}
+
+
+/* ========================= */
+/* SIDEBAR CONTRAÍDO */
+/* ========================= */
+
+// .feasibility-sidebar:not(.expanded) .sidebar-inner {
+//   padding: 28px 10px;
+// }
+
+// .feasibility-sidebar:not(.expanded) .sidebar-title {
+//   text-align: center;
+//   font-size: 0;
+// }
+
+// .feasibility-sidebar:not(.expanded) .sidebar-title::before {
+//   content: 'P';
+
+//   font-size: 1.05rem;
+//   font-weight: 700;
+//   color: $Aztk_deepBlue;
+// }
+.feasibility-sidebar:not(.expanded) .sidebar-title,
+.feasibility-sidebar:not(.expanded) .sidebar-subtitle {
+  display: none;
+}
+
+// .feasibility-sidebar:not(.expanded) .sidebar-header {
+//   padding-bottom: 20px;
+// }
+
+
+/* Centrar los pasos cuando está cerrado */
+
+.feasibility-sidebar:not(.expanded) .sidebar-nav a {
+  justify-content: center;
+  padding: 8px;
+}
+
+.feasibility-sidebar:not(.expanded) .link-text {
+  display: none;
+}
+
+
+/* ========================= */
+/* BOTÓN TOGGLE */
+/* ========================= */
+
+.sidebar-toggle {
+  position: absolute;
+
+  top: 26px;
+  right: -12px;
+
+  width: 24px;
+  height: 24px;
+
+  padding: 0;
+
+  border: 1px solid #d9e1e5;
+  border-radius: 50%;
+
+  background: #fff;
+  color: $Aztk_deepBlue;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  font-size: 18px;
+  line-height: 1;
+
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .10);
+
+  z-index: 20;
+
+  transition:
+    background .15s ease,
+    transform .15s ease;
+}
+
+.sidebar-toggle:hover {
+  background: #f0f5f7;
+  transform: scale(1.08);
 }
