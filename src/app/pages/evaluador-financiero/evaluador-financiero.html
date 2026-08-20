@@ -243,6 +243,7 @@
           <th>Razón Social</th>
           <th>Segmentación</th>
           <th>Capacidad</th>
+          <th>MRC Activo</th>
           <th>Tarifa</th>
           <th>Valor/Mbps</th>
           <th>Fin Permanencia</th>
@@ -267,11 +268,15 @@
           </td>
 
           <td>
-            {{ service["Tarifa"] | currency:'COP':'':'1.0-0' }} COP
+            {{ service["Tarifa Total Cliente"] | currency:'COP':'symbol-narrow':'1.0-0' }}
           </td>
 
           <td>
-            {{ service["Vlr x Mbps"] | currency:'COP':'':'1.0-2' }} COP
+            {{ service["Tarifa"] | currency:'COP':'symbol-narrow':'1.0-0' }}
+          </td>
+
+          <td>
+            {{ service["Vlr x Mbps"] | currency:'COP':'symbol-narrow':'1.0-0' }}
           </td>
 
           <td>
