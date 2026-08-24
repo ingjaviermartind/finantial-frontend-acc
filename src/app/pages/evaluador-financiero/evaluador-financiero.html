@@ -92,13 +92,13 @@
           <div class="result-row">
             <span>Precio mensual</span>
             <strong>
-              {{ displayedPrice?.price_monthly | currency:'COP':'':'1.0-2' }} COP
+              {{ displayedPrice?.price_monthly | currency:'COP':'symbol-narrow':'1.0-0' }}
             </strong>
           </div>
           <div class="result-row">
             <span>Precio por Mbps</span>
             <strong>
-              {{ displayedPrice?.price_per_mbps | currency:'COP':'':'1.0-2' }} COP
+              {{ displayedPrice?.price_per_mbps | currency:'COP':'symbol-narrow':'1.0-0' }}
             </strong>
           </div>
           <button
@@ -114,27 +114,27 @@
             {{ historicalReference }}
           </p>
           <div class="result-row">
-            <span>Precio promedio</span>
+            <span>Valor x Mbps promedio</span>
             <strong>
-              {{ pricingResult.mean_price_mbps | currency:'COP':'':'1.0-2' }}  COP/Mbps
+              {{ pricingResult.mean_price_mbps | currency:'COP':'symbol-narrow':'1.0-0' }}
             </strong>
           </div>
           <div class="result-row">
             <span>Desviación estándar</span>
             <strong>
-              {{ pricingResult.market_std | currency:'COP':'':'1.0-2' }}  COP/Mbps
+              {{ pricingResult.market_std | currency:'COP':'symbol-narrow':'1.0-0' }}
             </strong>
           </div>
           <div class="result-row">
             <span>Mediana</span>
             <strong>
-              {{ pricingResult.median_price_mbps | currency:'COP':'':'1.0-2' }}  COP/Mbps
+              {{ pricingResult.median_price_mbps | currency:'COP':'symbol-narrow':'1.0-0' }}
             </strong>
           </div>
           <div class="result-row">
             <span>Tarifario</span>
             <strong>
-              {{ pricingResult.reference_price_mbps | currency:'COP':'':'1.0-2' }}  COP/Mbps
+              {{ pricingResult.reference_price_mbps | currency:'COP':'symbol-narrow':'1.0-0' }}
             </strong>
           </div>
         }
