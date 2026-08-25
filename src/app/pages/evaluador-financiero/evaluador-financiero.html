@@ -131,10 +131,25 @@
               {{ pricingResult.median_price_mbps | currency:'COP':'symbol-narrow':'1.0-0' }}
             </strong>
           </div>
-          <div class="result-row">
+          <div class="tarifario-title">
             <span>Tarifario</span>
+          </div>
+          <div class="result-row">
+            <span>Base</span>
             <strong>
-              {{ pricingResult.reference_price_mbps | currency:'COP':'symbol-narrow':'1.0-0' }}
+              {{ pricingResult.ref_price_mbps | currency:'COP':'symbol-narrow':'1.0-0' }}
+            </strong>
+          </div>
+          <div class="result-row">
+            <span>Descuento</span>
+            <strong>
+              {{ pricingResult.ref_price_mbps_dis | currency:'COP':'symbol-narrow':'1.0-0' }}
+            </strong>
+          </div>
+          <div class="result-row">
+            <span>Especial</span>
+            <strong>
+              {{ pricingResult.ref_price_mbps_special | currency:'COP':'symbol-narrow':'1.0-0' }}
             </strong>
           </div>
         }

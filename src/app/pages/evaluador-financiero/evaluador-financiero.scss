@@ -80,7 +80,13 @@ input{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    margin:8px 0;
+    margin:6px 0;
+}
+.tarifario-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 8px 0;
 }
 
 .details-btn{

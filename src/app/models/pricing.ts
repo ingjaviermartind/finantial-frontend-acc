@@ -26,5 +26,7 @@ export interface PricingResponse {
     market_std: number;
     market_source: string;
     market_sample: number;
-    reference_price_mbps: number;
+    ref_price_mbps: number;
+    ref_price_mbps_dis: number;
+    ref_price_mbps_special: number;
  }
