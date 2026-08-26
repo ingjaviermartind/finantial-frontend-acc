@@ -7,12 +7,16 @@ import { Municipality } from '../../services/municipality';
 import { Services } from '../../services/services';
 
 import { PricingService } from '../../services/pricing';
+import { ProductCatalogService } from '../../services/product-catalog';
+import { ClientSubsegmentService } from '../../services/subsegments';
+
 import {
   PricingRequest,
   PricingResponse
 } from '../../models/pricing';
 
 import { finalize } from 'rxjs/operators';
+import { ProductCatalog } from '../../models/product-catalog';
 
 @Component({
   selector: 'app-evaluador-financiero',
@@ -30,6 +34,8 @@ export class EvaluadorFinanciero implements OnInit {
   form!: FormGroup;
   departments: any[] = [];
   municipalities: any[] = [];
+  products: ProductCatalog[] = [];
+  subsegments_selector: string[] = [];
   services: any [] = [];
   filteredServices : any[] = [];
 
@@ -52,7 +58,9 @@ export class EvaluadorFinanciero implements OnInit {
     private departmentService : Department,
     private municipalityService : Municipality,
     private servicesService : Services,
-    private pricingService : PricingService    
+    private pricingService : PricingService,
+    private productCatalogService : ProductCatalogService,
+    private clientSubsegmentService : ClientSubsegmentService
   ){}
 
 
@@ -61,6 +69,8 @@ export class EvaluadorFinanciero implements OnInit {
   this.form = this.fb.group({
     department: [''],
     municipality: [{ value: '', disabled: true }],
+    product: ['', Validators.required],
+    subsegment_sel: ['', Validators.required],
     bandwidth: [
       null,
       [
@@ -80,12 +90,15 @@ export class EvaluadorFinanciero implements OnInit {
 
 
   this.loadDepartments();
+  this.loadProducts();
+  this.loadSubsegments();
   this.form.get('municipality')!.reset();
 
   // Cambio de departamento
   this.form.get('department')!.valueChanges.subscribe(deptId => {
   this.selectedMunicipality = null;
   this.services = [];
+  // this.form.get('product')!.setValue('');
 
   this.showResults = false;
   this.municipalities = [];
@@ -109,6 +122,7 @@ export class EvaluadorFinanciero implements OnInit {
     if (!municipalityId) {
       this.selectedMunicipality = null;
       this.services = [];
+      // this.form.get('product')!.setValue('');
       return;
     }
     this.selectedMunicipality =
@@ -116,6 +130,7 @@ export class EvaluadorFinanciero implements OnInit {
         m => m.id === municipalityId
       );
     this.services = [];
+    // this.form.get('product')!.setValue('');
     this.selectedSubsegment = '';
     this.selectedCapacityRange = '';
     this.subsegments = [];
@@ -167,10 +182,34 @@ export class EvaluadorFinanciero implements OnInit {
 
   get canShowResults(): boolean {
     return !!this.selectedMunicipality &&
+      this.form.controls['product'].valid &&
       this.form.controls['bandwidth'].valid &&
       this.form.controls['contractTime'].valid;
   }
 
+  loadProducts(): void {
+    this.productCatalogService.getAll()
+      .subscribe({
+        next: data => {
+          this.products = data;
+        },
+        error: err => {
+          console.error('Error cargando productos:', err);
+        }
+      });
+  }
+  loadSubsegments(): void {
+    this.clientSubsegmentService.getAll()
+      .subscribe({
+        next: data => {
+          this.subsegments_selector = data;
+          // console.log(data)
+        },
+        error: err => {
+          console.error('Error cargando subsegmentos:', err);
+        }
+      });
+  }
   loadDepartments(){
     this.departmentService.getDepartments()
       .subscribe(data => {
@@ -179,7 +218,6 @@ export class EvaluadorFinanciero implements OnInit {
         );
       });
   }
-
   calculate() : void {
     if (this.form.invalid || !this.selectedMunicipality) {
       this.form.markAllAsTouched();
@@ -187,10 +225,15 @@ export class EvaluadorFinanciero implements OnInit {
     }
     const request: PricingRequest = {
       municipality_id: this.selectedMunicipality.id,
+      product_id: this.form.value.product,
+      subsegment: this.form.value.subsegment_sel,
       capacity_mbps: this.form.value.bandwidth,
       contract_time: this.form.value.contractTime,
       initial_income: 0
     };
+
+    // console.log('Pricing request:', request);
+
     this.showResults = false;
     this.pricingResult = undefined;
     this.loadingCalculation = true;
@@ -206,7 +249,6 @@ export class EvaluadorFinanciero implements OnInit {
       error: err => console.error(err)
     });
   }
-
   get displayedPrice() {
     if (!this.pricingResult) {
       return null;

@@ -1,6 +1,8 @@
 
 export interface PricingRequest { 
     municipality_id: string;
+    product_id: string;
+    subsegment: string;
     capacity_mbps: number;
     contract_time: number;
     initial_income: number;

@@ -50,6 +50,31 @@
             <div>{{ selectedMunicipality.node }}</div>
           </div>
 
+          <label>Producto</label>
+          <select formControlName="product">
+            <option value="">
+              Seleccione un producto
+            </option>
+
+            <option
+              *ngFor="let product of products"
+              [value]="product.id">
+
+              {{ product.product }}
+
+            </option>
+          </select>
+          <label>Subsegmento</label>
+            <select formControlName="subsegment_sel">
+              <option value="">
+                Seleccione un subsegmento
+              </option>
+              <option
+                *ngFor="let subsegment of subsegments_selector"
+                [value]="subsegment">
+                {{ subsegment }}
+              </option>
+            </select>
           <label>Capacidad (Mbps)</label>
           <input
             type="number"
