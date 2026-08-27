@@ -18,6 +18,7 @@ import {
 import { finalize } from 'rxjs/operators';
 import { ProductCatalog } from '../../models/product-catalog';
 import { Subsegment } from '../../models/subsegment';
+import { setThrowInvalidWriteToSignalError } from '@angular/core/primitives/signals';
 
 @Component({
   selector: 'app-evaluador-financiero',
@@ -42,9 +43,11 @@ export class EvaluadorFinanciero implements OnInit {
 
   subsegments: string[] = [];
   capacityRanges: string[] = [];
+  products_clients : string[] = []
 
   selectedSubsegment = '';
   selectedCapacityRange = '';
+  selectedProduct = '';
 
   loadingServices = false;
   showResults = false;
@@ -134,8 +137,10 @@ export class EvaluadorFinanciero implements OnInit {
     // this.form.get('product')!.setValue('');
     this.selectedSubsegment = '';
     this.selectedCapacityRange = '';
+    this.selectedProduct = '';
     this.subsegments = [];
     this.capacityRanges = [];
+    this.products_clients = [];
     this.servicesError = null;
     this.loadingServices = true;
     this.showResults = false;
@@ -152,6 +157,7 @@ export class EvaluadorFinanciero implements OnInit {
             this.services = response.data;
             this.selectedSubsegment = '';
             this.selectedCapacityRange = '';
+            this.selectedProduct = '';
             this.loadServiceFilters();
             this.applyServiceFilters();
             // console.log(response.data);
@@ -306,7 +312,11 @@ export class EvaluadorFinanciero implements OnInit {
         !this.selectedCapacityRange ||
         service['Rango Capacidad'] === this.selectedCapacityRange;
 
-      return matchesSubsegment && matchesCapacity;
+      const matchesProduct = 
+        !this.selectedProduct ||
+        service['Producto'] === this.selectedProduct;
+
+      return matchesSubsegment && matchesCapacity && matchesProduct;
     });
   }
 
@@ -318,7 +328,6 @@ export class EvaluadorFinanciero implements OnInit {
           .filter(value => value)
       )
     ].sort();
-
     this.capacityRanges = [
       ...new Set(
         this.services
@@ -326,6 +335,13 @@ export class EvaluadorFinanciero implements OnInit {
           .filter(value => value)
       )
     ];
+    this.products_clients = [
+      ...new Set(
+        this.services
+          .map(service => service['Producto'])
+          .filter(value => value)
+      )
+    ].sort();
   }
 }
 //

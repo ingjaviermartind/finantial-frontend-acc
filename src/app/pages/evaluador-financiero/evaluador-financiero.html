@@ -212,33 +212,45 @@
           id="subsegment"
           [(ngModel)]="selectedSubsegment"
           (ngModelChange)="applyServiceFilters()">
-
           <option value="">
             Todos
           </option>
-
           <option
             *ngFor="let subsegment of subsegments"
             [value]="subsegment">
-
             {{ subsegment }}
-
           </option>
-
         </select>
-
       </div>
 
 
       <div class="filter-group">
-
         <label for="capacityRange">
           Rango de capacidad
         </label>
-
         <select
           id="capacityRange"
           [(ngModel)]="selectedCapacityRange"
+          (ngModelChange)="applyServiceFilters()">
+          <option value="">
+            Todos
+          </option>
+          <option
+            *ngFor="let range of capacityRanges"
+            [value]="range">
+            {{ range }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="producto_c">
+          Producto
+        </label>
+
+        <select
+          id="producto_c"
+          [(ngModel)]="selectedProduct"
           (ngModelChange)="applyServiceFilters()">
 
           <option value="">
@@ -246,15 +258,12 @@
           </option>
 
           <option
-            *ngFor="let range of capacityRanges"
-            [value]="range">
-
-            {{ range }}
-
+            *ngFor="let product of products_clients"
+            [value]="product">
+            {{ product }}
           </option>
 
         </select>
-
       </div>
 
     </div>
@@ -280,6 +289,7 @@
         <tr>
           <th>Razón Social</th>
           <th>Segmentación</th>
+          <th>Producto</th>
           <th>Capacidad</th>
           <th>MRC Activo</th>
           <th>Tarifa</th>
@@ -299,6 +309,10 @@
 
           <td>
             {{ service["subsegment"] || 'Sin segmentar' }}
+          </td>
+
+          <td>
+            {{ service["Producto"] }}
           </td>
 
           <td>
