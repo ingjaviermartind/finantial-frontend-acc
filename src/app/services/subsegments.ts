@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { Subsegment } from '../models/subsegment';
 
 @Injectable({
   providedIn: 'root',
@@ -9,7 +10,7 @@ import { environment } from '../../environments/environment';
 export class ClientSubsegmentService {
   private baseUrl = `${environment.apiUrl}/subsegments/`;
   constructor(private http: HttpClient) {}
-  getAll(): Observable<string[]> {
-    return this.http.get<string[]>(this.baseUrl);
+  getAll(): Observable<Subsegment[]> {
+    return this.http.get<Subsegment[]>(this.baseUrl);
   }
 }

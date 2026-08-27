@@ -17,6 +17,7 @@ import {
 
 import { finalize } from 'rxjs/operators';
 import { ProductCatalog } from '../../models/product-catalog';
+import { Subsegment } from '../../models/subsegment';
 
 @Component({
   selector: 'app-evaluador-financiero',
@@ -35,7 +36,7 @@ export class EvaluadorFinanciero implements OnInit {
   departments: any[] = [];
   municipalities: any[] = [];
   products: ProductCatalog[] = [];
-  subsegments_selector: string[] = [];
+  subsegments_sel: Subsegment[] = [];
   services: any [] = [];
   filteredServices : any[] = [];
 
@@ -202,7 +203,7 @@ export class EvaluadorFinanciero implements OnInit {
     this.clientSubsegmentService.getAll()
       .subscribe({
         next: data => {
-          this.subsegments_selector = data;
+          this.subsegments_sel = data;
           // console.log(data)
         },
         error: err => {
@@ -226,7 +227,7 @@ export class EvaluadorFinanciero implements OnInit {
     const request: PricingRequest = {
       municipality_id: this.selectedMunicipality.id,
       product_id: this.form.value.product,
-      subsegment: this.form.value.subsegment_sel,
+      subsegment_id: this.form.value.subsegment_sel,
       capacity_mbps: this.form.value.bandwidth,
       contract_time: this.form.value.contractTime,
       initial_income: 0

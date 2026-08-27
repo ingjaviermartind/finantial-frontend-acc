@@ -59,9 +59,7 @@
             <option
               *ngFor="let product of products"
               [value]="product.id">
-
               {{ product.product }}
-
             </option>
           </select>
           <label>Subsegmento</label>
@@ -70,9 +68,9 @@
                 Seleccione un subsegmento
               </option>
               <option
-                *ngFor="let subsegment of subsegments_selector"
-                [value]="subsegment">
-                {{ subsegment }}
+                *ngFor="let subsegment of subsegments_sel"
+                [value]="subsegment.id">
+                {{ subsegment.name }}
               </option>
             </select>
           <label>Capacidad (Mbps)</label>
