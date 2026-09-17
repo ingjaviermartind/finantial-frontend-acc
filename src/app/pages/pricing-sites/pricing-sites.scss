@@ -1,0 +1,730 @@
+$Aztk_deepBlue: #074057;
+$Aztk_lightBlue: #e8f1f4;
+
+$border: #e1e6e9;
+$text: #555;
+$muted: #7a7a7a;
+
+
+/* ========================= */
+/* PAGE */
+/* ========================= */
+
+.pricing-sites-page {
+  display: flex;
+  width: 100%;
+  height: calc(100vh - 55px);
+  overflow: hidden;
+}
+
+
+/* ========================= */
+/* CONTENT */
+/* ========================= */
+
+.pricing-sites-content {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  overflow: auto;
+
+  padding: 18px 20px;
+  box-sizing: border-box;
+
+  background: #f8fafb;
+}
+
+
+/* ========================= */
+/* TOOLBAR */
+/* ========================= */
+
+.pricing-sites-toolbar {
+  display: flex;
+  align-items: center;
+
+  min-height: 48px;
+  margin-bottom: 14px;
+}
+
+
+.metrics {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+
+.metric {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+
+.metric-value {
+  color: $Aztk_deepBlue;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+
+.metric-label {
+  color: $muted;
+  font-size: .72rem;
+}
+
+
+.metric-divider {
+  width: 1px;
+  height: 22px;
+
+  background: $border;
+}
+
+
+/* ========================= */
+/* TABLA */
+/* ========================= */
+
+.pricing-table {
+  width: 100%;
+
+  border: 1px solid $border;
+  border-radius: 7px;
+
+  overflow: hidden;
+
+  background: #fff;
+}
+
+
+/* ========================= */
+/* HEADER FUNNEL */
+/* ========================= */
+
+.table-header {
+  display: grid;
+
+  grid-template-columns:
+    42px
+    1.1fr
+    2fr
+    1.2fr
+    1.5fr
+    .8fr
+    1.2fr;
+
+  min-height: 38px;
+
+  align-items: center;
+
+  padding: 0 14px;
+
+  background: $Aztk_deepBlue;
+
+  color: #fff;
+
+  font-size: .62rem;
+  font-weight: 700;
+
+  letter-spacing: .04em;
+}
+
+
+/* ========================= */
+/* FUNNEL BLOCK */
+/* ========================= */
+
+.funnel-block {
+  border-bottom: 1px solid $border;
+}
+
+.funnel-block:last-child {
+  border-bottom: none;
+}
+
+
+/* ========================= */
+/* FUNNEL ROW */
+/* ========================= */
+
+.funnel-row {
+  display: grid;
+
+  grid-template-columns:
+    42px
+    1.1fr
+    2fr
+    1.2fr
+    1.5fr
+    .8fr
+    1.2fr;
+
+  min-height: 68px;
+
+  align-items: center;
+
+  padding: 0 14px;
+
+  background: #fff;
+
+  cursor: pointer;
+
+  transition: background .15s ease;
+}
+
+
+.funnel-row:hover {
+  background: #f7fafb;
+}
+
+
+.funnel-row.expanded {
+  background: #f1f6f8;
+}
+
+
+/* ========================= */
+/* CHEVRON */
+/* ========================= */
+
+.funnel-expand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.expand-button {
+  width: 28px;
+  height: 28px;
+
+  padding: 0;
+
+  border: 1px solid #d7e0e4;
+  border-radius: 5px;
+
+  background: #fff;
+
+  color: $Aztk_deepBlue;
+
+  font-size: 18px;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+
+.expand-button:hover {
+  background: $Aztk_lightBlue;
+}
+
+
+/* ========================= */
+/* FUNNEL */
+/* ========================= */
+
+.funnel-info {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+
+.funnel-id {
+  color: $Aztk_deepBlue;
+
+  font-size: .74rem;
+  font-weight: 700;
+}
+
+
+.status-tag {
+  padding: 3px 6px;
+
+  border-radius: 4px;
+
+  background: $Aztk_lightBlue;
+
+  color: $Aztk_deepBlue;
+
+  font-size: .55rem;
+  font-weight: 700;
+}
+
+
+/* ========================= */
+/* CLIENTE */
+/* ========================= */
+
+.client-info {
+  min-width: 0;
+}
+
+
+.client-name {
+  overflow: hidden;
+
+  color: $text;
+
+  font-size: .74rem;
+  font-weight: 700;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.client-nit {
+  margin-top: 3px;
+
+  color: $muted;
+
+  font-size: .62rem;
+}
+
+
+/* ========================= */
+/* FECHA */
+/* ========================= */
+
+.funnel-date {
+  color: $text;
+
+  font-size: .68rem;
+}
+
+
+/* ========================= */
+/* ESTADO */
+/* ========================= */
+
+.funnel-status {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 5px 8px;
+
+  border-radius: 12px;
+
+  background: #fff4d6;
+
+  color: #9a6b00;
+
+  font-size: .59rem;
+  font-weight: 600;
+}
+
+
+/* ========================= */
+/* SEDES */
+/* ========================= */
+
+.sites-badge {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 5px 8px;
+
+  border-radius: 5px;
+
+  background: $Aztk_lightBlue;
+
+  color: $Aztk_deepBlue;
+
+  font-size: .62rem;
+  font-weight: 700;
+}
+
+
+/* ========================= */
+/* MRC FUNNEL */
+/* ========================= */
+
+.funnel-mrc {
+  color: $Aztk_deepBlue;
+
+  font-size: .74rem;
+  font-weight: 700;
+
+  text-align: right;
+}
+
+
+/* ========================= */
+/* DETAIL */
+/* ========================= */
+
+.funnel-detail {
+  padding: 0 14px 14px;
+
+  background: #f8fafb;
+
+  border-top: 1px solid $border;
+}
+
+
+/* ========================= */
+/* DETAIL HEADER */
+/* ========================= */
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 14px 8px;
+}
+
+
+.detail-title {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+}
+
+
+.detail-icon {
+  color: $Aztk_deepBlue;
+
+  font-size: 18px;
+}
+
+
+.detail-title-main {
+  color: $Aztk_deepBlue;
+
+  font-size: .68rem;
+  font-weight: 700;
+
+  letter-spacing: .03em;
+}
+
+
+.detail-description {
+  margin-top: 3px;
+
+  color: $muted;
+
+  font-size: .61rem;
+}
+
+
+.detail-count {
+  padding: 5px 8px;
+
+  border: 1px solid #d9e4e8;
+  border-radius: 12px;
+
+  background: #fff;
+
+  color: $Aztk_deepBlue;
+
+  font-size: .57rem;
+  font-weight: 700;
+}
+
+
+/* ========================= */
+/* SITES HEADER */
+/* ========================= */
+
+.sites-header {
+  display: grid;
+
+  grid-template-columns:
+    1.2fr
+    2fr
+    2fr
+    .9fr
+    .7fr
+    1.1fr
+    1.1fr;
+
+  min-height: 34px;
+
+  align-items: center;
+
+  padding: 0 12px;
+
+  border-bottom: 1px solid $border;
+
+  color: $muted;
+
+  font-size: .56rem;
+  font-weight: 700;
+
+  letter-spacing: .03em;
+}
+
+
+/* ========================= */
+/* SITE ROW */
+/* ========================= */
+
+.site-row {
+  display: grid;
+
+  grid-template-columns:
+    1.2fr
+    2fr
+    2fr
+    .9fr
+    .7fr
+    1.1fr
+    1.1fr;
+
+  min-height: 68px;
+
+  align-items: center;
+
+  padding: 0 12px;
+
+  border-bottom: 1px solid #edf0f2;
+
+  background: #fff;
+}
+
+
+.site-row:last-child {
+  border-bottom: none;
+}
+
+
+/* ========================= */
+/* SITE ID */
+/* ========================= */
+
+.site-id {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  color: $Aztk_deepBlue;
+
+  font-size: .66rem;
+  font-weight: 700;
+}
+
+
+.site-icon {
+  font-size: 14px;
+}
+
+
+/* ========================= */
+/* LOCATION */
+/* ========================= */
+
+.location-main {
+  color: $text;
+
+  font-size: .65rem;
+  font-weight: 700;
+}
+
+
+.dane-tag {
+  display: inline-block;
+
+  margin-top: 5px;
+  padding: 2px 5px;
+
+  border-radius: 3px;
+
+  background: #f1f3f4;
+
+  color: $muted;
+
+  font-size: .54rem;
+}
+
+
+/* ========================= */
+/* PRODUCT */
+/* ========================= */
+
+.product-name {
+  color: $text;
+
+  font-size: .65rem;
+  font-weight: 700;
+}
+
+
+.family-tag {
+  display: inline-block;
+
+  margin-left: 5px;
+  padding: 2px 5px;
+
+  border-radius: 3px;
+
+  background: $Aztk_lightBlue;
+
+  color: $Aztk_deepBlue;
+
+  font-size: .52rem;
+  font-weight: 600;
+}
+
+
+.plan-name {
+  margin-top: 4px;
+
+  color: $muted;
+
+  font-size: .57rem;
+}
+
+
+/* ========================= */
+/* CAPACIDAD */
+/* ========================= */
+
+.capacity {
+  display: inline-block;
+  padding: 5px 7px;
+  border: 1px solid #e0e5e8;
+  border-radius: 4px;
+  background: #f8fafb;
+  color: $text;
+  font-family: monospace;
+  font-size: .75rem;
+}
+
+
+/* ========================= */
+/* PRICINGS */
+/* ========================= */
+
+.pricing-count {
+  color: $Aztk_deepBlue;
+
+  font-size: .72rem;
+  font-weight: 700;
+
+  text-align: center;
+}
+
+
+/* ========================= */
+/* MONEY */
+/* ========================= */
+
+.money {
+  color: $text;
+
+  font-size: .68rem;
+  font-weight: 600;
+
+  text-align: right;
+}
+
+/* paginacion */
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-top: 10px;
+  padding: 10px 4px;
+
+  color: $muted;
+  font-size: .72rem;
+}
+
+.pagination-info {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pagination-info strong {
+  color: $text;
+  font-weight: 600;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.pagination-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 30px;
+  height: 30px;
+
+  padding: 0;
+
+  border: 1px solid $border;
+  border-radius: 5px;
+
+  background: #fff;
+  color: $Aztk_deepBlue;
+
+  font-size: 1rem;
+
+  cursor: pointer;
+
+  transition:
+    background .15s ease,
+    border-color .15s ease;
+}
+
+.pagination-button:hover:not(:disabled) {
+  background: $Aztk_lightBlue;
+  border-color: #cbd9de;
+}
+
+.pagination-button:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+.page-input {
+  width: 42px;
+  height: 30px;
+
+  box-sizing: border-box;
+
+  padding: 0 5px;
+
+  border: 1px solid $border;
+  border-radius: 5px;
+
+  background: #fff;
+  color: $text;
+
+  font-size: .72rem;
+  text-align: center;
+
+  outline: none;
+}
+
+.page-input:focus {
+  border-color: $Aztk_deepBlue;
+  box-shadow: 0 0 0 2px rgba(7, 64, 87, .08);
+}
+
+.pagination-button.loading,
+.pagination-button:disabled {
+  cursor: wait;
+}
+
+.page-input.loading,
+.page-input:disabled {
+  cursor: wait;
+}
+
+.page-content:has(.pricing-sites-page) {
+  padding: 0;
+}

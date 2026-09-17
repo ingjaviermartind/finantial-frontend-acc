@@ -1,0 +1,350 @@
+<div class="pricing-sites-page">
+
+  <!-- ========================= -->
+  <!-- SIDEBAR -->
+  <!-- ========================= -->
+
+  <app-pricing-sites-sidebar
+    (pricingSitesLoaded)="onPricingSitesLoaded($event)"
+    (filtersChanged)="onFiltersChanged($event)"
+    >
+
+  </app-pricing-sites-sidebar> 
+
+
+  <!-- ========================= -->
+  <!-- CONTENIDO -->
+  <!-- ========================= -->
+
+  <main class="pricing-sites-content">
+
+    <!-- ========================= -->
+    <!-- MÉTRICAS -->
+    <!-- ========================= -->
+
+    <div class="pricing-sites-toolbar">
+
+      <div class="metrics">
+
+        <div class="metric">
+
+          <span class="metric-value">
+            {{ funnelCount | number }}
+          </span>
+
+          <span class="metric-label">
+            Funnels encontrados
+          </span>
+
+        </div>
+
+
+        <div class="metric-divider"></div>
+
+
+        <div class="metric">
+
+          <span class="metric-value">
+            {{ siteCount | number }}
+          </span>
+
+          <span class="metric-label">
+            Sedes cotizadas
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ========================= -->
+    <!-- TABLA -->
+    <!-- ========================= -->
+
+    <div class="pricing-table">
+
+      <!-- HEADER FUNNEL -->
+
+      <div class="table-header">
+
+        <div></div>
+        <div>FUNNEL</div>
+        <div>CLIENTE</div>
+        <div>FECHA CREACIÓN</div>
+        <div>ESTADO</div>
+        <div>SEDES</div>
+        <div>MRC TOTAL</div>
+
+      </div>
+
+
+      <!-- ========================= -->
+      <!-- FUNNELS -->
+      <!-- ========================= -->
+
+      @for (funnel of funnels; track funnel.funnel) {
+
+        <div class="funnel-block">
+
+          <!-- ========================= -->
+          <!-- MASTER -->
+          <!-- ========================= -->
+
+          <div
+            class="funnel-row"
+            [class.expanded]="funnel.expanded"
+            (click)="toggleFunnel(funnel)">
+
+
+            <!-- CHEVRON -->
+
+            <div class="funnel-expand">
+
+              <button
+                type="button"
+                class="expand-button"
+                (click)="
+                  $event.stopPropagation();
+                  toggleFunnel(funnel)
+                ">
+
+                {{ funnel.expanded ? '⌄' : '›' }}
+
+              </button>
+
+            </div>
+
+
+            <!-- FUNNEL -->
+
+            <div class="funnel-info">
+
+              <span class="funnel-id">
+                {{ funnel.funnel }}
+              </span>
+
+              <span class="status-tag">
+                FUNNEL
+              </span>
+
+            </div>
+
+
+            <!-- CLIENTE -->
+
+            <div class="client-info">
+
+              <div class="client-name">
+                {{ funnel.cliente }}
+              </div>
+
+              <div class="client-nit">
+                NIT: {{ funnel.nit }}
+              </div>
+
+            </div>
+
+
+            <!-- FECHA -->
+
+            <div class="funnel-date">
+
+              {{ funnel.fechaCreacion | date:'dd/MM/yyyy, HH:mm' }}
+
+            </div>
+
+
+            <!-- ESTADO -->
+
+            <div>
+
+              <span class="funnel-status">
+                {{ funnel.estado }}
+              </span>
+
+            </div>
+
+
+            <!-- SEDES -->
+
+            <div>
+
+              <span class="sites-badge">
+
+                {{ funnel.siteCount }}
+
+                {{ funnel.siteCount === 1
+                    ? 'Sede'
+                    : 'Sedes'
+                }}
+
+              </span>
+
+            </div>
+            <!-- MRC -->
+            <div class="funnel-mrc">
+              {{ funnel.mrcTotal | currency:'$':'symbol':'1.0-0' }}
+            </div>
+          </div>
+          <!-- ========================= -->
+          <!-- DETAIL -->
+          <!-- ========================= -->
+          @if (funnel.expanded) {
+
+            <div class="funnel-detail">
+
+              <!-- HEADER SEDES -->
+
+              <div class="sites-header">
+                <div>CONSECUTIVO SEDE</div>
+                <div>UBICACIÓN</div>
+                <div>PORTAFOLIO / FAMILIA</div>
+                <div>ANCHO DE BANDA</div>
+                <div>PRICINGS</div>
+                <div>MRC PROMEDIO</div>
+                <div>NRC PROMEDIO</div>
+              </div>
+
+
+              <!-- SEDES -->
+
+              @for (
+                site of funnel.sites;
+                track site['Consecutivo de Sede']
+              ) {
+
+                <div class="site-row">
+
+                  <!-- SEDE -->
+
+                  <div class="site-id">
+                    <span>
+                      {{ site['Consecutivo de Sede'] }}
+                    </span>
+                  </div>
+
+
+                  <!-- UBICACIÓN -->
+
+                  <div class="site-location">
+
+                    <div class="location-main">
+                      {{ site.Departamento }} · {{ site.Municipio }}
+                    </div>
+
+                    <span class="dane-tag">
+                      DANE: {{ site.DANE_Mpio }}
+                    </span>
+
+                  </div>
+
+
+                  <!-- PRODUCTO -->
+
+                  <div class="site-product">
+
+                    <div class="product-name">
+                      {{ site.Producto }}
+
+                      <span class="family-tag">
+                        {{ site.Familia_Producto_Sede }}
+                      </span>
+                    </div>
+
+                    <div class="plan-name">
+                      Plan: {{ site.Plan }}
+                    </div>
+
+                  </div>
+
+
+                  <!-- CAPACIDAD -->
+
+                  <div>
+                    <span class="capacity">
+                      {{ site['Ancho de banda'] || 'N/A' }}
+                    </span>
+                  </div>
+
+
+                  <!-- PRICINGS -->
+
+                  <div class="pricing-count">
+                    {{ site.NUM_PRICINGS }}
+                  </div>
+
+
+                  <!-- MRC -->
+
+                  <div class="money">
+                    {{ site.MRC_PROMEDIO | currency:'$':'symbol':'1.0-0' }}
+                  </div>
+
+
+                  <!-- NRC -->
+
+                  <div class="money">
+                    {{ site.NRC_PROMEDIO | currency:'$':'symbol':'1.0-0' }}
+                  </div>
+
+                </div>
+
+              }
+
+            </div>
+          }
+        </div>
+      }
+    </div>
+    <!-- ========================= -->
+    <!-- PAGINACIÓN -->
+    <!-- ========================= -->
+
+    @if (totalPages > 0) {
+      <div class="pagination">
+        <div class="pagination-info">
+          Página
+          <strong>{{ currentPage }}</strong>
+          de
+          <strong>{{ totalPages }}</strong>
+        </div>
+        <div class="pagination-controls">
+          <!-- ANTERIOR -->
+          <button
+            type="button"
+            class="pagination-button"
+            [disabled]="currentPage <= 1 || isPaging"
+            [class.loading]="isPaging"
+            (click)="previousPage()"
+            aria-label="Página anterior">
+            &lt;
+          </button>
+          <!-- PÁGINA ACTUAL -->
+          <input
+            type="number"
+            class="page-input"
+            [value]="currentPage"
+            min="1"
+            [max]="totalPages"
+            [disabled]="isPaging"
+            [class.loading]="isPaging"
+            (change)="goToPage(+$any($event.target).value)"
+            aria-label="Número de página"
+          />
+          <!-- SIGUIENTE -->
+          <button
+            type="button"
+            class="pagination-button"
+            [disabled]="currentPage >= totalPages || isPaging"
+            [class.loading]="isPaging"
+            (click)="nextPage()"
+            aria-label="Página siguiente">
+            &gt;
+          </button>
+        </div>
+      </div>
+    }
+  </main>
+</div>

@@ -1,0 +1,478 @@
+<aside
+  class="pricing-sites-sidebar"
+  [class.expanded]="isExpanded"
+  [class.loading]="isLoadingFilterOptions">
+
+  @if (isLoadingFilterOptions) {
+    <div class="filter-loading-overlay">
+      <div class="filter-loading-message">
+        Cargando filtros...
+      </div>
+    </div>
+  }
+
+  <div class="sidebar-inner">
+    <!-- ========================= -->
+    <!-- HEADER -->
+    <!-- ========================= -->
+    <div class="sidebar-header">
+      @if (isExpanded) {
+        <span class="sidebar-title">
+          FILTROS DE BÚSQUEDA
+        </span>
+      }
+      <button
+        class="sidebar-toggle"
+        type="button"
+        (click)="toggleSidebar()"
+        [attr.aria-label]="isExpanded ? 'Contraer filtros' : 'Expandir filtros'">
+        {{ isExpanded ? '‹' : '›' }}
+      </button>
+    </div>
+
+
+    <!-- ========================= -->
+    <!-- FILTROS -->
+    <!-- ========================= -->
+
+    @if (isExpanded) {
+
+      <div class="filters">
+        <!-- ========================= -->
+        <!-- 1. FUNNEL -->
+        <!-- ========================= -->
+        <section class="filter-section">
+          <div class="section-title">
+            1. FILTROS DE FUNNEL
+          </div>
+
+          <!-- PERIODO -->
+
+          <div class="filter-group">
+            <label for="period-value">
+              Periodo
+            </label>
+            <div class="period-inputs">
+              <input
+                id="period-value"
+                type="number"
+                min="1"
+                [(ngModel)]="periodValue"
+                (ngModelChange)="onPeriodChange()">
+              <select
+                id="period-unit"
+                [(ngModel)]="periodUnit"
+                (ngModelChange)="onPeriodChange()">
+                @for (unit of periodUnits; track unit.value) {
+                  <option [value]="unit.value">
+                    {{ unit.label }}
+                  </option>
+                }
+              </select>
+            </div>
+          </div>
+
+
+          <!-- CLIENTE -->
+          <div class="filter-group">
+            <div class="filter-label-row">
+              <label>Cliente</label>
+
+              <button
+                type="button"
+                class="select-all-button"
+                (click)="toggleAllClients()">
+                {{ allClientsSelected ? 'Ninguno' : 'Todos' }}
+              </button>
+            </div>
+            <div class="checkbox-search">
+              <input
+                type="text"
+                placeholder="Buscar NIT o razón social..."
+                [(ngModel)]="clientSearch">
+            </div>
+            <div class="checkbox-list client-list">
+              @for (
+                client of filteredClients;
+                track client.nit
+              ) {
+                <label class="checkbox-option client-option">
+
+                  <input
+                    type="checkbox"
+                    [checked]="selectedClients.includes(client.nit)"
+                    (change)="toggleClient(client.nit)">
+
+                  <span class="checkbox-box"></span>
+
+                  <span class="client-info">
+                    <span class="client-nit">
+                      {{ client.nit }}
+                    </span>
+
+                    <span class="client-business-names">
+                      @for (
+                        businessName of client.business_names;
+                        track businessName
+                      ) {
+                        <span class="client-business-name">
+                          {{ businessName }}
+                        </span>
+                      }
+                    </span>
+                  </span>
+
+                </label>
+              }
+
+              @if (filteredClients.length === 0) {
+                <div class="no-options">
+                  No se encontraron clientes
+                </div>
+              }
+            </div>
+          </div>
+
+
+          <!-- ESTADO -->
+          <div class="filter-group">
+            <div class="filter-label-row">
+              <label>
+                Estado del Funnel
+              </label>
+
+              <button
+                type="button"
+                class="select-all-button"
+                (click)="toggleAllFunnelStatuses()">
+
+                {{ allFunnelStatusesSelected ? 'Ninguno' : 'Todos' }}
+
+              </button>
+            </div>
+            <div class="checkbox-list">
+              @for (
+                status of filterOptions?.funnel_statuses ?? [];
+                track status
+              ) {
+                <label class="checkbox-option"
+                [class.highlighted]="status === 'Negociación cliente'">
+                  <input
+                    type="checkbox"
+                    [checked]="selectedFunnelStatuses.includes(status)"
+                    (change)="toggleFunnelStatus(status)">
+                  <span class="checkbox-box"></span>
+                  <span class="checkbox-label">
+                    {{ status }}
+                  </span>
+                </label>
+              }
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ========================= -->
+        <!-- 2. SEDE -->
+        <!-- ========================= -->
+
+        <section class="filter-section">
+
+          <div class="section-title">
+            2. ESPECIFICACIONES DE SEDE
+          </div>
+
+
+          <!-- CAPACIDAD -->
+
+          <div class="filter-group">
+            <label>Capacidad (Mbps)</label>
+            <div class="range-inputs">
+              <input
+                type="number"
+                placeholder="Min"
+                [(ngModel)]="capacityMin"
+                min="0">
+
+              <span>–</span>
+
+              <input
+                type="number"
+                placeholder="Max"
+                [(ngModel)]="capacityMax"
+                min="0">
+            </div>
+
+          </div>
+          <!-- DEPARTAMENTO -->
+          <div class="filter-group">
+
+            <div class="filter-label-row">
+              <label>Departamento</label>
+
+              <button
+                type="button"
+                class="select-all-button"
+                (click)="toggleAllDepartments()">
+                {{ allDepartmentsSelected ? 'Ninguno' : 'Todos' }}
+              </button>
+            </div>
+
+            <div class="checkbox-search">
+              <input
+                type="text"
+                placeholder="Buscar departamento..."
+                [(ngModel)]="departmentSearch">
+            </div>
+
+            <div class="checkbox-list">
+              @for (
+                department of filteredDepartments;
+                track department
+              ) {
+                <label class="checkbox-option">
+
+                  <input
+                    type="checkbox"
+                    [checked]="selectedDepartments.includes(department)"
+                    (change)="toggleDepartment(department)">
+
+                  <span class="checkbox-box"></span>
+
+                  <span class="checkbox-label">
+                    {{ department }}
+                  </span>
+
+                </label>
+              }
+
+              @if (filteredDepartments.length === 0) {
+                <div class="no-options">
+                  No se encontraron departamentos
+                </div>
+              }
+            </div>
+
+          </div>
+
+
+          <!-- MUNICIPIO -->
+          <div class="filter-group">
+            <div class="filter-label-row">
+              <label>Municipio</label>
+              <button
+                type="button"
+                class="select-all-button"
+                [disabled]="!selectedDepartments.length"
+                (click)="toggleAllMunicipalities()">
+                {{ allMunicipalitiesSelected ? 'Ninguno' : 'Todos' }}
+              </button>
+            </div>
+            <div class="checkbox-search">
+              <input
+                type="text"
+                placeholder="Buscar municipio..."
+                [(ngModel)]="municipalitySearch"
+                [disabled]="!selectedDepartments.length">
+            </div>
+            <div class="checkbox-list">
+              @for (
+                municipality of filteredMunicipalities;
+                track municipality
+              ) {
+                <label class="checkbox-option">
+                  <input
+                    type="checkbox"
+                    [checked]="selectedMunicipalities.includes(municipality)"
+                    (change)="toggleMunicipality(municipality)"
+                    [disabled]="!selectedDepartments.length">
+                  <span class="checkbox-box"></span>
+                  <span class="checkbox-label">
+                    {{ municipality }}
+                  </span>
+                </label>
+              }
+              @if (
+                selectedDepartments.length &&
+                filteredMunicipalities.length === 0
+              ) {
+                <div class="no-options">
+                  No se encontraron municipios
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- FAMILIA DE PRODUCTOS -->
+          <div class="filter-group">
+            <div class="filter-label-row">
+              <label>Familia de productos</label>
+              <button
+                type="button"
+                class="select-all-button"
+                (click)="toggleAllProductFamilies()">
+                {{ allProductFamiliesSelected ? 'Ninguno' : 'Todos' }}
+              </button>
+            </div>
+            <div class="checkbox-search">
+              <input
+                type="text"
+                placeholder="Buscar familia..."
+                [(ngModel)]="productFamilySearch">
+            </div>
+            <div class="checkbox-list">
+              @for (
+                family of filteredProductFamilies;
+                track family
+              ) {
+                <label class="checkbox-option">
+                  <input
+                    type="checkbox"
+                    [checked]="selectedProductFamilies.includes(family)"
+                    (change)="toggleProductFamily(family)">
+                  <span class="checkbox-box"></span>
+                  <span class="checkbox-label">
+                    {{ family }}
+                  </span>
+                </label>
+              }
+              @if (filteredProductFamilies.length === 0) {
+                <div class="no-options">
+                  No se encontraron familias
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- PRODUCTO -->
+          <div class="filter-group">
+            <div class="filter-label-row">
+              <label>Producto</label>
+              <button
+                type="button"
+                class="select-all-button"
+                [disabled]="!selectedProductFamilies.length"
+                (click)="toggleAllProducts()">
+                {{ allProductsSelected ? 'Ninguno' : 'Todos' }}
+              </button>
+            </div>
+            <div class="checkbox-search">
+              <input
+                type="text"
+                placeholder="Buscar producto..."
+                [(ngModel)]="productSearch"
+                [disabled]="!selectedProductFamilies.length">
+            </div>
+            <div class="checkbox-list">
+              @for (
+                product of filteredProducts;
+                track product
+              ) {
+                <label class="checkbox-option">
+                  <input
+                    type="checkbox"
+                    [checked]="selectedProducts.includes(product)"
+                    (change)="toggleProduct(product)"
+                    [disabled]="!selectedProductFamilies.length">
+                  <span class="checkbox-box"></span>
+                  <span class="checkbox-label">
+                    {{ product }}
+                  </span>
+                </label>
+              }
+              @if (
+                selectedProductFamilies.length &&
+                filteredProducts.length === 0
+              ) {
+                <div class="no-options">
+                  No se encontraron productos
+                </div>
+              }
+            </div>
+          </div>
+          <!-- PLAN -->
+          <div class="filter-group">
+            <div class="filter-label-row">
+              <label>Plan</label>
+              <button
+                type="button"
+                class="select-all-button"
+                [disabled]="!selectedProducts.length"
+                (click)="toggleAllPlans()">
+                {{ allPlansSelected ? 'Ninguno' : 'Todos' }}
+              </button>
+            </div>
+
+            <div class="checkbox-search">
+              <input
+                type="text"
+                placeholder="Buscar plan..."
+                [(ngModel)]="planSearch"
+                [disabled]="!selectedProducts.length">
+            </div>
+
+            <div class="checkbox-list">
+              @for (
+                plan of filteredPlans;
+                track plan
+              ) {
+                <label class="checkbox-option">
+                  <input
+                    type="checkbox"
+                    [checked]="selectedPlans.includes(plan)"
+                    (change)="togglePlan(plan)"
+                    [disabled]="!selectedProducts.length">
+                  <span class="checkbox-box"></span>
+                  <span class="checkbox-label">
+                    {{ plan }}
+                  </span>
+                </label>
+              }
+
+              @if (
+                selectedProducts.length &&
+                filteredPlans.length === 0
+              ) {
+                <div class="no-options">
+                  No se encontraron planes
+                </div>
+              }
+            </div>
+          </div>
+
+        </section>
+
+      </div>
+
+
+      <!-- ========================= -->
+      <!-- ACTIONS -->
+      <!-- ========================= -->
+
+      <div class="sidebar-actions">
+        <button
+          type="button"
+          class="search-button"
+          [disabled]="isSearching"
+          [class.loading]="isSearching"
+          (click)="search()">
+          @if (isSearching) {
+            BUSCANDO...
+          } @else {
+            <!-- 🔍 -->
+            BUSCAR COTIZACIONES
+          }
+        </button>
+        <button
+          type="button"
+          class="clear-button">
+          Limpiar filtros
+        </button>
+
+      </div>
+
+    }
+
+  </div>
+
+</aside>

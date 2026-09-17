@@ -10,6 +10,8 @@ import { Main } from './pages/main/main';
 import { EvaluadorFinanciero } from './pages/evaluador-financiero/evaluador-financiero';
 import { Cotizaciones } from './pages/cotizaciones/cotizaciones';
 import { FinancialVariables } from './pages/financial-variables/financial-variables';
+import { PricingSites } from './pages/pricing-sites/pricing-sites'; 
+
 import { ChangePassword } from './pages/change-password/change-password';
 
 import { Presales } from './pages/presales/presales';
@@ -56,6 +58,13 @@ export const routes: Routes = [
       {
         path: 'pricing-variables',
         component: FinancialVariables,
+        canActivate: [
+          areaGuard('pricing')
+        ]
+      },
+      {
+        path: 'pricing-sites',
+        component: PricingSites,
         canActivate: [
           areaGuard('pricing')
         ]
