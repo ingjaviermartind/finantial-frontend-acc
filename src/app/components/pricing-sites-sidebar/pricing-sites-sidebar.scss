@@ -4,6 +4,19 @@ $border: #e1e6e9;
 $text: #555;
 $muted: #7a7a7a;
 
+.sidebar-title-group {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+
+.sidebar-site-count {
+  color: $muted;
+  font-size: .62rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
 
 .period-inputs {
   display: flex;

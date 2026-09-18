@@ -31,8 +31,6 @@ export class PricingSitesService {
         params = params.set(key, value);
       }
     });
-    console.log('FILTERS:', filters);
-    console.log('PARAMS:', params.toString());
     return this.http.get<PricingSitesResponse>(
       this.baseUrl,
       { params }

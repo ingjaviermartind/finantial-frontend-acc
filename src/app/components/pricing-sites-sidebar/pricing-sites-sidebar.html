@@ -17,10 +17,19 @@
     <!-- ========================= -->
     <div class="sidebar-header">
       @if (isExpanded) {
-        <span class="sidebar-title">
-          FILTROS DE BÚSQUEDA
-        </span>
+        <div class="sidebar-title-group">
+          <span class="sidebar-title">
+            FILTROS DE BÚSQUEDA
+          </span>
+
+          <!-- @if (filterOptions) {
+            <span class="sidebar-site-count">
+              {{ filterOptions.total_sites | number }} sedes
+            </span>
+          } -->
+        </div>
       }
+
       <button
         class="sidebar-toggle"
         type="button"

@@ -13,9 +13,14 @@ export interface PricingSite {
     Familia_Producto_Sede: string;
     'Ancho de banda': string;
     'Ancho de banda (Nro)': number;
+    'Tipo de Tecnologia': string;
+    'Ultimo kilometro (UK)': number;
+    'Distancia FO Red ACC': number;
+    TARGET_MRC_GRUPAL_FUNNEL: number;
     NUM_PRICINGS: number;
     MRC_PROMEDIO: number;
     NRC_PROMEDIO: number;
+    VLR_MBPS: number;
 }
 
 export interface PricingSitesResponse {
@@ -33,6 +38,7 @@ export class PricingFunnelGroup {
   cliente: string;
   nit: string;
   estado: string;
+  targetMrcGrupalFunnel: number;
   sites: PricingSite[];
   expanded = false;
   constructor(sites: PricingSite[]) {
@@ -43,6 +49,7 @@ export class PricingFunnelGroup {
     this.cliente = first.NOMBRE_COMERCIAL_FUNNEL;
     this.nit = first.NIT_CONCATENADO;
     this.estado = first.ESTADO_FUNNEL;
+    this.targetMrcGrupalFunnel = first.TARGET_MRC_GRUPAL_FUNNEL
   }
   get siteCount(): number {
     return this.sites.length;
@@ -112,61 +119,6 @@ export interface PricingSitesProductOption {
   product: string;
   plans: string[];
 }
-
-// export interface PricingClientOption {
-//   nit: string;
-//   business_names: string[];
-// }
-
-// export interface MunicipalityOption {
-//   municipality: string;
-//   danes: string[];
-// }
-
-// export interface LocationOption {
-//   department: string;
-//   municipalities: MunicipalityOption[];
-// }
-
-// export interface PlanOption {
-//   plan: string;
-// }
-
-// export interface ProductOption {
-//   product: string;
-//   plans: string[];
-// }
-
-// export interface ProductFamilyOption {
-//   family: string;
-//   products: ProductOption[];
-// }
-
-// export interface PricingFilterOptionsResponse {
-//   total_sites: number;
-//   clients: PricingClientOption[];
-//   funnel_statuses: string[];
-//   locations: LocationOption[];
-//   products: ProductFamilyOption[];
-// }
-
-// export interface PricingSiteFilters {
-//   period_value: number;
-//   period_unit: string;
-//   clients?: string[];
-//   funnel_statuses?: string[];
-//   departments?: string[];
-//   municipalities?: string[];
-//   danes?: string[];
-//   min_capacity?: number;
-//   max_capacity?: number;
-//   families?: string[];
-//   products?: string[];
-//   plans?: string[];
-//   page?: number;
-//   page_size?: number;
-// }
-
 
 //
 // EOF

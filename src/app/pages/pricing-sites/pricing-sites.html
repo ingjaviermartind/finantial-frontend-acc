@@ -185,7 +185,13 @@
             </div>
             <!-- MRC -->
             <div class="funnel-mrc">
-              {{ funnel.mrcTotal | currency:'$':'symbol':'1.0-0' }}
+              <div>
+                {{ funnel.mrcTotal | currency:'$':'symbol':'1.0-0' }}
+              </div>
+              <span class="dane-tag">
+                MRC Target:
+                {{ funnel.targetMrcGrupalFunnel | currency:'$':'symbol':'1.0-0' }}
+              </span>
             </div>
           </div>
           <!-- ========================= -->
@@ -198,7 +204,7 @@
               <!-- HEADER SEDES -->
 
               <div class="sites-header">
-                <div>CONSECUTIVO SEDE</div>
+                <div>SEDE</div>
                 <div>UBICACIÓN</div>
                 <div>PORTAFOLIO / FAMILIA</div>
                 <div>ANCHO DE BANDA</div>
@@ -222,6 +228,12 @@
                   <div class="site-id">
                     <span>
                       {{ site['Consecutivo de Sede'] }}
+                    </span>
+                    <span class="site-distance">
+                      UK: {{ site['Ultimo kilometro (UK)'] }} m
+                    </span>
+                    <span class="site-distance">
+                      FO ACC: {{ site['Distancia FO Red ACC'] }} m
                     </span>
                   </div>
 
@@ -257,6 +269,10 @@
                       Plan: {{ site.Plan }}
                     </div>
 
+                    <div class="technology-name">
+                      Tecnología: {{ site['Tipo de Tecnologia'] || 'N/A' }}
+                    </div>
+
                   </div>
 
 
@@ -279,8 +295,17 @@
                   <!-- MRC -->
 
                   <div class="money">
-                    {{ site.MRC_PROMEDIO | currency:'$':'symbol':'1.0-0' }}
+                    <div>
+                      {{ site.MRC_PROMEDIO | currency:'$':'symbol':'1.0-0' }}
+                    </div>
+                    <span class="dane-tag"
+                    [class.vlr-low]="site.VLR_MBPS < 1500">
+                      Vlr x Mbps:
+                      {{ site.VLR_MBPS | currency:'$':'symbol':'1.0-0' }}
+                    </span>
                   </div>
+                  
+                  
 
 
                   <!-- NRC -->

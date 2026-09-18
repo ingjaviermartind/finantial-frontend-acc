@@ -11,11 +11,12 @@ import { PricingSiteFilterOptionsService } from '../../services/pricing-site-fil
 
 import { finalize } from 'rxjs';
 import { OnInit } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-pricing-sites-sidebar',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, DecimalPipe],
   templateUrl: './pricing-sites-sidebar.html',
   styleUrl: './pricing-sites-sidebar.scss',
 })
@@ -82,6 +83,8 @@ export class PricingSitesSidebar {
       )
       .subscribe({
         next: (response: PricingSitesFilterOptions) => {
+          console.log('FILTER OPTIONS:', response);
+          console.log('TOTAL SITES:', response.total_sites);
           this.filterOptions = response;
         },
         error: error => {
@@ -118,6 +121,7 @@ export class PricingSitesSidebar {
       page: 1
     };
     this.filtersChanged.emit(filters);
+    
     this.pricingSitesService
       .getPricingSites(filters)
       .pipe(
@@ -127,7 +131,7 @@ export class PricingSitesSidebar {
       )
       .subscribe({
         next: (response: PricingSitesResponse) => {
-          // console.log('Respuesta:', response);
+          console.log('Respuesta:', response);
           this.pricingSitesLoaded.emit(response);
         },
         error: error => {
