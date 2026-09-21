@@ -3,7 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { PricingSitesService } from '../../services/pricing-site';
 import { 
   PricingSitesFilters, 
-  PricingSitesResponse, 
+  PricingSitesResponse,
+  PricingSitesFiltersBase,
   PricingSitesFilterOptions,
   PricingSitesClientOption
 } from '../../models/pricing-site';
@@ -66,16 +67,23 @@ export class PricingSitesSidebar {
   }
 
   private loadFilterOptions(): void {
+
     this.isLoadingFilterOptions = true;
+    const filters: PricingSitesFiltersBase = {
+      period_value: this.periodValue,
+      period_unit: this.periodUnit as PricingSitesFiltersBase['period_unit'],
+      // capacity_min: this.capacityMin ?? undefined,
+      // capacity_max: this.capacityMax ?? undefined,
+      // client: this.selectedClients,
+      // funnel_status: this.selectedFunnelStatuses,
+      // department: this.selectedDepartments,
+      // municipality: this.selectedMunicipalities,
+      // product_family: this.selectedProductFamilies,
+      // product: this.selectedProducts,
+      // plan: this.selectedPlans,
+    };
     this.pricingSiteFilterOptionsService
-      .getFilterOptions(
-        this.periodValue,
-        this.periodUnit,
-        this.selectedDepartments,
-        this.selectedMunicipalities,
-        this.selectedProductFamilies,
-        this.selectedProducts
-      )
+      .getFilterOptions(filters)
       .pipe(
         finalize(() => {
           this.isLoadingFilterOptions = false;
@@ -83,8 +91,6 @@ export class PricingSitesSidebar {
       )
       .subscribe({
         next: (response: PricingSitesFilterOptions) => {
-          console.log('FILTER OPTIONS:', response);
-          console.log('TOTAL SITES:', response.total_sites);
           this.filterOptions = response;
         },
         error: error => {
@@ -121,7 +127,6 @@ export class PricingSitesSidebar {
       page: 1
     };
     this.filtersChanged.emit(filters);
-    
     this.pricingSitesService
       .getPricingSites(filters)
       .pipe(
@@ -131,7 +136,7 @@ export class PricingSitesSidebar {
       )
       .subscribe({
         next: (response: PricingSitesResponse) => {
-          console.log('Respuesta:', response);
+          // console.log('Respuesta:', response);
           this.pricingSitesLoaded.emit(response);
         },
         error: error => {
@@ -185,7 +190,7 @@ export class PricingSitesSidebar {
       ];
     }
     this.selectedMunicipalities = [];
-    this.loadFilterOptions();
+    // this.loadFilterOptions();
   }
 
   get allDepartmentsSelected(): boolean {
@@ -204,7 +209,7 @@ export class PricingSitesSidebar {
       this.selectedDepartments = [...departments];
     }
     this.selectedMunicipalities = [];
-    this.loadFilterOptions();
+    // this.loadFilterOptions();
   }
 
   get filteredDepartments(): string[] {
@@ -241,7 +246,7 @@ export class PricingSitesSidebar {
         municipality
       ];
     }
-    this.loadFilterOptions();
+    // this.loadFilterOptions();
   }
 
   get allMunicipalitiesSelected(): boolean {
@@ -259,7 +264,7 @@ export class PricingSitesSidebar {
     } else {
       this.selectedMunicipalities = [...municipalities];
     }
-    this.loadFilterOptions();
+    // this.loadFilterOptions();
   }
 
 
@@ -304,7 +309,7 @@ export class PricingSitesSidebar {
     }
     this.selectedProducts = [];
     this.selectedPlans = [];
-    this.loadFilterOptions();
+    // this.loadFilterOptions();
   }
 
   get allProductFamiliesSelected(): boolean {
@@ -324,7 +329,7 @@ export class PricingSitesSidebar {
     }
     this.selectedProducts = [];
     this.selectedPlans = [];
-    this.loadFilterOptions();
+    // this.loadFilterOptions();
   }
 
   get availableProducts(): string[] {
@@ -362,7 +367,7 @@ export class PricingSitesSidebar {
       ];
     }
     this.selectedPlans = [];
-    this.loadFilterOptions();
+    // this.loadFilterOptions();
   }
 
   get allProductsSelected(): boolean {
@@ -381,7 +386,7 @@ toggleAllProducts(): void {
       this.selectedProducts = [...products];
     }
     this.selectedPlans = [];
-    this.loadFilterOptions();
+    // this.loadFilterOptions();
   }
 
   get availablePlans(): string[] {

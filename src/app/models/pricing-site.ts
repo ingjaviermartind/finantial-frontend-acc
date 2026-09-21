@@ -68,13 +68,14 @@ export class PricingFunnelGroup {
   }
 }
 
-export interface PricingSitesFilters {
+export interface PricingSitesFiltersBase {
   period_value: number;
-  period_unit: 'día(s)' | 'semana(s)' | 'mes(es)' | 'trimestre(s)' | 'año(s)';
-  page_size: number;
-  page: number;
-
-
+  period_unit:
+    | 'día(s)'
+    | 'semana(s)'
+    | 'mes(es)'
+    | 'trimestre(s)'
+    | 'año(s)';
   capacity_min?: number;
   capacity_max?: number;
   client?: string[];
@@ -85,6 +86,12 @@ export interface PricingSitesFilters {
   product_family?: string[];
   product?: string[];
   plan?: string[];
+}
+
+export interface PricingSitesFilters
+  extends PricingSitesFiltersBase {
+  page_size: number;
+  page: number;
 }
 
 export interface PricingSitesFilterOptions {
