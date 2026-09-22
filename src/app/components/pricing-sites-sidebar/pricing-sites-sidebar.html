@@ -22,21 +22,13 @@
             FILTROS DE BÚSQUEDA
           </span>
 
-          @if (filterOptions) {
+          <!-- @if (filterOptions) {
             <span class="sidebar-site-count">
               {{ filterOptions.total_sites | number }} sedes
             </span>
-          }
+          } -->
         </div>
       }
-
-      <button
-        class="sidebar-toggle"
-        type="button"
-        (click)="toggleSidebar()"
-        [attr.aria-label]="isExpanded ? 'Contraer filtros' : 'Expandir filtros'">
-        {{ isExpanded ? '‹' : '›' }}
-      </button>
     </div>
 
 
@@ -80,7 +72,6 @@
               </select>
             </div>
           </div>
-
 
           <!-- CLIENTE -->
           <div class="filter-group">
@@ -142,6 +133,48 @@
             </div>
           </div>
 
+          <!-- FUNNEL -->
+          <div class="filter-group">
+            <div class="filter-label-row">
+              <label>
+                Funnel
+              </label>
+              <button
+                type="button"
+                class="select-all-button"
+                (click)="toggleAllFunnels()">
+                {{ allFunnelsSelected ? 'Ninguno' : 'Todos' }}
+              </button>
+            </div>
+            <div class="checkbox-search">
+              <input
+                type="text"
+                placeholder="Buscar funnel..."
+                [(ngModel)]="funnelSearch">
+            </div>
+            <div class="checkbox-list">
+              @for (
+                funnel of filteredFunnels;
+                track funnel
+              ) {
+                <label class="checkbox-option">
+                  <input
+                    type="checkbox"
+                    [checked]="selectedFunnels.includes(funnel)"
+                    (change)="toggleFunnel(funnel)">
+                  <span class="checkbox-box"></span>
+                  <span class="checkbox-label">
+                    {{ funnel }}
+                  </span>
+                </label>
+              }
+              @if (filteredFunnels.length === 0) {
+                <div class="no-options">
+                  No se encontraron funnels
+                </div>
+              }
+            </div>
+          </div>
 
           <!-- ESTADO -->
           <div class="filter-group">

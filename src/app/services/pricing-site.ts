@@ -36,4 +36,30 @@ export class PricingSitesService {
       { params }
     );
   }
+
+  exportPricingSites(
+    filters: PricingSitesFilters
+  ): Observable<Blob> {
+    let params = new HttpParams();
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value === null || value === undefined) {
+        return;
+      }
+      if (Array.isArray(value)) {
+        value.forEach(item => {
+          params = params.append(key, item);
+        });
+      } else {
+        params = params.set(key, value);
+      }
+    });
+
+    return this.http.get(
+      `${this.baseUrl}export/`,
+      {
+        params,
+        responseType: 'blob'
+      }
+    );
+  }
 }

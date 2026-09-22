@@ -17,6 +17,8 @@ export interface PricingSite {
     'Ultimo kilometro (UK)': number;
     'Distancia FO Red ACC': number;
     TARGET_MRC_GRUPAL_FUNNEL: number;
+    MRC_FUNNEL: number;
+    TipoOferta: string;
     NUM_PRICINGS: number;
     MRC_PROMEDIO: number;
     NRC_PROMEDIO: number;
@@ -26,6 +28,7 @@ export interface PricingSite {
 export interface PricingSitesResponse {
   'funnel count': number;
   'sedes count' : number;
+  'mrc total': number;
   page: number;
   page_size: number;
   total_pages: number;
@@ -39,7 +42,9 @@ export class PricingFunnelGroup {
   nit: string;
   estado: string;
   targetMrcGrupalFunnel: number;
+  MrcFunnel: number;
   sites: PricingSite[];
+  TipoOferta: string;
   expanded = false;
   constructor(sites: PricingSite[]) {
     this.sites = sites;
@@ -50,15 +55,14 @@ export class PricingFunnelGroup {
     this.nit = first.NIT_CONCATENADO;
     this.estado = first.ESTADO_FUNNEL;
     this.targetMrcGrupalFunnel = first.TARGET_MRC_GRUPAL_FUNNEL
+    this.MrcFunnel = first.MRC_FUNNEL
+    this.TipoOferta = first.TipoOferta
   }
   get siteCount(): number {
     return this.sites.length;
   }
   get mrcTotal(): number {
-    return this.sites.reduce(
-      (total, site) => total + site.MRC_PROMEDIO,
-      0
-    );
+    return this.MrcFunnel;
   }
   get nrcTotal(): number {
     return this.sites.reduce(
@@ -79,6 +83,7 @@ export interface PricingSitesFiltersBase {
   capacity_min?: number;
   capacity_max?: number;
   client?: string[];
+  funnel?: string[];
   funnel_status?: string[];
   department?: string[];
   municipality?: string[];
@@ -97,6 +102,7 @@ export interface PricingSitesFilters
 export interface PricingSitesFilterOptions {
   total_sites: number;
   clients: PricingSitesClientOption[];
+  funnels: string[];
   funnel_statuses: string[];
   locations: PricingSitesLocationOption[];
   products: PricingSitesProductFamilyOption[];

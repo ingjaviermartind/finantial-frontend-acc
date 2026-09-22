@@ -80,8 +80,11 @@ $muted: #7a7a7a;
 
 
 .pricing-sites-sidebar:not(.expanded) {
-  flex-basis: 54px;
-  width: 54px;
+  // flex-basis: 54px;
+  // width: 54px;
+  flex-basis: 0;
+  width: 0;
+  border-right: none;
 }
 
 

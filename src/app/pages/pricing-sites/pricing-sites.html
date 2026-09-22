@@ -5,58 +5,76 @@
   <!-- ========================= -->
 
   <app-pricing-sites-sidebar
+    [isExpanded]="isFiltersExpanded"
     (pricingSitesLoaded)="onPricingSitesLoaded($event)"
     (filtersChanged)="onFiltersChanged($event)"
     >
-
   </app-pricing-sites-sidebar> 
-
-
   <!-- ========================= -->
   <!-- CONTENIDO -->
   <!-- ========================= -->
-
   <main class="pricing-sites-content">
-
     <!-- ========================= -->
     <!-- MÉTRICAS -->
     <!-- ========================= -->
-
     <div class="pricing-sites-toolbar">
-
+      <button
+        type="button"
+        class="filters-toggle-button"
+        (click)="toggleFilters()"
+        [attr.aria-label]="
+          isFiltersExpanded
+            ? 'Ocultar filtros'
+            : 'Mostrar filtros'
+        ">
+        <span class="filters-toggle-icon">
+          {{ isFiltersExpanded ? '‹' : '›' }}
+        </span>
+        <span>
+          {{ isFiltersExpanded
+            ? 'Ocultar filtros'
+            : 'Mostrar filtros'
+          }}
+        </span>
+      </button>
       <div class="metrics">
-
         <div class="metric">
-
           <span class="metric-value">
             {{ funnelCount | number }}
           </span>
-
           <span class="metric-label">
             Funnels encontrados
           </span>
-
         </div>
-
-
         <div class="metric-divider"></div>
-
-
         <div class="metric">
-
           <span class="metric-value">
             {{ siteCount | number }}
           </span>
-
           <span class="metric-label">
             Sedes cotizadas
           </span>
-
         </div>
-
+        <div class="metric-divider"></div>
+        <div class="metric">
+          <span class="metric-value">
+            {{ mrcTotal | currency:'$':'symbol':'1.0-0' }}
+          </span>
+          <span class="metric-label">
+            MRC total
+          </span>
+        </div>
       </div>
-
+      <button
+        type="button"
+        class="export-button"
+        (click)="exportToExcel()">
+        <span class="export-icon">↓</span>
+        Exportar a Excel
+      </button>
     </div>
+
+
 
 
     <!-- ========================= -->
@@ -126,7 +144,7 @@
               </span>
 
               <span class="status-tag">
-                FUNNEL
+                {{ funnel.TipoOferta }}
               </span>
 
             </div>

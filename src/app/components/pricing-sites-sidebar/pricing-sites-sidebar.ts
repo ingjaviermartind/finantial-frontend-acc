@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PricingSitesService } from '../../services/pricing-site';
 import { 
@@ -17,18 +17,17 @@ import { DecimalPipe } from '@angular/common';
 @Component({
   selector: 'app-pricing-sites-sidebar',
   standalone: true,
-  imports: [FormsModule, DecimalPipe],
+  imports: [FormsModule],
   templateUrl: './pricing-sites-sidebar.html',
   styleUrl: './pricing-sites-sidebar.scss',
 })
 export class PricingSitesSidebar {
-
-  isExpanded = true;
+  @Input() isExpanded = true;
   isSearching = false;
   isLoadingFilterOptions = false;
   periodValue = 3; //3
   periodUnit = 'mes(es)'; //'mes(es)'
-  PageSize = 15;
+  PageSize = 12;
   filterOptions: PricingSitesFilterOptions | null = null;
 
   capacityMin: number | null = null;
@@ -41,6 +40,7 @@ export class PricingSitesSidebar {
   selectedProducts: string[] = [];
   selectedPlans: string[] = [];
   selectedClients: string[] = [];
+  selectedFunnels: string[] = [];
 
   departmentSearch = '';
   municipalitySearch = '';
@@ -48,6 +48,7 @@ export class PricingSitesSidebar {
   productSearch = '';
   planSearch = '';
   clientSearch = '';
+  funnelSearch = '';
 
   periodUnits = [
     { value: 'día(s)', label: 'Días' },
@@ -66,21 +67,15 @@ export class PricingSitesSidebar {
     this.loadFilterOptions();
   }
 
-  private loadFilterOptions(): void {
-
+  private loadFilterOptions(
+    extraFilters: Partial<PricingSitesFiltersBase> = {}
+  ): void {
     this.isLoadingFilterOptions = true;
     const filters: PricingSitesFiltersBase = {
       period_value: this.periodValue,
-      period_unit: this.periodUnit as PricingSitesFiltersBase['period_unit'],
-      // capacity_min: this.capacityMin ?? undefined,
-      // capacity_max: this.capacityMax ?? undefined,
-      // client: this.selectedClients,
-      // funnel_status: this.selectedFunnelStatuses,
-      // department: this.selectedDepartments,
-      // municipality: this.selectedMunicipalities,
-      // product_family: this.selectedProductFamilies,
-      // product: this.selectedProducts,
-      // plan: this.selectedPlans,
+      period_unit:
+        this.periodUnit as PricingSitesFiltersBase['period_unit'],
+      ...extraFilters
     };
     this.pricingSiteFilterOptionsService
       .getFilterOptions(filters)
@@ -102,10 +97,6 @@ export class PricingSitesSidebar {
       });
   }
 
-  toggleSidebar(): void {
-    this.isExpanded = !this.isExpanded;
-  }
-
   @Output() pricingSitesLoaded = new EventEmitter<PricingSitesResponse>();
   @Output() filtersChanged = new EventEmitter<PricingSitesFilters>();
   
@@ -115,6 +106,7 @@ export class PricingSitesSidebar {
       period_value: this.periodValue,
       period_unit: this.periodUnit as PricingSitesFilters['period_unit'],
       client: this.selectedClients,
+      funnel: this.selectedFunnels,
       funnel_status: this.selectedFunnelStatuses,
       capacity_min: this.capacityMin ?? undefined,
       capacity_max: this.capacityMax ?? undefined,
@@ -502,4 +494,45 @@ toggleAllProducts(): void {
     this.loadFilterOptions();
   }
 
+  get availableFunnels(): string[] {
+    return this.filterOptions?.funnels ?? [];
+  }
+
+  get filteredFunnels(): string[] {
+    const search = this.funnelSearch
+      .trim()
+      .toLowerCase();
+    return this.availableFunnels.filter(funnel =>
+      funnel.toLowerCase().includes(search)
+    );
+  }
+
+  toggleFunnel(funnel: string): void {
+    if (this.selectedFunnels.includes(funnel)) {
+      this.selectedFunnels =
+        this.selectedFunnels.filter(f => f !== funnel);
+    } else {
+      this.selectedFunnels = [
+        ...this.selectedFunnels,
+        funnel
+      ];
+    }
+  }
+
+  get allFunnelsSelected(): boolean {
+    const funnels = this.availableFunnels;
+    return (
+      funnels.length > 0 &&
+      this.selectedFunnels.length === funnels.length
+    );
+  }
+
+  toggleAllFunnels(): void {
+    const funnels = this.availableFunnels;
+    if (this.allFunnelsSelected) {
+      this.selectedFunnels = [];
+    } else {
+      this.selectedFunnels = [...funnels];
+    }
+  }
 }

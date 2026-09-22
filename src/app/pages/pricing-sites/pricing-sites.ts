@@ -24,7 +24,7 @@ import { finalize } from 'rxjs';
 })
 export class PricingSites {
 
-  readonly pageSize = 10;
+  readonly pageSize = 12;
   isPaging = false;
   currentPage = 1;
   totalPages = 0;
@@ -34,20 +34,32 @@ export class PricingSites {
 
   funnelCount = 0;
   siteCount = 0;
+  mrcTotal = 0;
+
+  isFiltersExpanded = true;
 
   constructor(
     private pricingSitesService: PricingSitesService
   ) {}
 
   onPricingSitesLoaded(response: PricingSitesResponse): void {
+    console.log('RESULTS:', response.results);
+    console.log('PRIMER RESULTADO:', response.results[0]);
+    console.log('TIPO OFERTA:', response.results[0]?.TipoOferta);
     this.funnelCount = response['funnel count'];
     this.siteCount = response['sedes count'];
+    this.mrcTotal = response['mrc total'];
     this.currentPage = response.page;
     this.totalPages = response.total_pages;
-    this.funnels = this.groupByFunnel(response.results).sort((a, b) => b.mrcTotal - a.mrcTotal);;
+    this.funnels = this.groupByFunnel(response.results).sort((a, b) => b.mrcTotal - a.mrcTotal);
   }
+
   onFiltersChanged(filters: PricingSitesFilters): void {
     this.currentFilters = filters;
+  }
+
+  toggleFilters(): void {
+    this.isFiltersExpanded = !this.isFiltersExpanded;
   }
 
   private groupByFunnel(
@@ -72,6 +84,7 @@ export class PricingSites {
         (a, b) => b.mrcTotal - a.mrcTotal
       );
   }
+
   toggleFunnel(funnel: PricingFunnelGroup): void {
     funnel.expanded = !funnel.expanded;
   }
@@ -122,4 +135,27 @@ export class PricingSites {
     this.goToPage(this.currentPage - 1);
   }
 
+  exportToExcel(): void {
+    if (!this.currentFilters) {
+      return;
+    }
+    this.pricingSitesService
+      .exportPricingSites(this.currentFilters)
+      .subscribe({
+        next: blob => {
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = 'pricing_sites.xlsx';
+          link.click();
+          window.URL.revokeObjectURL(url);
+        },
+        error: error => {
+          console.error(
+            'Error exportando pricing sites:',
+            error
+          );
+        }
+      });
+  }
 }
