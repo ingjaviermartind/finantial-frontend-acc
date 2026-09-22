@@ -37,6 +37,7 @@ export class PricingSites {
   mrcTotal = 0;
 
   isFiltersExpanded = true;
+  isExporting = false;
 
   constructor(
     private pricingSitesService: PricingSitesService
@@ -139,8 +140,14 @@ export class PricingSites {
     if (!this.currentFilters) {
       return;
     }
+    this.isExporting = true;
     this.pricingSitesService
       .exportPricingSites(this.currentFilters)
+      .pipe(
+        finalize(() => {
+          this.isExporting = false;
+        })
+      )
       .subscribe({
         next: blob => {
           const url = window.URL.createObjectURL(blob);

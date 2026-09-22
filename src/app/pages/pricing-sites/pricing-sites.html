@@ -69,8 +69,13 @@
         type="button"
         class="export-button"
         (click)="exportToExcel()">
-        <span class="export-icon">↓</span>
-        Exportar a Excel
+        @if (isExporting) {
+          <span class="export-spinner"></span>
+          Generando Excel...
+        } @else {
+          <span class="export-icon">↓</span>
+          Exportar a Excel
+        }
       </button>
     </div>
 
