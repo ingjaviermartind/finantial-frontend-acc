@@ -1,378 +1,375 @@
 <!-- <h2>Evaluador Financiero</h2> -->
-<br>
 <div class="evaluator-container">
+  <app-evaluador-sidebar
+    [isExpanded]="isFiltersExpanded"
+    (departmentsChange)="onDepartmentsChange($event)"
+    (municipalitiesChange)="onMunicipalitiesChange($event)"
+    (search)="onSidebarSearch($event)">
+  </app-evaluador-sidebar>
   <!-- ========================= -->
   <!-- Panel superior            -->
   <!-- ========================= -->
-  <div class="top-panel">
-    <!-- Panel izquierdo -->
-    <div class="left-panel">
-      <form [formGroup]="form">
-        <!-- ========================= -->
-        <!-- INPUTS BASE               -->
-        <!-- ========================= -->
-        <label>Departamento</label>
-        <select
-          formControlName="department">
-          <!-- (change)="onDepartmentChange($event)"> -->
-          <option value="">
-            Seleccione un departamento
-          </option>
-          <option
-            *ngFor="let dept of departments"
-            [value]="dept.id">
-            {{ dept.name }}
-          </option>
-        </select>
-        <label>Municipio</label>
-        <select
-          formControlName="municipality">
-          <!-- (change)="onMunicipalityChange($event)"> -->
-          <option [ngValue]="null">
-            Seleccione un municipio
-          </option>
-          <option
-            *ngFor="let mun of municipalities"
-            [value]="mun.id">
-            {{ mun.name }}
-          </option>
-        </select>
-        <!-- ========================= -->
-        <!-- CARD + INPUTS EXTRA (1)   -->
-        <!-- ========================= -->
-        <div
-          class="municipality-card"
-          *ngIf="selectedMunicipality">
+  <div class="evaluator-content">
+    <div class="evaluator-toolbar">
+      <button
+        type="button"
+        class="filters-toggle-button"
+        (click)="toggleFilters()">
+        <span class="filters-toggle-icon">
+          {{ isFiltersExpanded ? '‹' : '›' }}
+        </span>
+        {{ isFiltersExpanded ? 'Ocultar filtros' : 'Mostrar filtros' }}
+      </button>
+      <div class="metrics">
+        <!-- métricas -->
+      </div>
+    </div>
 
-          <div class="municipality-info">
-            <div>{{ selectedMunicipality.dane }}</div>
-            <div>{{ selectedMunicipality.region }}</div>
-            <div>{{ selectedMunicipality.node }}</div>
-          </div>
-
-          <label>Producto</label>
-          <select formControlName="product">
+    <div class="top-panel">
+      <!-- Panel izquierdo -->
+      <div class="left-panel">
+        <form [formGroup]="form">
+          <!-- ========================= -->
+          <!-- INPUTS BASE               -->
+          <!-- ========================= -->
+          <label>Departamento</label>
+          <select
+            formControlName="department">
+            <!-- (change)="onDepartmentChange($event)"> -->
             <option value="">
-              Seleccione un producto
+              Seleccione un departamento
             </option>
-
             <option
-              *ngFor="let product of products"
-              [value]="product.id">
-              {{ product.product }}
+              *ngFor="let dept of departments"
+              [value]="dept.id">
+              {{ dept.name }}
             </option>
           </select>
-          <label>Subsegmento</label>
-            <select formControlName="subsegment_sel">
+          <label>Municipio</label>
+          <select
+            formControlName="municipality">
+            <!-- (change)="onMunicipalityChange($event)"> -->
+            <option [ngValue]="null">
+              Seleccione un municipio
+            </option>
+            <option
+              *ngFor="let mun of municipalities"
+              [value]="mun.id">
+              {{ mun.name }}
+            </option>
+          </select>
+          <!-- ========================= -->
+          <!-- CARD + INPUTS EXTRA (1)   -->
+          <!-- ========================= -->
+          <div
+            class="municipality-card"
+            *ngIf="selectedMunicipality">
+
+            <div class="municipality-info">
+              <div>{{ selectedMunicipality.dane }}</div>
+              <div>{{ selectedMunicipality.region }}</div>
+              <div>{{ selectedMunicipality.node }}</div>
+            </div>
+
+            <label>Producto</label>
+            <select formControlName="product">
               <option value="">
-                Seleccione un subsegmento
+                Seleccione un producto
               </option>
+
               <option
-                *ngFor="let subsegment of subsegments_sel"
-                [value]="subsegment.id">
-                {{ subsegment.name }}
+                *ngFor="let product of products"
+                [value]="product.id">
+                {{ product.product }}
               </option>
             </select>
-          <label>Capacidad (Mbps)</label>
-          <input
-            type="number"
-            formControlName="bandwidth"
-            placeholder="Ej: 500">
+            <label>Subsegmento</label>
+              <select formControlName="subsegment_sel">
+                <option value="">
+                  Seleccione un subsegmento
+                </option>
+                <option
+                  *ngFor="let subsegment of subsegments_sel"
+                  [value]="subsegment.id">
+                  {{ subsegment.name }}
+                </option>
+              </select>
+            <label>Capacidad (Mbps)</label>
+            <input
+              type="number"
+              formControlName="bandwidth"
+              placeholder="Ej: 500">
 
-          <label>Tiempo contrato (meses)</label>
-          <input
-            type="number"
-            formControlName="contractTime"
-            placeholder="Ej: 36">
+            <label>Tiempo contrato (meses)</label>
+            <input
+              type="number"
+              formControlName="contractTime"
+              placeholder="Ej: 36">
 
-          <button
-            type="button"
-            class="calculate-btn"
-            (click)="calculate()"
-            [disabled]="!canShowResults">
-            Calcular
-          </button>
+            <button
+              type="button"
+              class="calculate-btn"
+              (click)="calculate()"
+              [disabled]="!canShowResults">
+              Calcular
+            </button>
 
+          </div>
+        </form>
+      </div>
+      <!-- ========================= -->
+      <!-- PANEL DERECHA (2)         -->
+      <!-- ========================= -->
+      @if (selectedMunicipality && (loadingCalculation || showResults)) {
+        <div class="results-panel">
+          <!-- *ngIf="selectedMunicipality && (loadingCalculation || showResults)"> -->
+          @if(loadingCalculation){
+            <div class="loading-results">
+              <div class="spinner"></div>
+              <p>Calculando propuesta financiera...</p>
+            </div>
+          }
+          @else if(showResults && pricingResult){
+            <h3>
+              {{ showFloor ? '💰 Precio piso' : '💰 Precio recomendado' }}
+            </h3>
+            <div class="result-row">
+              <span>Precio mensual</span>
+              <strong>
+                {{ displayedPrice?.price_monthly | currency:'COP':'symbol-narrow':'1.0-0' }}
+              </strong>
+            </div>
+            <div class="result-row">
+              <span>Precio por Mbps</span>
+              <strong>
+                {{ displayedPrice?.price_per_mbps | currency:'COP':'symbol-narrow':'1.0-0' }}
+              </strong>
+            </div>
+            <button
+              *ngIf="canTogglePrice"
+              type="button"
+              class="details-btn"
+              (click)="togglePrice()">
+              ⇄ {{ showFloor ? 'Precio recomendado' : 'Precio piso' }}
+            </button>
+            <hr>
+            <h3>📊 Referencia histórica</h3>
+            <p class="reference-text">
+              {{ historicalReference }}
+            </p>
+            <div class="result-row">
+              <span>Valor x Mbps promedio</span>
+              <strong>
+                {{ pricingResult.mean_price_mbps | currency:'COP':'symbol-narrow':'1.0-0' }}
+              </strong>
+            </div>
+            <div class="result-row">
+              <span>Desviación estándar</span>
+              <strong>
+                {{ pricingResult.market_std | currency:'COP':'symbol-narrow':'1.0-0' }}
+              </strong>
+            </div>
+            <div class="result-row">
+              <span>Mediana</span>
+              <strong>
+                {{ pricingResult.median_price_mbps | currency:'COP':'symbol-narrow':'1.0-0' }}
+              </strong>
+            </div>
+            <div class="tarifario-title">
+              <span>Tarifario</span>
+            </div>
+            <div class="result-row">
+              <span>Base</span>
+              <strong>
+                {{ pricingResult.ref_price_mbps | currency:'COP':'symbol-narrow':'1.0-0' }}
+              </strong>
+            </div>
+            <div class="result-row">
+              <span>Descuento</span>
+              <strong>
+                {{ pricingResult.ref_price_mbps_dis | currency:'COP':'symbol-narrow':'1.0-0' }}
+              </strong>
+            </div>
+            <div class="result-row">
+              <span>Especial</span>
+              <strong>
+                {{ pricingResult.ref_price_mbps_special | currency:'COP':'symbol-narrow':'1.0-0' }}
+              </strong>
+            </div>
+          }
         </div>
-      </form>
+      }
     </div>
     <!-- ========================= -->
-    <!-- PANEL DERECHA (2)         -->
+    <!-- TABLA (3)                 -->
     <!-- ========================= -->
-    @if (selectedMunicipality && (loadingCalculation || showResults)) {
-      <div class="results-panel">
-        <!-- *ngIf="selectedMunicipality && (loadingCalculation || showResults)"> -->
-        @if(loadingCalculation){
+  
+    @if(servicesSearched || selectedMunicipality) 
+    {
+      <div class="services-table">
+        @if (loadingServices) 
+        {
           <div class="loading-results">
             <div class="spinner"></div>
-            <p>Calculando propuesta financiera...</p>
+            <p>Cargando servicios...</p>
           </div>
         }
-        @else if(showResults && pricingResult){
-          <h3>
-            {{ showFloor ? '💰 Precio piso' : '💰 Precio recomendado' }}
-          </h3>
-          <div class="result-row">
-            <span>Precio mensual</span>
-            <strong>
-              {{ displayedPrice?.price_monthly | currency:'COP':'symbol-narrow':'1.0-0' }}
-            </strong>
-          </div>
-          <div class="result-row">
-            <span>Precio por Mbps</span>
-            <strong>
-              {{ displayedPrice?.price_per_mbps | currency:'COP':'symbol-narrow':'1.0-0' }}
-            </strong>
-          </div>
-          <button
-            *ngIf="canTogglePrice"
-            type="button"
-            class="details-btn"
-            (click)="togglePrice()">
-            ⇄ {{ showFloor ? 'Precio recomendado' : 'Precio piso' }}
-          </button>
-          <hr>
-          <h3>📊 Referencia histórica</h3>
-          <p class="reference-text">
-            {{ historicalReference }}
+        @else if (servicesError) 
+        {
+          <p class="table-message error">
+            {{ servicesError }}
           </p>
-          <div class="result-row">
-            <span>Valor x Mbps promedio</span>
-            <strong>
-              {{ pricingResult.mean_price_mbps | currency:'COP':'symbol-narrow':'1.0-0' }}
-            </strong>
-          </div>
-          <div class="result-row">
-            <span>Desviación estándar</span>
-            <strong>
-              {{ pricingResult.market_std | currency:'COP':'symbol-narrow':'1.0-0' }}
-            </strong>
-          </div>
-          <div class="result-row">
-            <span>Mediana</span>
-            <strong>
-              {{ pricingResult.median_price_mbps | currency:'COP':'symbol-narrow':'1.0-0' }}
-            </strong>
-          </div>
-          <div class="tarifario-title">
-            <span>Tarifario</span>
-          </div>
-          <div class="result-row">
-            <span>Base</span>
-            <strong>
-              {{ pricingResult.ref_price_mbps | currency:'COP':'symbol-narrow':'1.0-0' }}
-            </strong>
-          </div>
-          <div class="result-row">
-            <span>Descuento</span>
-            <strong>
-              {{ pricingResult.ref_price_mbps_dis | currency:'COP':'symbol-narrow':'1.0-0' }}
-            </strong>
-          </div>
-          <div class="result-row">
-            <span>Especial</span>
-            <strong>
-              {{ pricingResult.ref_price_mbps_special | currency:'COP':'symbol-narrow':'1.0-0' }}
-            </strong>
+        }
+        @else if (services.length === 0)
+        {
+          <p class="table-message">
+            No se encontraron servicios para los municipios seleccionados.
+          </p>
+        }
+        @else 
+        {
+           <div class="services-content">
+            <!-- FILTROS -->
+            <div class="services-filters">
+              <div class="filter-group">
+                <label for="subsegment">
+                  Segmentación
+                </label>
+                <select
+                  id="subsegment"
+                  [(ngModel)]="selectedSubsegment"
+                  (ngModelChange)="applyServiceFilters()">
+                  <option value="">
+                    Todos
+                  </option>
+                  @for (
+                    subsegment of subsegments;
+                    track subsegment
+                  ) {
+                    <option [value]="subsegment">
+                      {{ subsegment }}
+                    </option>
+                  }
+                </select>
+              </div>
+              <div class="filter-group">
+                <label for="capacityRange">
+                  Rango de capacidad
+                </label>
+                <select
+                  id="capacityRange"
+                  [(ngModel)]="selectedCapacityRange"
+                  (ngModelChange)="applyServiceFilters()">
+                  <option value="">
+                    Todos
+                  </option>
+                  @for (
+                    range of capacityRanges;
+                    track range
+                  ) {
+                    <option [value]="range">
+                      {{ range }}
+                    </option>
+                  }
+                </select>
+              </div>
+              <div class="filter-group">
+                <label for="producto_c">
+                  Producto
+                </label>
+                <select
+                  id="producto_c"
+                  [(ngModel)]="selectedProduct"
+                  (ngModelChange)="applyServiceFilters()">
+                  <option value="">
+                    Todos
+                  </option>
+                  @for (product of products_clients; track product) {
+                    <option [value]="product">
+                      {{ product }}
+                    </option>
+                  }
+                </select>
+              </div>
+            </div>
+            <!-- CONTADOR -->
+            <div class="services-summary">
+              <span>
+                {{ filteredServices.length }}
+                servicios encontrados
+              </span>
+            </div>
+            <!-- TABLA -->
+            @if (filteredServices.length > 0) {
+              <table>
+                <thead>
+                  <tr>
+                    <th>Razón Social</th>
+                    <th>Segmentación</th>
+                    <th>Producto</th>
+                    <th>Capacidad</th>
+                    <th>MRC Activo</th>
+                    <th>Tarifa</th>
+                    <th>Valor/Mbps</th>
+                    <th>Fin Permanencia</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (
+                    service of filteredServices;
+                    track $index
+                  ) {
+                    <tr>
+                      <td>
+                        {{ service["Razón Social"] }}
+                      </td>
+                      <td>
+                        {{ service["subsegment"] || 'Sin segmentar' }}
+                      </td>
+                      <td>
+                        {{ service["Producto"] }}
+                      </td>
+                      <td>
+                        {{ service["Capacidad"] }}
+                      </td>
+                      <td>
+                        {{
+                          service["Tarifa Total Cliente"]
+                            | currency:'COP':'symbol-narrow':'1.0-0'
+                        }}
+                      </td>
+                      <td>
+                        {{
+                          service["Tarifa"]
+                            | currency:'COP':'symbol-narrow':'1.0-0'
+                        }}
+                      </td>
+                      <td>
+                        {{
+                          service["Vlr x Mbps"]
+                            | currency:'COP':'symbol-narrow':'1.0-0'
+                        }}
+                      </td>
+                      <td>
+                        {{
+                          service["Fecha Fin Permanencia"]
+                            | date:'dd/MM/yyyy'
+                        }}
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            }
+            @else {
+              <p class="table-message">
+                No hay servicios que coincidan con los filtros seleccionados.
+              </p>
+            }
           </div>
         }
       </div>
     }
   </div>
-  <!-- ========================= -->
-  <!-- TABLA (3)                 -->
-  <!-- ========================= -->
-  <div
-  class="services-table"
-  *ngIf="selectedMunicipality">
-
-  <div *ngIf="loadingServices">
-
-    <div class="loading-results">
-      <div class="spinner"></div>
-      <p>Cargando servicios...</p>
-    </div>
-
-  </div>
-
-  <div
-    *ngIf="!loadingServices && services.length > 0"
-    class="services-content">
-
-    <!-- FILTROS -->
-    <div class="services-filters">
-
-      <div class="filter-group">
-
-        <label for="subsegment">
-          Segmentación
-        </label>
-
-        <select
-          id="subsegment"
-          [(ngModel)]="selectedSubsegment"
-          (ngModelChange)="applyServiceFilters()">
-          <option value="">
-            Todos
-          </option>
-          <option
-            *ngFor="let subsegment of subsegments"
-            [value]="subsegment">
-            {{ subsegment }}
-          </option>
-        </select>
-      </div>
-
-
-      <div class="filter-group">
-        <label for="capacityRange">
-          Rango de capacidad
-        </label>
-        <select
-          id="capacityRange"
-          [(ngModel)]="selectedCapacityRange"
-          (ngModelChange)="applyServiceFilters()">
-          <option value="">
-            Todos
-          </option>
-          <option
-            *ngFor="let range of capacityRanges"
-            [value]="range">
-            {{ range }}
-          </option>
-        </select>
-      </div>
-
-      <div class="filter-group">
-        <label for="producto_c">
-          Producto
-        </label>
-
-        <select
-          id="producto_c"
-          [(ngModel)]="selectedProduct"
-          (ngModelChange)="applyServiceFilters()">
-
-          <option value="">
-            Todos
-          </option>
-
-          <option
-            *ngFor="let product of products_clients"
-            [value]="product">
-            {{ product }}
-          </option>
-
-        </select>
-      </div>
-
-    </div>
-
-
-    <!-- CONTADOR -->
-    <div class="services-summary">
-
-      <span>
-        {{ filteredServices.length }}
-        servicios encontrados
-      </span>
-
-    </div>
-
-
-    <!-- TABLA -->
-    <table
-      *ngIf="filteredServices.length > 0">
-
-      <thead>
-
-        <tr>
-          <th>Razón Social</th>
-          <th>Segmentación</th>
-          <th>Producto</th>
-          <th>Capacidad</th>
-          <th>MRC Activo</th>
-          <th>Tarifa</th>
-          <th>Valor/Mbps</th>
-          <th>Fin Permanencia</th>
-        </tr>
-
-      </thead>
-
-      <tbody>
-
-        <tr *ngFor="let service of filteredServices">
-
-          <td>
-            {{ service["Razón Social"] }}
-          </td>
-
-          <td>
-            {{ service["subsegment"] || 'Sin segmentar' }}
-          </td>
-
-          <td>
-            {{ service["Producto"] }}
-          </td>
-
-          <td>
-            {{ service["Capacidad"] }}
-          </td>
-
-          <td>
-            {{ service["Tarifa Total Cliente"] | currency:'COP':'symbol-narrow':'1.0-0' }}
-          </td>
-
-          <td>
-            {{ service["Tarifa"] | currency:'COP':'symbol-narrow':'1.0-0' }}
-          </td>
-
-          <td>
-            {{ service["Vlr x Mbps"] | currency:'COP':'symbol-narrow':'1.0-0' }}
-          </td>
-
-          <td>
-            {{ service["Fecha Fin Permanencia"] | date:'dd/MM/yyyy' }}
-          </td>
-
-        </tr>
-
-      </tbody>
-
-    </table>
-
-
-    <!-- FILTRO SIN RESULTADOS -->
-    <p
-      *ngIf="filteredServices.length === 0"
-      class="table-message">
-
-      No hay servicios que coincidan con los filtros seleccionados.
-
-    </p>
-
-  </div>
-
-
-  <!-- ERROR -->
-  <p
-    *ngIf="!loadingServices && servicesError"
-    class="table-message error">
-
-    {{ servicesError }}
-
-  </p>
-
-
-  <!-- MUNICIPIO SIN SERVICIOS -->
-  <p
-    *ngIf="!loadingServices && !servicesError && services.length === 0"
-    class="table-message">
-
-    No se encontraron servicios para este municipio.
-
-  </p>
-
-</div>
 </div>
 <!-- EOF -->

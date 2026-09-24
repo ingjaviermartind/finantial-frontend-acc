@@ -1,0 +1,320 @@
+$Aztk_deepBlue: #074057;
+$Aztk_lightBlue: #e8f1f4;
+$border: #e1e6e9;
+$text: #555;
+$muted: #7a7a7a;
+
+.evaluador-sidebar {
+  flex: 0 0 280px;
+  width: 280px;
+  height: 100%;
+  box-sizing: border-box;
+  background: #fff;
+  border-right: 1px solid $border;
+  overflow: hidden;
+  transition:
+    flex-basis .25s ease,
+    width .25s ease;
+}
+
+.evaluador-sidebar:not(.expanded) {
+  flex-basis: 0;
+  width: 0;
+  border-right: none;
+}
+
+.sidebar-inner {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 18px 14px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebar-header {
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 14px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #e5e7e9;
+  white-space: nowrap;
+}
+
+.sidebar-title {
+  color: $Aztk_deepBlue;
+  font-size: .86rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+}
+
+.filters {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 3px;
+}
+
+
+/* ========================= */
+/* SECCIÓN */
+/* ========================= */
+
+.filter-section {
+  padding-bottom: 18px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid #edf0f2;
+}
+
+.section-title {
+  margin-bottom: 12px;
+  color: $Aztk_deepBlue;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+}
+
+
+/* ========================= */
+/* GRUPO */
+/* ========================= */
+
+.filter-group {
+  margin-bottom: 12px;
+}
+
+.filter-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.filter-label-row label {
+  margin-bottom: 0;
+  color: $text;
+  font-size: .72rem;
+  font-weight: 600;
+}
+
+
+/* ========================= */
+/* TODOS / NINGUNO */
+/* ========================= */
+
+.select-all-button {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: $Aztk_deepBlue;
+  font-size: .65rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.select-all-button:hover {
+  text-decoration: underline;
+}
+
+
+/* ========================= */
+/* BUSCADOR */
+/* ========================= */
+
+.checkbox-search {
+  margin-bottom: 6px;
+}
+
+.checkbox-search input {
+  width: 100%;
+  height: 30px;
+  box-sizing: border-box;
+  padding: 0 8px;
+  border: 1px solid #d8dfe3;
+  border-radius: 5px;
+  background: #fff;
+  color: $text;
+  font-size: .7rem;
+  outline: none;
+}
+
+.checkbox-search input::placeholder {
+  color: #aaa;
+}
+
+.checkbox-search input:focus {
+  border-color: $Aztk_deepBlue;
+  box-shadow: 0 0 0 2px rgba(7, 64, 87, .08);
+}
+
+
+/* ========================= */
+/* LISTA */
+/* ========================= */
+
+.checkbox-list {
+  max-height: 126px;
+  overflow-y: auto;
+  padding: 5px 4px;
+  border: 1px solid $border;
+  border-radius: 5px;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+
+/* ========================= */
+/* OPCIÓN */
+/* ========================= */
+
+.checkbox-option {
+  display: flex !important;
+  align-items: center;
+  position: relative;
+  min-height: 27px;
+  margin: 0 !important;
+  padding: 0 4px;
+  color: $text;
+  font-size: .72rem;
+  font-weight: 400 !important;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-option:hover {
+  background: #f5f8f9;
+  border-radius: 4px;
+}
+
+
+/* ========================= */
+/* CHECKBOX REAL */
+/* ========================= */
+
+.checkbox-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+
+/* ========================= */
+/* CHECKBOX VISUAL */
+/* ========================= */
+
+.checkbox-box {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  margin-right: 7px;
+  box-sizing: border-box;
+  border: 1px solid #cfd9de;
+  border-radius: 4px;
+  background: #fff;
+  position: relative;
+}
+
+
+/* ========================= */
+/* MARCADO */
+/* ========================= */
+
+.checkbox-option input:checked + .checkbox-box {
+  background: $Aztk_deepBlue;
+  border-color: $Aztk_deepBlue;
+}
+
+
+/* ========================= */
+/* CHECK */
+/* ========================= */
+
+.checkbox-option input:checked + .checkbox-box::after {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 1px;
+  width: 5px;
+  height: 8px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+
+/* ========================= */
+/* TEXTO */
+/* ========================= */
+
+.checkbox-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* ========================= */
+/* SIN RESULTADOS */
+/* ========================= */
+
+.no-options {
+  padding: 10px 6px;
+  color: #999;
+  font-size: .68rem;
+  text-align: center;
+}
+
+.sidebar-actions {
+  padding-top: 14px;
+  border-top: 1px solid #e5e7e9;
+}
+
+.search-button {
+  width: 100%;
+  min-height: 36px;
+  border: none;
+  border-radius: 5px;
+  background: $Aztk_deepBlue;
+  color: white;
+  font-size: .68rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background .15s ease,
+    transform .1s ease;
+}
+
+.search-button:hover {
+  background: #07516d;
+}
+
+.search-button:active {
+  transform: scale(.98);
+}
+
+.search-button:disabled {
+  opacity: .65;
+  cursor: not-allowed;
+}
+
+.search-button:disabled:hover {
+  background: $Aztk_deepBlue;
+}
+
+.clear-button {
+  width: 100%;
+  margin-top: 7px;
+  padding: 7px;
+  border: none;
+  background: transparent;
+  color: $muted;
+  font-size: .68rem;
+  cursor: pointer;
+}
+
+.clear-button:hover {
+  color: $Aztk_deepBlue;
+}

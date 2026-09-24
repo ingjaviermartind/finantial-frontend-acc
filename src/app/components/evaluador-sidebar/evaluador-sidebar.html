@@ -1,0 +1,133 @@
+<aside
+    class="evaluador-sidebar"
+    [class.expanded]="isExpanded">
+    <div class="sidebar-inner">
+    <!-- ========================= -->
+    <!-- HEADER -->
+    <!-- ========================= -->
+    <div class="sidebar-header">
+      <div class="sidebar-title-group">
+          <span class="sidebar-title">
+            FILTROS DE BÚSQUEDA
+          </span>
+        </div>
+    </div>
+    <!-- ========================= -->
+    <!-- FILTROS -->
+    <!-- ========================= -->
+    @if (isExpanded) {
+        <div class="filters">
+            <section class="filter-section">
+                <div class="section-title">
+                    UBICACIÓN
+                </div>
+                <!-- DEPARTAMENTO -->
+                <div class="filter-group">
+                    <div class="filter-label-row">
+                    <label>
+                        Departamento
+                    </label>
+                    <button
+                        type="button"
+                        class="select-all-button"
+                        (click)="toggleAllDepartments()">
+                        {{ allDepartmentsSelected ? 'Ninguno' : 'Todos' }}
+                    </button>
+                    </div>
+                    <div class="checkbox-search">
+                    <input
+                        type="text"
+                        placeholder="Buscar departamento..."
+                        [(ngModel)]="departmentSearch">
+                    </div>
+                    <div class="checkbox-list">
+                    @for (
+                        department of filteredDepartments;
+                        track department.id
+                    ) {
+                        <label class="checkbox-option">
+                        <input
+                            type="checkbox"
+                            [checked]="selectedDepartmentIds.includes(department.id)"
+                            (change)="toggleDepartment(department.id)">
+                        <span class="checkbox-box"></span>
+                        <span class="checkbox-label">
+                            {{ department.name }}
+                        </span>
+                        </label>
+                    }
+                    @if (filteredDepartments.length === 0) {
+                        <div class="no-options">
+                        No se encontraron departamentos
+                        </div>
+                    }
+                    </div>
+                </div>
+                <!-- MUNICIPIO -->
+                <div class="filter-group">
+                <div class="filter-label-row">
+                    <label>
+                    Municipio
+                    </label>
+                    <button
+                    type="button"
+                    class="select-all-button"
+                    [disabled]="!selectedDepartmentIds.length"
+                    (click)="toggleAllMunicipalities()">
+                    {{ allMunicipalitiesSelected ? 'Ninguno' : 'Todos' }}
+                    </button>
+                </div>
+                <div class="checkbox-search">
+                    <input
+                    type="text"
+                    placeholder="Buscar municipio..."
+                    [(ngModel)]="municipalitySearch"
+                    [disabled]="!selectedDepartmentIds.length">
+                </div>
+                <div class="checkbox-list">
+                    @if (loadingMunicipalities) {
+                    <div class="no-options">
+                        Cargando municipios...
+                    </div>
+                    } @else 
+                    {
+                        @for (municipality of filteredMunicipalities; track municipality.id) 
+                        {
+                            <label class="checkbox-option">
+                            <input
+                                type="checkbox"
+                                [checked]="selectedMunicipalityIds.includes(municipality.id)"
+                                (change)="toggleMunicipality(municipality.id)">
+                            <span class="checkbox-box"></span>
+                            <span class="checkbox-label">
+                                {{ municipality.name }}
+                            </span>
+                            </label>
+                        }
+                        @if (selectedDepartmentIds.length && filteredMunicipalities.length === 0) {
+                            <div class="no-options">No se encontraron municipios</div>
+                        }
+                    }
+
+                </div>
+
+                </div>
+            </section>
+        </div>
+        <div class="sidebar-actions">
+            <button
+                type="button"
+                class="search-button"
+                [disabled]="!selectedMunicipalityIds.length"
+                (click)="searchServices()">
+                BUSCAR SERVICIOS
+            </button>
+            <button
+                type="button"
+                class="clear-button">
+                Limpiar filtros
+            </button>
+            </div>
+        }
+    </div>
+</aside>
