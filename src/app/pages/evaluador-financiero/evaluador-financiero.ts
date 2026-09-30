@@ -16,6 +16,8 @@ import {
   PricingResponse
 } from '../../models/pricing';
 
+import {ServicesFilters, ActiveService} from '../../models/services'
+
 import { finalize } from 'rxjs/operators';
 import { ProductCatalog } from '../../models/product-catalog';
 import { Subsegment } from '../../models/subsegment';
@@ -48,16 +50,18 @@ export class EvaluadorFinanciero implements OnInit {
   municipalities: any[] = [];
   products: ProductCatalog[] = [];
   subsegments_sel: Subsegment[] = [];
-  services: any [] = [];
-  filteredServices : any[] = [];
+
+  services: any[] = [];
+  // services: ActiveService[] = [];
+  filteredServices: ActiveService[] = [];
 
   subsegments: string[] = [];
   capacityRanges: string[] = [];
   products_clients : string[] = []
 
-  selectedSubsegment = '';
-  selectedCapacityRange = '';
-  selectedProduct = '';
+  // selectedSubsegment = '';
+  // selectedCapacityRange = '';
+  // selectedProduct = '';
 
   loadingServices = false;
   showResults = false;
@@ -144,9 +148,9 @@ export class EvaluadorFinanciero implements OnInit {
         );
       this.services = [];
       // this.form.get('product')!.setValue('');
-      this.selectedSubsegment = '';
-      this.selectedCapacityRange = '';
-      this.selectedProduct = '';
+      // this.selectedSubsegment = '';
+      // this.selectedCapacityRange = '';
+      // this.selectedProduct = '';
       this.subsegments = [];
       this.capacityRanges = [];
       this.products_clients = [];
@@ -164,11 +168,11 @@ export class EvaluadorFinanciero implements OnInit {
           next: response => {
             if (response.success) {
               this.services = response.data;
-              this.selectedSubsegment = '';
-              this.selectedCapacityRange = '';
-              this.selectedProduct = '';
-              this.loadServiceFilters();
-              this.applyServiceFilters();
+              // this.selectedSubsegment = '';
+              // this.selectedCapacityRange = '';
+              // this.selectedProduct = '';
+              // this.loadServiceFilters();
+              // this.applyServiceFilters();
               // console.log(response.data);
             } else {
               this.servicesError = response.message;
@@ -219,42 +223,50 @@ export class EvaluadorFinanciero implements OnInit {
     this.loadingServices = true;
     this.servicesError = null;
     this.showResults = false;
-    this.selectedSubsegment = '';
-    this.selectedCapacityRange = '';
-    this.selectedProduct = '';
+    // this.selectedSubsegment = '';
+    // this.selectedCapacityRange = '';
+    // this.selectedProduct = '';
     this.subsegments = [];
     this.capacityRanges = [];
     this.products_clients = [];
-    console.log('MUNICIPIOS A CONSULTAR:', municipalityIds);
-    forkJoin(
-      municipalityIds.map(
-        municipalityId =>
-          this.servicesService.getByMunicipality(municipalityId)
-      )
-    )
+    // console.log('MUNICIPIOS A CONSULTAR:', municipalityIds);
+
+    const filters: ServicesFilters = {
+      municipality: municipalityIds
+    };
+
+  this.servicesService
+    .getByMunicipalities(filters)
     .pipe(
       finalize(() => {
         this.loadingServices = false;
       })
     )
     .subscribe({
-      next: responses => {
-        console.log('RESPUESTAS:', responses);
-        const successfulResponses =
-          responses.filter(response => response.success);
-        const failedResponses =
-          responses.filter(response => !response.success);
-        this.services = successfulResponses.flatMap(
-          response => response.data
-        );
-        console.log('SERVICIOS TOTALES:', this.services.length);
-        console.log('SERVICES:', this.services);
-        if (failedResponses.length > 0) {
+      next: response => {
+        // console.log(
+        //   'RESPUESTA:',
+        //   response
+        // );
+        if (response.success) {
+          this.services = response.data;
+          // console.log(
+          //   'SERVICIOS TOTALES:',
+          //   this.services.length
+          // );
+          console.log(
+            'SERVICES:',
+            this.services
+          );
+          // this.loadServiceFilters();
+          // this.applyServiceFilters();
+        } else {
+          this.services = [];
+          this.filteredServices = [];
           this.servicesError =
-            'Algunos municipios no pudieron consultarse.';
+            response.message ??
+            'No fue posible consultar los servicios.';
         }
-        this.loadServiceFilters();
-        this.applyServiceFilters();
       },
       error: err => {
         console.error(
@@ -384,48 +396,46 @@ export class EvaluadorFinanciero implements OnInit {
         return '';
     }
   }
-  applyServiceFilters(): void {
-    this.filteredServices = this.services.filter(service => {
+  // applyServiceFilters(): void {
+  //   this.filteredServices = this.services.filter(service => {
+  //     const matchesSubsegment =
+  //       !this.selectedSubsegment ||
+  //       service['subsegment'] === this.selectedSubsegment;
+  //     const matchesCapacity =
+  //       !this.selectedCapacityRange ||
+  //       service['Rango Capacidad'] === this.selectedCapacityRange;
 
-      const matchesSubsegment =
-        !this.selectedSubsegment ||
-        service['subsegment'] === this.selectedSubsegment;
+  //     const matchesProduct = 
+  //       !this.selectedProduct ||
+  //       service['Producto'] === this.selectedProduct;
 
-      const matchesCapacity =
-        !this.selectedCapacityRange ||
-        service['Rango Capacidad'] === this.selectedCapacityRange;
+  //     return matchesSubsegment && matchesCapacity && matchesProduct;
+  //   });
+  // }
 
-      const matchesProduct = 
-        !this.selectedProduct ||
-        service['Producto'] === this.selectedProduct;
-
-      return matchesSubsegment && matchesCapacity && matchesProduct;
-    });
-  }
-
-  loadServiceFilters(): void {
-    this.subsegments = [
-      ...new Set(
-        this.services
-          .map(service => service['subsegment'])
-          .filter(value => value)
-      )
-    ].sort();
-    this.capacityRanges = [
-      ...new Set(
-        this.services
-          .map(service => service['Rango Capacidad'])
-          .filter(value => value)
-      )
-    ];
-    this.products_clients = [
-      ...new Set(
-        this.services
-          .map(service => service['Producto'])
-          .filter(value => value)
-      )
-    ].sort();
-  }
+  // loadServiceFilters(): void {
+  //   this.subsegments = [
+  //     ...new Set(
+  //       this.services
+  //         .map(service => service['subsegment'])
+  //         .filter(value => value)
+  //     )
+  //   ].sort();
+  //   this.capacityRanges = [
+  //     ...new Set(
+  //       this.services
+  //         .map(service => service['Rango Capacidad'])
+  //         .filter(value => value)
+  //     )
+  //   ];
+  //   this.products_clients = [
+  //     ...new Set(
+  //       this.services
+  //         .map(service => service['Producto'])
+  //         .filter(value => value)
+  //     )
+  //   ].sort();
+  // }
 }
 //
 // EOF
