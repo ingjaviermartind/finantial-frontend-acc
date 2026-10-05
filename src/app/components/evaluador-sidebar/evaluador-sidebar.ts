@@ -3,6 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { Department } from '../../services/department';
 import { Municipality } from '../../services/municipality';
 
+import { ClientsSidebarState } from '../../services/clients-state';
+
 @Component({
   selector: 'app-evaluador-sidebar',
   standalone: true,
@@ -15,9 +17,16 @@ import { Municipality } from '../../services/municipality';
 
 export class EvaluadorSidebar {
   @Input() isExpanded = true;
-
+  @Input() initialState : ClientsSidebarState = 
+  {
+    selectedDepartmentIds: [],
+    selectedMunicipalityIds: [],
+    departmentSearch: '',
+    municipalitySearch: ''
+  }
   @Output() departmentsChange = new EventEmitter<any[]>();
   @Output() municipalitiesChange = new EventEmitter<any[]>();
+  @Output() stateChange = new EventEmitter<ClientsSidebarState>();
   @Output() search = new EventEmitter<any[]>();
 
   departments : any[] = [];
@@ -37,7 +46,14 @@ export class EvaluadorSidebar {
   ) {}
 
   ngOnInit() : void {
+    this.selectedDepartmentIds = [...this.initialState.selectedDepartmentIds];
+    this.selectedMunicipalityIds = [...this.initialState.selectedMunicipalityIds];
+    this.departmentSearch = this.initialState.departmentSearch;
+    this.municipalitySearch = this.initialState.municipalitySearch;
     this.loadDepartments();
+    if (this.selectedDepartmentIds.length > 0) {
+      this.loadMunicipalities();
+    }
   }
 
   loadDepartments() : void {
@@ -56,6 +72,15 @@ export class EvaluadorSidebar {
           );
         }
       });
+  }
+
+  emitState(): void {
+    this.stateChange.emit({
+      selectedDepartmentIds: [...this.selectedDepartmentIds],
+      selectedMunicipalityIds: [...this.selectedMunicipalityIds],
+      departmentSearch: this.departmentSearch,
+      municipalitySearch: this.municipalitySearch
+    });
   }
 
   get allDepartmentsSelected(): boolean {
@@ -87,10 +112,9 @@ export class EvaluadorSidebar {
     }
     this.selectedMunicipalityIds = [];
     this.municipalities = [];
-    this.departmentsChange.emit(
-      this.selectedDepartmentIds
-    );
+    this.departmentsChange.emit( this.selectedDepartmentIds);
     this.municipalitiesChange.emit([]);
+    this.emitState();
     this.loadMunicipalities();
   }
 
@@ -107,6 +131,7 @@ export class EvaluadorSidebar {
     this.municipalities = [];
     this.departmentsChange.emit(this.selectedDepartmentIds);
     this.municipalitiesChange.emit([]);
+    this.emitState();
     this.loadMunicipalities();
   }
 
@@ -155,43 +180,31 @@ export class EvaluadorSidebar {
 
   toggleMunicipality(id: any): void {
     if (this.selectedMunicipalityIds.includes(id)) {
-
       this.selectedMunicipalityIds =
         this.selectedMunicipalityIds.filter(
           municipalityId => municipalityId !== id
         );
-
     } else {
-
       this.selectedMunicipalityIds = [
         ...this.selectedMunicipalityIds,
         id
       ];
-
     }
-
-    this.municipalitiesChange.emit(
-      this.selectedMunicipalityIds
-    );
+    this.municipalitiesChange.emit(this.selectedMunicipalityIds);
+    this.emitState();
   }
 
   toggleAllMunicipalities(): void {
     if (this.allMunicipalitiesSelected) {
-
       this.selectedMunicipalityIds = [];
-
     } else {
-
       this.selectedMunicipalityIds =
         this.municipalities.map(
           municipality => municipality.id
         );
-
     }
-
-    this.municipalitiesChange.emit(
-      this.selectedMunicipalityIds
-    );
+    this.municipalitiesChange.emit(this.selectedMunicipalityIds);
+    this.emitState();
     }
     
   searchServices(): void {
@@ -200,4 +213,6 @@ export class EvaluadorSidebar {
     }
     this.search.emit(this.selectedMunicipalityIds);
   }
+
+  
 }

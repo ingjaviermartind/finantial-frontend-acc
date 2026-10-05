@@ -38,7 +38,8 @@
                     <input
                         type="text"
                         placeholder="Buscar departamento..."
-                        [(ngModel)]="departmentSearch">
+                        [(ngModel)]="departmentSearch"
+                        (ngModelChange)="emitState()">
                     </div>
                     <div class="checkbox-list">
                     @for (
@@ -82,7 +83,8 @@
                     type="text"
                     placeholder="Buscar municipio..."
                     [(ngModel)]="municipalitySearch"
-                    [disabled]="!selectedDepartmentIds.length">
+                    [disabled]="!selectedDepartmentIds.length"
+                    (ngModelChange)="emitState()">
                 </div>
                 <div class="checkbox-list">
                     @if (loadingMunicipalities) {

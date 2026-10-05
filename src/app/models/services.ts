@@ -23,7 +23,7 @@ export interface ActiveService {
   Producto: string;
   Plan: string;
   TIPO_TECNOLOGIA: string;
-  subsegmento: string;
+  Subsegmento: string;
   'Rango Capacidad': string;
 }
 

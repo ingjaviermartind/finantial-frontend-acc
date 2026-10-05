@@ -6,6 +6,7 @@ import { EvaluadorSidebar } from '../../components/evaluador-sidebar/evaluador-s
 import { Department } from '../../services/department';
 import { Municipality } from '../../services/municipality';
 import { Services } from '../../services/services';
+import { ClientsState, ClientsSidebarState } from '../../services/clients-state';
 
 import { PricingService } from '../../services/pricing';
 import { ProductCatalogService } from '../../services/product-catalog';
@@ -21,8 +22,8 @@ import {ServicesFilters, ActiveService} from '../../models/services'
 import { finalize } from 'rxjs/operators';
 import { ProductCatalog } from '../../models/product-catalog';
 import { Subsegment } from '../../models/subsegment';
-import { setThrowInvalidWriteToSignalError } from '@angular/core/primitives/signals';
-import { forkJoin } from 'rxjs';
+
+
 
 @Component({
   selector: 'app-evaluador-financiero',
@@ -51,9 +52,9 @@ export class EvaluadorFinanciero implements OnInit {
   products: ProductCatalog[] = [];
   subsegments_sel: Subsegment[] = [];
 
-  services: any[] = [];
-  // services: ActiveService[] = [];
-  filteredServices: ActiveService[] = [];
+
+  services: ActiveService[] = [];
+
 
   subsegments: string[] = [];
   capacityRanges: string[] = [];
@@ -70,6 +71,8 @@ export class EvaluadorFinanciero implements OnInit {
   showFloor = false;
   selectedMunicipality: any = null;
   servicesError: string | null | undefined = null;
+  sidebarState: ClientsSidebarState;
+
 
   constructor(
     private fb: FormBuilder,
@@ -78,8 +81,13 @@ export class EvaluadorFinanciero implements OnInit {
     private servicesService : Services,
     private pricingService : PricingService,
     private productCatalogService : ProductCatalogService,
-    private clientSubsegmentService : ClientSubsegmentService
-  ){}
+    private clientSubsegmentService : ClientSubsegmentService,
+    private clientsState : ClientsState,
+  ){
+    this.sidebarState = {
+    ...this.clientsState.sidebar
+  };
+  }
 
 
   ngOnInit(): void {
@@ -105,6 +113,14 @@ export class EvaluadorFinanciero implements OnInit {
       sensitivity: [null]
     });
 
+
+    this.services = [...this.clientsState.services];
+    this.servicesSearched = this.clientsState.servicesSearched;
+    this.isFiltersExpanded = this.clientsState.isFiltersExpanded;
+
+    this.sidebarState = {...this.clientsState.sidebar};
+    this.selectedDepartmentIds = [...this.sidebarState.selectedDepartmentIds];
+    this.selectedMunicipalityIds = [...this.sidebarState.selectedMunicipalityIds];
 
     this.loadDepartments();
     this.loadProducts();
@@ -168,12 +184,6 @@ export class EvaluadorFinanciero implements OnInit {
           next: response => {
             if (response.success) {
               this.services = response.data;
-              // this.selectedSubsegment = '';
-              // this.selectedCapacityRange = '';
-              // this.selectedProduct = '';
-              // this.loadServiceFilters();
-              // this.applyServiceFilters();
-              // console.log(response.data);
             } else {
               this.servicesError = response.message;
             }
@@ -202,6 +212,7 @@ export class EvaluadorFinanciero implements OnInit {
 
   toggleFilters(): void {
     this.isFiltersExpanded = !this.isFiltersExpanded;
+    this.clientsState.isFiltersExpanded = this.isFiltersExpanded;
   }
 
   onDepartmentsChange(ids: any[]): void {
@@ -215,7 +226,6 @@ export class EvaluadorFinanciero implements OnInit {
   onSidebarSearch(municipalityIds: any[]): void {
     if (municipalityIds.length === 0) {
       this.services = [];
-      this.filteredServices = [];
       this.servicesSearched = false;
       return;
     }
@@ -223,13 +233,9 @@ export class EvaluadorFinanciero implements OnInit {
     this.loadingServices = true;
     this.servicesError = null;
     this.showResults = false;
-    // this.selectedSubsegment = '';
-    // this.selectedCapacityRange = '';
-    // this.selectedProduct = '';
     this.subsegments = [];
     this.capacityRanges = [];
     this.products_clients = [];
-    // console.log('MUNICIPIOS A CONSULTAR:', municipalityIds);
 
     const filters: ServicesFilters = {
       municipality: municipalityIds
@@ -244,37 +250,24 @@ export class EvaluadorFinanciero implements OnInit {
     )
     .subscribe({
       next: response => {
-        // console.log(
-        //   'RESPUESTA:',
-        //   response
-        // );
-        if (response.success) {
+        if (response.success) 
+        {
           this.services = response.data;
-          // console.log(
-          //   'SERVICIOS TOTALES:',
-          //   this.services.length
-          // );
-          console.log(
-            'SERVICES:',
-            this.services
-          );
-          // this.loadServiceFilters();
-          // this.applyServiceFilters();
-        } else {
+          this.servicesSearched = true;
+          this.clientsState.services = [...response.data];
+          this.clientsState.servicesSearched = true;
+        } 
+        else 
+        {
           this.services = [];
-          this.filteredServices = [];
+          this.servicesSearched = false;
           this.servicesError =
             response.message ??
             'No fue posible consultar los servicios.';
         }
       },
       error: err => {
-        console.error(
-          'Error consultando servicios:',
-          err
-        );
         this.services = [];
-        this.filteredServices = [];
         this.servicesError =
           err.error?.message ??
           'Error inesperado consultando servicios.';
@@ -305,7 +298,6 @@ export class EvaluadorFinanciero implements OnInit {
       .subscribe({
         next: data => {
           this.subsegments_sel = data;
-          // console.log(data)
         },
         error: err => {
           console.error('Error cargando subsegmentos:', err);
@@ -333,9 +325,6 @@ export class EvaluadorFinanciero implements OnInit {
       contract_time: this.form.value.contractTime,
       initial_income: 0
     };
-
-    // console.log('Pricing request:', request);
-
     this.showResults = false;
     this.pricingResult = undefined;
     this.loadingCalculation = true;
@@ -396,46 +385,14 @@ export class EvaluadorFinanciero implements OnInit {
         return '';
     }
   }
-  // applyServiceFilters(): void {
-  //   this.filteredServices = this.services.filter(service => {
-  //     const matchesSubsegment =
-  //       !this.selectedSubsegment ||
-  //       service['subsegment'] === this.selectedSubsegment;
-  //     const matchesCapacity =
-  //       !this.selectedCapacityRange ||
-  //       service['Rango Capacidad'] === this.selectedCapacityRange;
 
-  //     const matchesProduct = 
-  //       !this.selectedProduct ||
-  //       service['Producto'] === this.selectedProduct;
-
-  //     return matchesSubsegment && matchesCapacity && matchesProduct;
-  //   });
-  // }
-
-  // loadServiceFilters(): void {
-  //   this.subsegments = [
-  //     ...new Set(
-  //       this.services
-  //         .map(service => service['subsegment'])
-  //         .filter(value => value)
-  //     )
-  //   ].sort();
-  //   this.capacityRanges = [
-  //     ...new Set(
-  //       this.services
-  //         .map(service => service['Rango Capacidad'])
-  //         .filter(value => value)
-  //     )
-  //   ];
-  //   this.products_clients = [
-  //     ...new Set(
-  //       this.services
-  //         .map(service => service['Producto'])
-  //         .filter(value => value)
-  //     )
-  //   ].sort();
-  // }
+  onSidebarStateChange(state: ClientsSidebarState): void 
+  {
+    this.clientsState.sidebar = {...state};
+    this.sidebarState = {...state};
+    this.selectedDepartmentIds = [...state.selectedDepartmentIds];
+    this.selectedMunicipalityIds = [...state.selectedMunicipalityIds];
+  }
 }
 //
 // EOF
