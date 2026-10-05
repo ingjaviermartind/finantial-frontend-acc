@@ -53,7 +53,14 @@
                             (change)="toggleDepartment(department.id)">
                         <span class="checkbox-box"></span>
                         <span class="checkbox-label">
-                            {{ department.name }}
+                            <span>
+                                {{ department.name }}
+                            </span>
+                            @if (department.unprofitable) {
+                                <span class="unprofitable-tag">
+                                No rentable
+                                </span>
+                            }
                         </span>
                         </label>
                     }
@@ -101,8 +108,14 @@
                                 [checked]="selectedMunicipalityIds.includes(municipality.id)"
                                 (change)="toggleMunicipality(municipality.id)">
                             <span class="checkbox-box"></span>
-                            <span class="checkbox-label">
-                                {{ municipality.name }}
+                            <span class="checkbox-label"
+                            [class.unprofitable-label]="municipality.unprofitable">
+                            {{ municipality.name }}
+                            @if (municipality.unprofitable) {
+                                <span class="unprofitable-tag">
+                                No rentable
+                                </span>
+                            }
                             </span>
                             </label>
                         }
