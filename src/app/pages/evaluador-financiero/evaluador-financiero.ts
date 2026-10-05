@@ -17,7 +17,7 @@ import {
   PricingResponse
 } from '../../models/pricing';
 
-import {ServicesFilters, ActiveService} from '../../models/services'
+import {ServicesFilters, ActiveService, ActiveClientGroup} from '../../models/services'
 
 import { finalize } from 'rxjs/operators';
 import { ProductCatalog } from '../../models/product-catalog';
@@ -54,7 +54,7 @@ export class EvaluadorFinanciero implements OnInit {
 
 
   services: ActiveService[] = [];
-
+  clients: ActiveClientGroup[] = [];
 
   subsegments: string[] = [];
   capacityRanges: string[] = [];
@@ -115,6 +115,9 @@ export class EvaluadorFinanciero implements OnInit {
 
 
     this.services = [...this.clientsState.services];
+    if (this.services.length > 0) {
+      this.buildClients();
+    }
     this.servicesSearched = this.clientsState.servicesSearched;
     this.isFiltersExpanded = this.clientsState.isFiltersExpanded;
 
@@ -253,6 +256,8 @@ export class EvaluadorFinanciero implements OnInit {
         if (response.success) 
         {
           this.services = response.data;
+          this.buildClients();
+          console.log(this.services);
           this.servicesSearched = true;
           this.clientsState.services = [...response.data];
           this.clientsState.servicesSearched = true;
@@ -392,6 +397,23 @@ export class EvaluadorFinanciero implements OnInit {
     this.sidebarState = {...state};
     this.selectedDepartmentIds = [...state.selectedDepartmentIds];
     this.selectedMunicipalityIds = [...state.selectedMunicipalityIds];
+  }
+
+  buildClients(): void 
+  {
+    const grouped = new Map<string, ActiveService[]>();
+    for (const service of this.services) {
+      const nit = service.NIT;
+      if (!grouped.has(nit)) {
+        grouped.set(nit, []);
+      }
+      grouped.get(nit)!.push(service);
+    }
+    this.clients = Array.from(grouped.values()).map(services => new ActiveClientGroup(services));
+  }
+
+  toggleClient(client: ActiveClientGroup): void {
+    client.expanded = !client.expanded;
   }
 }
 //

@@ -1,5 +1,14 @@
+
 $Aztk_deepBlue: #074057;
 $Aztk_lightBlue: #e8f1f4;
+$border: #e1e6e9;
+$text: #555;
+$muted: #7a7a7a;
+
+
+/* ========================= */
+/* LAYOUT PAGE               */
+/* ========================= */
 
 .page-content:has(.evaluator-container) {
   padding: 0;
@@ -21,12 +30,20 @@ $Aztk_lightBlue: #e8f1f4;
   min-height: 0;
   height: 100%;
   box-sizing: border-box;
+
   display: flex;
   flex-direction: column;
-  gap: 0px;
+
+  gap: 0;
   padding: 18px 20px;
+
   overflow: hidden;
 }
+
+
+/* ========================= */
+/* TOOLBAR                   */
+/* ========================= */
 
 .evaluator-toolbar {
   display: flex;
@@ -56,15 +73,20 @@ $Aztk_lightBlue: #e8f1f4;
 }
 
 .metric-label {
-  color: #7a7a7a;
+  color: $muted;
   font-size: .72rem;
 }
 
 .metric-divider {
   width: 1px;
   height: 22px;
-  background: #e1e6e9;
+  background: $border;
 }
+
+
+/* ========================= */
+/* TOGGLE FILTROS            */
+/* ========================= */
 
 .filters-toggle-button {
   display: inline-flex;
@@ -74,7 +96,7 @@ $Aztk_lightBlue: #e8f1f4;
   height: 30px;
   padding: 0 9px;
 
-  border: 1px solid #e1e6e9;
+  border: 1px solid $border;
   border-radius: 5px;
 
   background: #fff;
@@ -100,225 +122,479 @@ $Aztk_lightBlue: #e8f1f4;
   line-height: 1;
 }
 
-.top-panel{
-    display:flex;
-    gap:30px;
-    align-items:flex-start;
-}
 
-.left-panel{
-    width:320px;
-    display:flex;
-    flex-direction:column;
-    gap:20px;
-
-    margin-top:-20px;
-}
-
-form{
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-}
-
-select,
-input{
-    padding:8px;
-    border-radius:6px;
-}
-
-.municipality-info{
-
-    margin-bottom:12px;
-
-    color:#7a7a7a;
-
-    font-size:.9rem;
-
-    line-height:1.4;
-
-}
-
-.municipality-info div{
-
-    margin-bottom:2px;
-
-}
-
-.municipality-info div:first-child{
-
-    font-weight:600;
-    color:#555;
-
-}
-
-.results-panel{
-    width: 340px;
-    flex-shrink: 0;
-    padding: 18px;
-    border:1px solid #ddd;
-    border-radius:10px;
-    background:#f8f9fa;
-}
-
-.results-panel h3{
-    margin-top:0;
-    margin-bottom:12px;
-}
-
-.results-panel hr{
-    margin:16px 0;
-}
-
-.result-row{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin:6px 0;
-}
-.tarifario-title {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 8px 0;
-}
-
-.details-btn{
-    margin-top:12px;
-    padding:0;
-    background:none;
-    border:none;
-    color:$Aztk_deepBlue;
-    cursor:pointer;
-    font-weight:600;
-}
-
-.details-btn:hover{
-    text-decoration:underline;
-}
-
-.reference-text{
-    margin-bottom:12px;
-    color:#666;
-    font-size:.9rem;
-}
-
-.result-row span{
-    color:#666;
-}
-
-.result-row strong{
-    font-weight:600;
-}
-
-.municipality-card p {
-  margin: 2px;
-}
-
-.municipality-card{
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    padding:10px;
-    border:1px solid #ddd;
-    border-radius:10px;
-    background:#f8f9fa;
-}
+/* ========================= */
+/* TABLA CLIENTES            */
+/* ========================= */
 
 .services-table {
   flex: 1 1 0;
+
   min-width: 0;
   min-height: 0;
+
   overflow-y: auto;
   overflow-x: hidden;
+
+  border: 1px solid $border;
+  border-radius: 7px;
+
+  background: #fff;
 }
 
-table{
-
-    width:100%;
-
-    border-collapse:collapse;
-
+.services-content {
+  width: 100%;
 }
 
-th{
 
-    background:$Aztk_deepBlue;
+/* ========================= */
+/* CONTADOR                  */
+/* ========================= */
 
-    color:white;
+.services-summary {
+  display: flex;
+  justify-content: flex-end;
 
-    padding:10px;
+  padding: 8px 14px 6px;
 
-    text-align:left;
-
+  color: $muted;
+  font-size: .72rem;
 }
 
-td{
 
-    padding:10px;
+/* ========================= */
+/* HEADER CLIENTES           */
+/* ========================= */
 
-    border-bottom:1px solid #ddd;
+.clients-header {
+  display: grid;
 
+  grid-template-columns:
+    42px
+    2fr
+    1.2fr
+    .8fr
+    1.2fr;
+
+  min-height: 38px;
+
+  align-items: center;
+
+  padding: 0 14px;
+
+  background: $Aztk_deepBlue;
+  color: #fff;
+
+  font-size: .62rem;
+  font-weight: 700;
+  letter-spacing: .04em;
 }
 
-tbody tr:nth-child(even){
-
-    background:#f7f7f7;
-
+.client-row > div:last-child,
+.clients-header > div:last-child {
+  padding-left: 30px;
 }
 
-tbody tr:hover{
+/* ========================= */
+/* CLIENT BLOCK              */
+/* ========================= */
 
-    background:#e9f3ff;
-
+.client-block {
+  border-bottom: 1px solid $border;
 }
 
-.loading-results{
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    min-height:260px;
-    gap:16px;
-    color:#666;
+.client-block:last-child {
+  border-bottom: none;
 }
 
-.spinner{
-    width:42px;
-    height:42px;
-    border:4px solid #d8e3e8;
-    border-top:4px solid $Aztk_deepBlue;
-    border-radius:50%;
-    animation:spin .8s linear infinite;
+
+/* ========================= */
+/* CLIENT ROW                */
+/* ========================= */
+
+.client-row {
+  display: grid;
+
+  grid-template-columns:
+    42px
+    2fr
+    1.2fr
+    .8fr
+    1.2fr;
+
+  min-height: 68px;
+
+  align-items: center;
+
+  padding: 0 14px;
+
+  background: #fff;
+
+  cursor: pointer;
+
+  transition: background .15s ease;
 }
 
-@keyframes spin{
-    from{
-        transform:rotate(0deg);
-    }
-    to{
-        transform:rotate(360deg);
-    }
+.client-row:hover {
+  background: #f7fafb;
 }
 
-.calculate-btn{
-    margin-top:12px;
-    padding:10px 16px;
-
-    border:none;
-    border-radius:8px;
-
-    background:$Aztk_deepBlue;
-    color:white;
-
-    font-size:.95rem;
-    font-weight:600;
+.client-row.expanded {
+  background: #f1f6f8;
 }
+
+
+/* ========================= */
+/* CHEVRON                  */
+/* ========================= */
+
+.client-expand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.expand-button {
+  width: 28px;
+  height: 28px;
+
+  padding: 0;
+
+  border: 1px solid #d7e0e4;
+  border-radius: 5px;
+
+  background: #fff;
+  color: $Aztk_deepBlue;
+
+  font-size: 18px;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.expand-button:hover {
+  background: $Aztk_lightBlue;
+}
+
+
+/* ========================= */
+/* CLIENTE                   */
+/* ========================= */
+
+.client-info {
+  min-width: 0;
+}
+
+.client-name {
+  overflow: hidden;
+
+  color: $text;
+
+  font-size: .74rem;
+  font-weight: 700;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.subsegment-tag {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 2px 5px;
+  border-radius: 3px;
+  background: $Aztk_lightBlue;
+  color: $Aztk_deepBlue;
+  font-size: .52rem;
+  font-weight: 600;
+}
+
+.client-nit {
+  color: $text;
+  font-size: .62rem;
+  font-weight: 600;
+}
+
+
+/* ========================= */
+/* BADGE SERVICIOS           */
+/* ========================= */
+
+.sites-badge {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 5px 8px;
+
+  border-radius: 5px;
+
+  background: $Aztk_lightBlue;
+  color: $Aztk_deepBlue;
+
+  font-size: .62rem;
+  font-weight: 700;
+}
+
+
+/* ========================= */
+/* MONEY                     */
+/* ========================= */
+
+.money {
+  color: $text;
+  font-size: .68rem;
+  font-weight: 600;
+  text-align: right;
+}
+.client-row .money,
+.service-row .money {
+  text-align: left;
+}
+
+
+/* ========================= */
+/* DETALLE CLIENTE            */
+/* ========================= */
+
+.client-detail {
+  padding: 0 14px 14px;
+
+  background: #f8fafb;
+
+  border-top: 1px solid $border;
+}
+
+
+/* ========================= */
+/* HEADER SERVICIOS           */
+/* ========================= */
+
+.services-header {
+  display: grid;
+  grid-template-columns:
+    1.1fr
+    1.8fr
+    2fr
+    .9fr
+    1.2fr
+    1.1fr;
+  min-height: 34px;
+  align-items: center;
+  padding: 0 12px;
+  border-bottom: 1px solid $border;
+  color: $muted;
+  font-size: .56rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+}
+
+/* ========================= */
+/* SERVICE ROW               */
+/* ========================= */
+
+.service-row {
+  display: grid;
+  grid-template-columns:
+    1.1fr
+    1.8fr
+    2fr
+    .9fr
+    1.2fr
+    1.1fr;
+  min-height: 68px;
+  align-items: center;
+  padding: 0 12px;
+  border-bottom: 1px solid #edf0f2;
+  background: #fff;
+}
+
+.service-row:last-child {
+  border-bottom: none;
+}
+
+
+/* ========================= */
+/* SER                       */
+/* ========================= */
+
+.service-id {
+  color: $Aztk_deepBlue;
+
+  font-size: .66rem;
+  font-weight: 700;
+}
+
+.cycle-tag {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 2px 5px;
+  border-radius: 3px;
+  background: $Aztk_lightBlue;
+  color: $Aztk_deepBlue;
+  font-size: .52rem;
+  font-weight: 600;
+}
+
+/* ========================= */
+/* LOCATION                  */
+/* ========================= */
+
+.service-location {
+  min-width: 0;
+}
+
+.location-main {
+  color: $text;
+
+  font-size: .65rem;
+  font-weight: 700;
+}
+
+.dane-tag {
+  display: inline-block;
+
+  margin-top: 5px;
+
+  padding: 2px 5px;
+
+  border-radius: 3px;
+
+  background: #f1f3f4;
+  color: $muted;
+
+  font-size: .54rem;
+}
+
+
+/* ========================= */
+/* PRODUCT                   */
+/* ========================= */
+
+.service-product {
+  min-width: 0;
+}
+
+.product-name {
+  color: $text;
+
+  font-size: .65rem;
+  font-weight: 700;
+}
+
+.family-tag {
+  display: inline-block;
+
+  margin-left: 5px;
+  padding: 2px 5px;
+
+  border-radius: 3px;
+
+  background: $Aztk_lightBlue;
+  color: $Aztk_deepBlue;
+
+  font-size: .52rem;
+  font-weight: 600;
+}
+
+.plan-name {
+  margin-top: 4px;
+
+  color: $muted;
+
+  font-size: .57rem;
+}
+
+.technology-name {
+  margin-top: 2px;
+
+  color: #888;
+
+  font-size: .62rem;
+  line-height: 1.3;
+}
+
+.subsegment-name {
+  margin-top: 2px;
+
+  color: #888;
+
+  font-size: .60rem;
+  line-height: 1.3;
+}
+
+
+/* ========================= */
+/* CAPACIDAD                 */
+/* ========================= */
+
+.capacity {
+  display: inline-block;
+
+  padding: 5px 7px;
+
+  border: 1px solid #e0e5e8;
+  border-radius: 4px;
+
+  background: #f8fafb;
+  color: $text;
+
+  font-family: monospace;
+  font-size: .75rem;
+}
+
+
+/* ========================= */
+/* LOADING                   */
+/* ========================= */
+
+.loading-results {
+  display: flex;
+
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  min-height: 260px;
+
+  gap: 16px;
+
+  color: #666;
+}
+
+.spinner {
+  width: 42px;
+  height: 42px;
+
+  border: 4px solid #d8e3e8;
+  border-top: 4px solid $Aztk_deepBlue;
+
+  border-radius: 50%;
+
+  animation: spin .8s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* ========================= */
+/* MENSAJES                  */
+/* ========================= */
 
 .table-message {
-  text-align: center;
+  margin: 0;
+
   padding: 20px;
-  font-size: 0.95rem;
+
+  text-align: center;
+
+  font-size: .95rem;
   color: #666;
 }
 
@@ -327,45 +603,3 @@ tbody tr:hover{
   font-weight: 500;
 }
 
-
-services-filters {
-  display: flex;
-  gap: 16px;
-  margin-bottom: 12px;
-  padding: 14px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: #f8f9fa;
-}
-
-.filter-group {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  min-width: 180px;
-}
-
-.filter-group label {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #555;
-}
-
-.filter-group select {
-  padding: 8px 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background: white;
-  color: #333;
-}
-
-.services-summary {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 8px;
-  color: #666;
-  font-size: 0.85rem;
-}
-//
-// EOF
-//
