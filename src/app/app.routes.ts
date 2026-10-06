@@ -22,6 +22,7 @@ import { Upload } from './pages/presales/upload/upload';
 import { Viability } from './pages/presales/viability/viability';
 import { Costs } from './pages/presales/costs/costs';
 import { Export } from './pages/presales/export/export';
+import { EvaluacionServicio } from './pages/evaluacion-servicio/evaluacion-servicio';
 
 
 export const routes: Routes = [
@@ -65,6 +66,13 @@ export const routes: Routes = [
       {
         path: 'pricing-sites',
         component: PricingSites,
+        canActivate: [
+          areaGuard('pricing')
+        ]
+      },
+      {
+        path: 'service-evaluator',
+        component: EvaluacionServicio,
         canActivate: [
           areaGuard('pricing')
         ]

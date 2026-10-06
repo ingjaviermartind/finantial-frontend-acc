@@ -229,7 +229,10 @@ export class EvaluadorFinanciero implements OnInit {
   onSidebarSearch(municipalityIds: any[]): void {
     if (municipalityIds.length === 0) {
       this.services = [];
+      this.clients = [];
       this.servicesSearched = false;
+      this.clientsState.services = [];
+      this.clientsState.servicesSearched = false;
       return;
     }
     this.servicesSearched = true;
@@ -256,8 +259,8 @@ export class EvaluadorFinanciero implements OnInit {
         if (response.success) 
         {
           this.services = response.data;
-          this.buildClients();
           console.log(this.services);
+          this.buildClients();
           this.servicesSearched = true;
           this.clientsState.services = [...response.data];
           this.clientsState.servicesSearched = true;
@@ -410,11 +413,32 @@ export class EvaluadorFinanciero implements OnInit {
       grouped.get(nit)!.push(service);
     }
     this.clients = Array.from(grouped.values()).map(services => new ActiveClientGroup(services));
+    const expandedNits = this.clientsState.expandedClientNits;
+    for (const client of this.clients) {
+      client.expanded =
+        expandedNits.includes(client.nit);
+    }
   }
-
+  
   toggleClient(client: ActiveClientGroup): void {
     client.expanded = !client.expanded;
+    if (client.expanded) {
+      if (!this.clientsState.expandedClientNits.includes(client.nit)) {
+        this.clientsState.expandedClientNits = [
+          ...this.clientsState.expandedClientNits,
+          client.nit
+        ];
+      }
+    } else {
+      this.clientsState.expandedClientNits =
+        this.clientsState.expandedClientNits.filter(
+          nit => nit !== client.nit
+        );
+    }
+
   }
+
+  
 }
 //
 // EOF

@@ -1,0 +1,355 @@
+<aside
+  class="evaluacion-servicio-sidebar"
+  [class.expanded]="isExpanded">
+
+  <div class="sidebar-inner">
+
+    <!-- ========================= -->
+    <!-- HEADER                    -->
+    <!-- ========================= -->
+
+    <div class="sidebar-header">
+      <div class="sidebar-title-group">
+        <span class="sidebar-title">
+          PARÁMETROS DE EVALUACIÓN
+        </span>
+      </div>
+    </div>
+
+    @if (isExpanded) {
+
+      <div class="filters">
+
+        <!-- ========================= -->
+        <!-- SERVICIOS                 -->
+        <!-- ========================= -->
+
+        <section class="filter-section">
+
+          <div class="section-title">
+            SERVICIOS
+          </div>
+
+          <div class="filter-label-row">
+            <label>
+              Seleccione un servicio
+            </label>
+
+            @if (selectedService) {
+              <button
+                type="button"
+                class="select-all-button"
+                (click)="clearSelection()">
+                Limpiar
+              </button>
+            }
+          </div>
+
+          <div class="service-search">
+            <input
+              type="text"
+              placeholder="Buscar SER, cliente, producto..."
+              [(ngModel)]="serviceSearch">
+          </div>
+
+          <div class="service-list">
+
+            @if (filteredServices.length === 0) {
+
+              <div class="no-options">
+                No se encontraron servicios.
+              </div>
+
+            } @else {
+
+              @for (
+                service of filteredServices;
+                track service.SER
+              ) {
+
+                <label
+                  class="service-option"
+                  [class.selected]="
+                    selectedService?.SER === service.SER
+                  ">
+
+                  <input
+                    type="radio"
+                    name="selectedService"
+                    [value]="service.SER"
+                    [checked]="
+                      selectedService?.SER === service.SER
+                    "
+                    (change)="selectService(service)">
+
+                  <span class="radio-box"></span>
+
+                  <span class="service-option-content">
+
+                    <span class="service-main">
+
+                      <span class="service-ser">
+                        {{ service.SER }}
+                      </span>
+
+                      <span class="service-capacity">
+                        {{ service.Capacidad }}
+                      </span>
+
+                    </span>
+
+                    <span class="service-client">
+                      {{ service['Razón Social'] }}
+                    </span>
+
+                  </span>
+
+                </label>
+              }
+
+            }
+
+          </div>
+
+        </section>
+
+
+        <!-- ========================= -->
+        <!-- DEPARTAMENTO              -->
+        <!-- ========================= -->
+
+        <div class="filter-group">
+
+          <div class="filter-label-row">
+            <label>
+              Departamento
+            </label>
+          </div>
+
+          <select
+            [ngModel]="selectedDepartmentId ?? ''"
+            (ngModelChange)="onDepartmentChange($event)">
+
+            <option value="">
+              Seleccione un departamento
+            </option>
+
+            @for (
+              department of departments;
+              track department.id
+            ) {
+
+              <option
+                [value]="department.id"
+                [class.unprofitable-option]="department.unprofitable">
+
+                {{ department.unprofitable ? '● ' : '' }}{{ department.name }}
+
+              </option>
+
+            }
+
+          </select>
+
+        </div>
+
+
+        <!-- ========================= -->
+        <!-- MUNICIPIO                -->
+        <!-- ========================= -->
+
+        <div class="filter-group municipality-filter">
+
+          <div class="filter-label-row">
+            <label>
+              Municipio
+            </label>
+          </div>
+
+          <select
+            [ngModel]="selectedMunicipalityId ?? ''"
+            [disabled]="!selectedDepartmentId"
+            (ngModelChange)="onMunicipalityChange($event)">
+
+            <option value="">
+              Seleccione un municipio
+            </option>
+
+            @for (
+              municipality of municipalities;
+              track municipality.id
+            ) {
+
+              <option
+                [value]="municipality.id"
+                [class.unprofitable-option]="municipality.unprofitable">
+
+                {{ municipality.unprofitable ? '● ' : '' }}{{ municipality.name }}
+
+              </option>
+
+            }
+
+          </select>
+
+        </div>
+
+
+        <!-- ========================= -->
+        <!-- SUBSEGMENTO               -->
+        <!-- ========================= -->
+
+        <div class="filter-group subsegment-filter">
+
+          <div class="filter-label-row">
+            <label>
+              Subsegmento
+            </label>
+          </div>
+
+          <select
+            [ngModel]="selectedSubsegment ?? ''"
+            (ngModelChange)="onSubsegmentChange($event)">
+
+            <option value="">
+              Seleccione un subsegmento
+            </option>
+
+            @for (
+              subsegment of subsegments;
+              track subsegment.id
+            ) {
+
+              <option [value]="subsegment.name">
+                {{ subsegment.name }}
+              </option>
+
+            }
+
+          </select>
+
+        </div>
+
+
+        <!-- ========================= -->
+        <!-- PRODUCTO                  -->
+        <!-- ========================= -->
+
+        <div class="filter-group product-filter">
+
+          <div class="filter-label-row">
+            <label>
+              Producto
+            </label>
+          </div>
+
+          <select
+            [ngModel]="selectedProduct ?? ''"
+            (ngModelChange)="onProductChange($event)">
+
+            <option value="">
+              Seleccione un producto
+            </option>
+
+            @for (
+              product of products;
+              track product.id
+            ) {
+
+              <option [value]="product.product">
+                {{ product.product }}
+              </option>
+
+            }
+
+          </select>
+
+        </div>
+
+
+        <!-- ========================= -->
+        <!-- DATOS DE EVALUACIÓN       -->
+        <!-- ========================= -->
+
+        <div class="evaluation-inputs">
+
+          <!-- Capacidad -->
+          <div class="filter-group">
+            <div class="filter-label-row">
+              <label for="capacity">
+                Capacidad
+              </label>
+            </div>
+
+            <input
+              id="capacity"
+              type="number"
+              min="1"
+              [(ngModel)]="capacityMbps"
+              placeholder="Ej. 100">
+          </div>
+
+
+          <!-- Tiempo de contrato -->
+          <div class="filter-group">
+            <div class="filter-label-row">
+              <label for="contractTime">
+                Tiempo de contrato
+              </label>
+            </div>
+
+            <input
+              id="contractTime"
+              type="number"
+              min="1"
+              [(ngModel)]="contractTime"
+              placeholder="Ej. 24">
+          </div>
+
+
+          <!-- CAPEX -->
+          <div class="filter-group full-width">
+
+            <div class="filter-label-row">
+              <label for="initialCapex">
+                CAPEX inicial
+              </label>
+            </div>
+
+            <input
+              id="initialCapex"
+              type="number"
+              min="0"
+              [(ngModel)]="initialCapex">
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- ========================= -->
+      <!-- ACCIONES                  -->
+      <!-- ========================= -->
+
+      <div class="sidebar-actions">
+
+        <button
+          type="button"
+          class="search-button"
+          [disabled]="
+            !selectedSubsegment ||
+            !selectedProduct ||
+            !selectedMunicipalityId
+          "
+          (click)="evaluateService()">
+          EVALUAR SERVICIO
+        </button>
+
+      </div>
+
+    }
+
+  </div>
+
+</aside>

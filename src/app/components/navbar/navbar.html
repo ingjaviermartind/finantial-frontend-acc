@@ -15,9 +15,12 @@
 
   <div class="nav-links">
 
-    <!-- PRICING -->
-    @if (userService.hasArea('pricing')) {
+    <!-- PRICING & VENTAS -->
+    @if (userService.hasArea('pricing') || userService.hasArea('ventas')) {
       <a routerLink="/evaluator">
+        Clientes Activos
+      </a>
+      <a routerLink="/service-evaluator">
         Evaluador
       </a>
       <a routerLink="/pricing-sites">

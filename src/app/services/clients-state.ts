@@ -21,10 +21,15 @@ export class ClientsState
     departmentSearch : '',
     municipalitySearch : '',
   }
-
+  selectedProduct: string | null = null;
+  selectedSubsegment: string | null = null;
+  expandedClientNits: string[] = [];
   services: ActiveService[] = [];
   servicesSearched = false;
   isFiltersExpanded = true;
+  selectedService: ActiveService | null = null;
+  selectedEvaluationDepartmentId: string | null = null;
+  selectedEvaluationMunicipalityId: string | null = null;
   saveServices(services: ActiveService[]): void {
     this.services = services;
   }
@@ -35,7 +40,11 @@ export class ClientsState
       departmentSearch: '',
       municipalitySearch: ''
     };
-    
+    this.selectedSubsegment = null;
+    this.selectedProduct = null;
+    this.selectedEvaluationDepartmentId = null;
+    this.selectedEvaluationMunicipalityId = null;
+    this.expandedClientNits = [];
     this.services = [];
     this.servicesSearched = false;
     this.isFiltersExpanded = true;

@@ -55,7 +55,9 @@ $warning-text: #9a6b00;
 
 .filters {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   padding-right: 3px;
 }
 
@@ -283,8 +285,10 @@ $warning-text: #9a6b00;
 }
 
 .sidebar-actions {
+  flex: 0 0 auto;
   padding-top: 14px;
   border-top: 1px solid #e5e7e9;
+  // background: #fff;
 }
 
 .search-button {

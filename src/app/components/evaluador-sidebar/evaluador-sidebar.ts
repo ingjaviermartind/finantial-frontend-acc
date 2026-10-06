@@ -209,10 +209,23 @@ export class EvaluadorSidebar {
     
   searchServices(): void {
     if (this.selectedMunicipalityIds.length === 0) {
+      
       return;
     }
     this.search.emit(this.selectedMunicipalityIds);
   }
 
+  clearFilters() : void {
+    this.selectedDepartmentIds = [];
+    this.selectedMunicipalityIds = [];
+    this.departmentSearch = '';
+    this.municipalitySearch = '';
+    this.municipalities = [];
+    this.loadingMunicipalities = false;
+    this.departmentsChange.emit([]);
+    this.municipalitiesChange.emit([]);
+    this.emitState();
+    this.search.emit([]);
+  }
   
 }

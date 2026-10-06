@@ -167,7 +167,8 @@
                             {{ service.Municipio }}
                           </div>
                           <span
-                            class="dane-tag">
+                            class="dane-tag"
+                            [class.unprofitable-dane]="service.unprofitable">
                             DANE: {{ service['Codigo DANE'] }}
                           </span>
                         </div>

@@ -25,6 +25,8 @@ export interface ActiveService {
   TIPO_TECNOLOGIA: string;
   Subsegmento: string;
   'Rango Capacidad': string;
+  node : string;
+  unprofitable : boolean;
 }
 
 export interface ServicesFilters {
