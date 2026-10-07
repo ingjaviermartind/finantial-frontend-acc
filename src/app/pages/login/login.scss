@@ -1,9 +1,4 @@
-$teal-500: #00bbdc;
-$teal-700: #097695;
-$teal-800: #116079;
-$teal-900: #134f66;
-$teal-950: #074057;
-$Aztk_deepBlue: #074057;
+@use 'tokens' as *;
 
 
 :host {
@@ -32,7 +27,7 @@ $Aztk_deepBlue: #074057;
     font-size: 1.4rem;
     font-weight: 700;
     letter-spacing: -0.03em;
-    color: $teal-950;
+    color: $Aztk_deepBlue;
   }
 }
 
@@ -85,7 +80,7 @@ button {
   align-items: center;
   min-height: 52px;
   &:hover {
-    background: $teal-950;
+    background: $Aztk_deepBlue;
   }
   &:disabled {
     opacity: 0.8;

@@ -5,9 +5,11 @@ import { PricingResponse, PricingRequest, EvaluationResult } from '../models/pri
 export interface ClientsSidebarState {
   selectedDepartmentIds : string[];
   selectedMunicipalityIds : string[];
+  selectedClients: string[];
 
   departmentSearch: string;
   municipalitySearch: string;
+  clientSearch: string;
 }
 
 @Injectable({
@@ -19,8 +21,10 @@ export class ClientsState
   sidebar : ClientsSidebarState = {
     selectedDepartmentIds: [],
     selectedMunicipalityIds : [],
+    selectedClients: [],
     departmentSearch : '',
     municipalitySearch : '',
+    clientSearch : ''
   }
   evaluationCapacityMbps: number | null = null;
   evaluationContractTime: number | null = null;
@@ -76,8 +80,10 @@ export class ClientsState
     this.sidebar = {
       selectedDepartmentIds: [],
       selectedMunicipalityIds: [],
+      selectedClients:[],
       departmentSearch: '',
-      municipalitySearch: ''
+      municipalitySearch: '',
+      clientSearch:''
     };
     this.selectedSubsegment = null;
     this.selectedProduct = null;

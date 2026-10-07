@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, Input } from '@angular/core';
+import { Component, EventEmitter, Output, Input, OnInit} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PricingSitesService } from '../../services/pricing-site';
 import { 
@@ -11,8 +11,6 @@ import {
 import { PricingSiteFilterOptionsService } from '../../services/pricing-site-filters';
 
 import { finalize } from 'rxjs';
-import { OnInit } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-pricing-sites-sidebar',
@@ -21,7 +19,7 @@ import { DecimalPipe } from '@angular/common';
   templateUrl: './pricing-sites-sidebar.html',
   styleUrl: './pricing-sites-sidebar.scss',
 })
-export class PricingSitesSidebar {
+export class PricingSitesSidebar implements OnInit {
   @Input() isExpanded = true;
   isSearching = false;
   isLoadingFilterOptions = false;

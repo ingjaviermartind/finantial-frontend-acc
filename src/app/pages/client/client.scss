@@ -1,0 +1,596 @@
+@use 'tokens' as *;
+
+
+/* ========================= */
+/* LAYOUT PAGE               */
+/* ========================= */
+
+.page-content:has(.evaluator-container) {
+  padding: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.evaluator-container {
+  display: flex;
+  width: 100%;
+  height: calc(100vh - 55px);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.evaluator-content {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 18px 20px;
+  overflow: hidden;
+}
+
+
+/* ========================= */
+/* TOOLBAR                   */
+/* ========================= */
+
+.evaluator-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  min-height: 48px;
+  margin-bottom: 14px;
+}
+
+.metrics {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.metric {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.metric-value {
+  color: $Aztk_deepBlue;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.metric-label {
+  color: $muted;
+  font-size: .72rem;
+}
+
+.metric-divider {
+  width: 1px;
+  height: 22px;
+  background: $border;
+}
+
+
+/* ========================= */
+/* TOGGLE FILTROS            */
+/* ========================= */
+
+.filters-toggle-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  height: 30px;
+  padding: 0 9px;
+
+  border: 1px solid $border;
+  border-radius: 5px;
+
+  background: #fff;
+  color: $Aztk_deepBlue;
+
+  font-size: .65rem;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background .15s ease,
+    border-color .15s ease;
+}
+
+.filters-toggle-button:hover {
+  background: $Aztk_lightBlue;
+  border-color: #cbd9de;
+}
+
+.filters-toggle-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+
+/* ========================= */
+/* TABLA CLIENTES            */
+/* ========================= */
+
+.services-table {
+  flex: 1 1 0;
+
+  min-width: 0;
+  min-height: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  border: 1px solid $border;
+  border-radius: 7px;
+
+  background: #fff;
+}
+
+.services-content {
+  width: 100%;
+}
+
+
+/* ========================= */
+/* CONTADOR                  */
+/* ========================= */
+
+.services-summary {
+  display: flex;
+  justify-content: flex-end;
+
+  padding: 8px 14px 6px;
+
+  color: $muted;
+  font-size: .72rem;
+}
+
+
+/* ========================= */
+/* HEADER CLIENTES           */
+/* ========================= */
+
+.clients-header {
+  display: grid;
+
+  grid-template-columns:
+    42px
+    2fr
+    1.2fr
+    .8fr
+    1.2fr;
+
+  min-height: 38px;
+
+  align-items: center;
+
+  padding: 0 14px;
+
+  background: $Aztk_deepBlue;
+  color: #fff;
+
+  font-size: .62rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+}
+
+.client-row > div:last-child,
+.clients-header > div:last-child {
+  padding-left: 30px;
+}
+
+/* ========================= */
+/* CLIENT BLOCK              */
+/* ========================= */
+
+.client-block {
+  border-bottom: 1px solid $border;
+}
+
+.client-block:last-child {
+  border-bottom: none;
+}
+
+
+/* ========================= */
+/* CLIENT ROW                */
+/* ========================= */
+
+.client-row {
+  display: grid;
+
+  grid-template-columns:
+    42px
+    2fr
+    1.2fr
+    .8fr
+    1.2fr;
+
+  min-height: 68px;
+
+  align-items: center;
+
+  padding: 0 14px;
+
+  background: #fff;
+
+  cursor: pointer;
+
+  transition: background .15s ease;
+}
+
+.client-row:hover {
+  background: #f7fafb;
+}
+
+.client-row.expanded {
+  background: #f1f6f8;
+}
+
+
+/* ========================= */
+/* CHEVRON                  */
+/* ========================= */
+
+.client-expand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.expand-button {
+  width: 28px;
+  height: 28px;
+
+  padding: 0;
+
+  border: 1px solid #d7e0e4;
+  border-radius: 5px;
+
+  background: #fff;
+  color: $Aztk_deepBlue;
+
+  font-size: 18px;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.expand-button:hover {
+  background: $Aztk_lightBlue;
+}
+
+
+/* ========================= */
+/* CLIENTE                   */
+/* ========================= */
+
+.client-info {
+  min-width: 0;
+}
+
+.client-name {
+  overflow: hidden;
+
+  color: $text;
+
+  font-size: .74rem;
+  font-weight: 700;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.subsegment-tag {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 2px 5px;
+  border-radius: 3px;
+  background: $Aztk_lightBlue;
+  color: $Aztk_deepBlue;
+  font-size: .52rem;
+  font-weight: 600;
+}
+
+.client-nit {
+  color: $text;
+  font-size: .62rem;
+  font-weight: 600;
+}
+
+
+/* ========================= */
+/* BADGE SERVICIOS           */
+/* ========================= */
+
+.sites-badge {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 5px 8px;
+
+  border-radius: 5px;
+
+  background: $Aztk_lightBlue;
+  color: $Aztk_deepBlue;
+
+  font-size: .62rem;
+  font-weight: 700;
+}
+
+
+/* ========================= */
+/* MONEY                     */
+/* ========================= */
+
+.money {
+  color: $text;
+  font-size: .68rem;
+  font-weight: 600;
+  text-align: right;
+}
+.client-row .money,
+.service-row .money {
+  text-align: left;
+}
+
+
+/* ========================= */
+/* DETALLE CLIENTE            */
+/* ========================= */
+
+.client-detail {
+  padding: 0 14px 14px;
+
+  background: #f8fafb;
+
+  border-top: 1px solid $border;
+}
+
+
+/* ========================= */
+/* HEADER SERVICIOS           */
+/* ========================= */
+
+.services-header {
+  display: grid;
+  grid-template-columns:
+    1.1fr
+    1.8fr
+    2fr
+    .9fr
+    1.2fr
+    1.1fr;
+  min-height: 34px;
+  align-items: center;
+  padding: 0 12px;
+  border-bottom: 1px solid $border;
+  color: $muted;
+  font-size: .56rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+}
+
+/* ========================= */
+/* SERVICE ROW               */
+/* ========================= */
+
+.service-row {
+  display: grid;
+  grid-template-columns:
+    1.1fr
+    1.8fr
+    2fr
+    .9fr
+    1.2fr
+    1.1fr;
+  min-height: 68px;
+  align-items: center;
+  padding: 0 12px;
+  border-bottom: 1px solid #edf0f2;
+  background: #fff;
+}
+
+.service-row:last-child {
+  border-bottom: none;
+}
+
+
+/* ========================= */
+/* SER                       */
+/* ========================= */
+
+.service-id {
+  color: $Aztk_deepBlue;
+
+  font-size: .66rem;
+  font-weight: 700;
+}
+
+.cycle-tag {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 2px 5px;
+  border-radius: 3px;
+  background: $Aztk_lightBlue;
+  color: $Aztk_deepBlue;
+  font-size: .52rem;
+  font-weight: 600;
+}
+
+/* ========================= */
+/* LOCATION                  */
+/* ========================= */
+
+.service-location {
+  min-width: 0;
+}
+
+.location-main {
+  color: $text;
+
+  font-size: .65rem;
+  font-weight: 700;
+}
+
+.dane-tag {
+  display: inline-block;
+  margin-top: 5px;
+  padding: 2px 5px;
+  border-radius: 3px;
+  background: #f1f3f4;
+  color: $muted;
+  font-size: .54rem;
+}
+
+.unprofitable-dane {
+  background: #fff4d6; 
+  color: #9a6b00; 
+}
+
+/* ========================= */
+/* PRODUCT                   */
+/* ========================= */
+
+.service-product {
+  min-width: 0;
+}
+
+.product-name {
+  color: $text;
+
+  font-size: .65rem;
+  font-weight: 700;
+}
+
+.family-tag {
+  display: inline-block;
+
+  margin-left: 5px;
+  padding: 2px 5px;
+
+  border-radius: 3px;
+
+  background: $Aztk_lightBlue;
+  color: $Aztk_deepBlue;
+
+  font-size: .52rem;
+  font-weight: 600;
+}
+
+.plan-name {
+  margin-top: 4px;
+
+  color: $muted;
+
+  font-size: .57rem;
+}
+
+.technology-name {
+  margin-top: 2px;
+
+  color: #888;
+
+  font-size: .62rem;
+  line-height: 1.3;
+}
+
+.subsegment-name {
+  margin-top: 2px;
+
+  color: #888;
+
+  font-size: .60rem;
+  line-height: 1.3;
+}
+
+
+/* ========================= */
+/* CAPACIDAD                 */
+/* ========================= */
+
+.capacity {
+  display: inline-block;
+
+  padding: 5px 7px;
+
+  border: 1px solid #e0e5e8;
+  border-radius: 4px;
+
+  background: #f8fafb;
+  color: $text;
+
+  font-family: monospace;
+  font-size: .75rem;
+}
+
+
+/* ========================= */
+/* LOADING                   */
+/* ========================= */
+
+.loading-results {
+  display: flex;
+
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  min-height: 260px;
+
+  gap: 16px;
+
+  color: #666;
+}
+
+.spinner {
+  width: 42px;
+  height: 42px;
+
+  border: 4px solid #d8e3e8;
+  border-top: 4px solid $Aztk_deepBlue;
+
+  border-radius: 50%;
+
+  animation: spin .8s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* ========================= */
+/* MENSAJES                  */
+/* ========================= */
+
+.table-message {
+  margin: 0;
+
+  padding: 20px;
+
+  text-align: center;
+
+  font-size: .95rem;
+  color: #666;
+}
+
+.table-message.error {
+  color: #b42318;
+  font-weight: 500;
+}
+

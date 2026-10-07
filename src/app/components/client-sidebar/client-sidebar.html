@@ -1,0 +1,346 @@
+<aside
+  class="client-sidebar"
+  [class.expanded]="isExpanded">
+
+  <div class="sidebar-inner">
+
+    <!-- ========================= -->
+    <!-- HEADER                    -->
+    <!-- ========================= -->
+
+    <div class="sidebar-header">
+
+      @if (isExpanded) {
+        <div class="sidebar-title-group">
+          <span class="sidebar-title">
+            FILTROS DE BÚSQUEDA
+          </span>
+        </div>
+      }
+
+    </div>
+
+
+    @if (isExpanded) {
+
+      <div class="filters">
+
+        <!-- ========================= -->
+        <!-- 1. CLIENTES               -->
+        <!-- ========================= -->
+
+        <section class="filter-section">
+
+          <div class="section-title">
+            1. CLIENTES
+          </div>
+
+
+          <div class="filter-group">
+
+            <div class="filter-label-row">
+
+              <label>
+                Cliente
+              </label>
+
+              <button
+                type="button"
+                class="select-all-button"
+                (click)="toggleAllClients()">
+
+                {{ allClientsSelected ? 'Ninguno' : 'Todos' }}
+
+              </button>
+
+            </div>
+
+
+            <!-- BUSCADOR -->
+
+            <div class="checkbox-search">
+
+              <input
+                type="text"
+                placeholder="Buscar NIT o razón social..."
+                [(ngModel)]="clientSearch">
+
+            </div>
+
+
+            <!-- LISTA CLIENTES -->
+
+            <div class="checkbox-list client-list">
+
+              @if (isLoadingClients) {
+
+                <div class="no-options">
+                  Cargando clientes...
+                </div>
+
+              } @else {
+
+                @for (
+                  client of filteredClients;
+                  track client.NIT
+                ) {
+
+                  <label class="checkbox-option client-option">
+
+                    <input
+                      type="checkbox"
+                      [checked]="selectedClients.includes(client.NIT)"
+                      (change)="toggleClient(client.NIT)">
+
+                    <span class="checkbox-box"></span>
+
+
+                    <span class="client-info">
+
+                      <span class="client-nit">
+                        {{ client.NIT }}
+                      </span>
+
+                      <span class="client-business-names">
+
+                        @for (
+                          businessName of client.business_names;
+                          track businessName
+                        ) {
+
+                          <span class="client-business-name">
+                            {{ businessName }}
+                          </span>
+
+                        }
+
+                      </span>
+
+                    </span>
+
+                  </label>
+
+                }
+
+
+                @if (filteredClients.length === 0) {
+
+                  <div class="no-options">
+                    No se encontraron clientes
+                  </div>
+
+                }
+
+              }
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- ========================= -->
+        <!-- 2. UBICACIÓN              -->
+        <!-- ========================= -->
+
+        <section class="filter-section">
+
+          <div class="section-title">
+            2. UBICACIÓN
+          </div>
+
+
+          <!-- DEPARTAMENTO -->
+
+          <div class="filter-group">
+
+            <div class="filter-label-row">
+
+              <label>
+                Departamento
+              </label>
+
+              <button
+                type="button"
+                class="select-all-button"
+                (click)="toggleAllDepartments()">
+
+                {{ allDepartmentsSelected ? 'Ninguno' : 'Todos' }}
+
+              </button>
+
+            </div>
+
+
+            <div class="checkbox-search">
+
+              <input
+                type="text"
+                placeholder="Buscar departamento..."
+                [(ngModel)]="departmentSearch">
+
+            </div>
+
+
+            <div class="checkbox-list">
+
+              @for (
+                department of filteredDepartments;
+                track department.id
+              ) {
+
+                <label class="checkbox-option">
+
+                  <input
+                    type="checkbox"
+                    [checked]="selectedDepartmentIds.includes(department.id)"
+                    (change)="toggleDepartment(department.id)">
+
+                  <span class="checkbox-box"></span>
+
+                  <span class="checkbox-label">
+                    {{ department.name }}
+                  </span>
+
+                </label>
+
+              }
+
+
+              @if (filteredDepartments.length === 0) {
+
+                <div class="no-options">
+                  No se encontraron departamentos
+                </div>
+
+              }
+
+            </div>
+
+          </div>
+
+
+          <!-- MUNICIPIO -->
+
+          <div class="filter-group">
+
+            <div class="filter-label-row">
+
+              <label>
+                Municipio
+              </label>
+
+              <button
+                type="button"
+                class="select-all-button"
+                [disabled]="!selectedDepartmentIds.length"
+                (click)="toggleAllMunicipalities()">
+
+                {{ allMunicipalitiesSelected ? 'Ninguno' : 'Todos' }}
+
+              </button>
+
+            </div>
+
+
+            <div class="checkbox-search">
+
+              <input
+                type="text"
+                placeholder="Buscar municipio..."
+                [(ngModel)]="municipalitySearch"
+                [disabled]="!selectedDepartmentIds.length">
+
+            </div>
+
+
+            <div class="checkbox-list">
+
+              @for (
+                municipality of filteredMunicipalities;
+                track municipality.id
+              ) {
+
+                <label class="checkbox-option">
+
+                  <input
+                    type="checkbox"
+                    [checked]="selectedMunicipalityIds.includes(municipality.id)"
+                    (change)="toggleMunicipality(municipality.id)"
+                    [disabled]="!selectedDepartmentIds.length">
+
+                  <span class="checkbox-box"></span>
+
+                  <span class="checkbox-label">
+                    {{ municipality.name }}
+                  </span>
+
+                </label>
+
+              }
+
+
+              @if (
+                selectedDepartmentIds.length &&
+                filteredMunicipalities.length === 0
+              ) {
+
+                <div class="no-options">
+                  No se encontraron municipios
+                </div>
+
+              }
+
+            </div>
+
+          </div>
+
+        </section>
+
+      </div>
+
+
+      <!-- ========================= -->
+      <!-- ACCIONES                  -->
+      <!-- ========================= -->
+
+      <div class="sidebar-actions">
+
+        <button
+          type="button"
+          class="search-button"
+          [disabled]="
+            !selectedMunicipalityIds.length
+          "
+          (click)="searchServices()">
+
+          BUSCAR SERVICIOS
+
+        </button>
+
+
+        <button
+          type="button"
+          class="clear-button"
+          [disabled]="
+            !selectedClients.length &&
+            !selectedDepartmentIds.length &&
+            !selectedMunicipalityIds.length &&
+            !clientSearch &&
+            !departmentSearch &&
+            !municipalitySearch
+          "
+          (click)="clearFilters()">
+
+          Limpiar filtros
+
+        </button>
+
+      </div>
+
+    }
+
+  </div>
+
+</aside>

@@ -49,6 +49,11 @@ export interface ActiveClient {
   services: ActiveService[];
 }
 
+export interface ClientOption {
+  NIT: string;
+  business_names: string[];
+}
+
 export class ActiveClientGroup {
   nit: string;
   razonSocial: string;

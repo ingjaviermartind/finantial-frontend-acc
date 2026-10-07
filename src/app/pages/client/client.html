@@ -1,0 +1,235 @@
+<!-- <h2>Evaluador Financiero</h2> -->
+<div class="evaluator-container">
+  <app-client-sidebar
+    [isExpanded]="isFiltersExpanded"
+    [initialState]="sidebarState"
+    (departmentsChange)="onDepartmentsChange($event)"
+    (municipalitiesChange)="onMunicipalitiesChange($event)"
+    (stateChange)="onSidebarStateChange($event)"
+    (search)="onSidebarSearch($event)">
+  </app-client-sidebar>
+  <!-- ========================= -->
+  <!-- Panel superior            -->
+  <!-- ========================= -->
+  <div class="evaluator-content">
+    <div class="evaluator-toolbar">
+      <button
+        type="button"
+        class="filters-toggle-button"
+        (click)="toggleFilters()">
+        <span class="filters-toggle-icon">
+          {{ isFiltersExpanded ? '‹' : '›' }}
+        </span>
+        {{ isFiltersExpanded ? 'Ocultar filtros' : 'Mostrar filtros' }}
+      </button>
+      <div class="metrics">
+      </div>
+    </div>
+    <!-- ========================= -->
+    <!-- TABLA (3)                 -->
+    <!-- ========================= -->
+    <!-- ========================= -->
+    <!-- TABLA (3)                 -->
+    <!-- ========================= -->
+    @if (servicesSearched) {
+      <div class="services-table">
+        @if (loadingServices) {
+          <div class="loading-results">
+            <div class="spinner"></div>
+            <p>Cargando servicios...</p>
+          </div>
+        }
+        @else if (servicesError) {
+          <p class="table-message error">
+            {{ servicesError }}
+          </p>
+        }
+        @else if (services.length === 0) {
+          <p class="table-message">
+            No se encontraron servicios para los municipios seleccionados.
+          </p>
+        }
+        @else {
+          <div class="services-content">
+            <!-- CONTADOR -->
+            <div class="services-summary">
+              <span>
+                {{ clients.length }}
+                {{ clients.length === 1 ? 'cliente' : 'clientes' }}
+                ·
+                {{ services.length }}
+                {{ services.length === 1 ? 'servicio' : 'servicios' }}
+              </span>
+            </div>
+            <!-- ========================= -->
+            <!-- HEADER CLIENTES            -->
+            <!-- ========================= -->
+            <div class="clients-header">
+              <div></div>
+              <div>CLIENTE</div>
+              <div>NIT</div>
+              <div>SERVICIOS</div>
+              <div>MRC ACTIVO</div>
+            </div>
+            <!-- ========================= -->
+            <!-- CLIENTES                   -->
+            <!-- ========================= -->
+            @for (client of clients; track client.nit) {
+              <div class="client-block">
+                <!-- ========================= -->
+                <!-- FILA CLIENTE               -->
+                <!-- ========================= -->
+                <div
+                  class="client-row"
+                  [class.expanded]="client.expanded"
+                  (click)="toggleClient(client)"
+                >
+                  <!-- CHEVRON -->
+                  <div class="client-expand">
+                    <button
+                      type="button"
+                      class="expand-button"
+                      (click)="
+                        $event.stopPropagation();
+                        toggleClient(client)
+                      "
+                    >
+                      {{ client.expanded ? '⌄' : '›' }}
+                    </button>
+                  </div>
+                  <!-- CLIENTE -->
+                  <div class="client-info">
+                    <div class="client-name">
+                      {{ client.razonSocial }}
+                    </div>
+                    <span class="subsegment-tag">
+                      {{ client.subsegmento || 'Sin segmentar' }}
+                    </span>
+
+                  </div>
+                  <!-- NIT -->
+                  <div class="client-nit">
+                    {{ client.nit }}
+                  </div>
+                  <!-- SERVICIOS -->
+                  <div>
+                    <span class="sites-badge">
+                      {{ client.serviceCount }}
+                      {{ client.serviceCount === 1
+                          ? 'Servicio'
+                          : 'Servicios'
+                      }}
+                    </span>
+                  </div>
+                  <!-- MRC -->
+                  <div class="money">
+                    {{
+                      client.tarifaTotalCliente
+                        | currency:'COP':'symbol-narrow':'1.0-0'
+                    }}
+                  </div>
+                </div>
+                <!-- ========================= -->
+                <!-- DETALLE SERVICIOS          -->
+                <!-- ========================= -->
+                @if (client.expanded) {
+                  <div class="client-detail">
+                    <!-- HEADER SERVICIOS -->
+                    <div class="services-header">
+                      <div>SER</div>
+                      <div>UBICACIÓN</div>
+                      <div>PRODUCTO</div>
+                      <div>CAPACIDAD</div>
+                      <div>TARIFA</div>
+                      <div>FIN PERMANENCIA</div>
+                    </div>
+                    <!-- SERVICIOS -->
+                    @for (
+                      service of client.services;
+                      track service.SER
+                    ) {
+                      <div class="service-row">
+                        <!-- SER -->
+                        <div class="service-id">
+                          <div>
+                            {{ service.SER }}
+                          </div>
+                          <span class="cycle-tag">
+                            Ciclo {{ service.Ciclo }}
+                          </span>
+                        </div>
+                        
+                        <!-- UBICACIÓN -->
+                        <div class="service-location">
+                          <div class="location-main">
+                            {{ service.Departamento }}
+                            ·
+                            {{ service.Municipio }}
+                          </div>
+                          <span
+                            class="dane-tag"
+                            [class.unprofitable-dane]="service.unprofitable">
+                            DANE: {{ service['Codigo DANE'] }}
+                          </span>
+                        </div>
+                        <!-- PRODUCTO -->
+                        <div class="service-product">
+                          <div class="product-name">
+                            {{ service.Producto }}
+                            <span class="family-tag">
+                              {{ service.FAMILIA_PRODUCTOS }}
+                            </span>
+                          </div>
+                          <div class="plan-name">
+                            Plan: {{ service.Plan }}
+                          </div>
+                          <div class="technology-name">
+                            Tecnología:
+                            {{ service.TIPO_TECNOLOGIA || 'N/A' }}
+                          </div>
+                        </div>
+                        <!-- CAPACIDAD -->
+                        <div>
+                          <span class="capacity">
+                            {{ service.Capacidad || 'N/A' }}
+                          </span>
+                        </div>
+                        <!-- TARIFA -->
+                        <div class="money">
+                          <div>
+                            {{
+                              service.Tarifa
+                                | currency:'COP':'symbol-narrow':'1.0-0'
+                            }}
+                          </div>
+                          <span
+                            class="dane-tag"
+                            [class.vlr-low]="service['Vlr x Mbps'] < 1500">
+                            Vlr x Mbps:
+                            {{
+                              service['Vlr x Mbps']
+                                | currency:'COP':'symbol-narrow':'1.0-0'
+                            }}
+                          </span>
+                        </div>
+
+                        <!-- PERMANENCIA -->
+                        <div>
+                          {{
+                            service['Fecha Fin Permanencia']
+                              | date:'dd/MM/yyyy'
+                          }}
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
+<!-- EOF -->

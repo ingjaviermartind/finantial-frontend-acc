@@ -17,15 +17,16 @@
 
     <!-- PRICING & VENTAS -->
     @if (userService.hasArea('pricing') || userService.hasArea('ventas')) {
-      <a routerLink="/evaluator">
-        Clientes Activos
-      </a>
-      <a routerLink="/service-evaluator">
-        Evaluador
-      </a>
       <a routerLink="/pricing-sites">
         Pricing por Sede
       </a>
+      <a routerLink="/client">
+        Clientes
+      </a>
+      <a routerLink="/evaluator">
+        Evaluador
+      </a>
+      
     }
     <!-- PREVENTA -->
     @if (userService.hasArea('preventa')) {

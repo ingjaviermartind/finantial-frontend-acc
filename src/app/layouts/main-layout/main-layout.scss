@@ -1,3 +1,5 @@
+@use 'tokens' as *;
+
 :host{
     display:block;
     height:100vh;
@@ -19,5 +21,5 @@
     flex:1;
     padding:0px;
     overflow:auto;
-    background:#FCFDFD; // el mismo fondo que usas en login
+    background: $background 
 }

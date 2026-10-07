@@ -2,14 +2,19 @@ import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { UserService } from '../services/user';
 
-export const areaGuard = (area: string): CanActivateFn => {
+export const areaGuard = (...areas: string[]): CanActivateFn => {
   return () => {
     const router = inject(Router);
     const userService = inject(UserService);
-    if (userService.hasArea(area)) {
+    const hasAccess = areas.some(
+      area => userService.hasArea(area)
+    );
+    if (hasAccess) {
       return true;
     }
+
     const routes: Record<string, string> = {
+      ventas: '/evaluator',
       pricing: '/evaluator',
       preventa: '/pre-sales',
       retencion: '/main'

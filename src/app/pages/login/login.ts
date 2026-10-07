@@ -51,17 +51,14 @@ export class Login {
   ngOnInit() {
       const token = this.auth.getAccessToken();
       if (token) {
-        // this.router.navigate([
-        //   '/evaluator' //main
-        // ]);
         this.redirectByArea();
       }
     }
     private redirectByArea() : void {
         const routes: Record<string, string> = {
-        ventas: '/evaluator',
-        pricing: '/evaluator',
-        preventa: '/pre-sales',
+        ventas: '/client',
+        pricing: '/client',
+        // preventa: '/pre-sales',
         retencion: '/main'
       };
       const user = this.userService.getUser();
