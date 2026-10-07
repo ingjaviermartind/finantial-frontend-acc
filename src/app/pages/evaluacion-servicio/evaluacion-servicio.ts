@@ -13,6 +13,9 @@ import { EvaluacionServicioSidebar } from '../../components/evaluacion-servicio-
 export class EvaluacionServicio {
   isFiltersExpanded = true;
 
+  toggleFilters(): void {
+    this.isFiltersExpanded = !this.isFiltersExpanded;
+  }
   evaluateService(): void {
     // aquí irá la lógica de evaluación
   }

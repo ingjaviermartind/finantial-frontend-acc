@@ -54,11 +54,11 @@ $warning-text: #9a6b00;
 }
 
 .filters {
-  flex: 1;
+  flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-right: 3px;
+  padding-right: 6px;
 }
 
 
@@ -288,7 +288,7 @@ $warning-text: #9a6b00;
   flex: 0 0 auto;
   padding-top: 14px;
   border-top: 1px solid #e5e7e9;
-  // background: #fff;
+  background: #fff;
 }
 
 .search-button {

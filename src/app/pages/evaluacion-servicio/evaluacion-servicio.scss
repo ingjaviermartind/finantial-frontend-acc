@@ -1,7 +1,53 @@
+$Aztk_deepBlue: #074057;
+$Aztk_lightBlue: #e8f1f4;
+$border: #e1e6e9;
+$text: #555;
+$muted: #7a7a7a;
+$warning-bg: #fff4d6;
+$warning-text: #9a6b00;
+
+
 .evaluacion-servicio-container {
   display: flex;
   width: 100%;
   height: calc(100vh - 55px);
   min-height: 0;
   overflow: hidden;
+}
+
+.evaluacion-servicio-content {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  overflow: auto;
+  padding: 18px 20px;
+  box-sizing: border-box;
+}
+
+.filter-toggle-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 9px;
+  border: 1px solid $border;
+  border-radius: 5px;
+  background: #fff;
+  color: $Aztk_deepBlue;
+  font-size: .65rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background .15s ease,
+    border-color .15s ease;
+
+  &:hover {
+    background: $Aztk_lightBlue;
+    border-color: #cbd9de;
+  }
+}
+
+.filters-toggle-icon {
+  font-size: 16px;
+  line-height: 1;
 }

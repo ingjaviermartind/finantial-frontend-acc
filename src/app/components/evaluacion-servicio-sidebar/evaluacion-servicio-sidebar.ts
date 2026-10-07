@@ -224,6 +224,8 @@ export class EvaluacionServicioSidebar implements OnInit {
     const product = service.Producto?.trim()
     this.clientsState.selectedSubsegment = subsegment || null;
     this.clientsState.selectedProduct = product || null;
+    
+    this.capacityMbps = service.CAPACIDADBPS ?? null;
 
      const department = this.departments.find(d => d.name === service.Departamento);
     if (!department) {
@@ -249,16 +251,39 @@ export class EvaluacionServicioSidebar implements OnInit {
       subsegment || null;
   }
 
-
-  clearSelection(): void {
-    this.clientsState.selectedService = null;
-    this.clientsState.selectedSubsegment = null;
-  }
-
   evaluateService(): void {
     if (!this.selectedSubsegment || !this.selectedProduct || this.selectedMunicipalityId) 
       return;
     this.evaluate.emit();
+  }
+
+  clearSelection(): void {
+    this.serviceSearch = '';
+    this.clientsState.selectedService = null;
+    this.clientsState.selectedSubsegment = null;
+    this.clientsState.selectedProduct = null;
+    this.clientsState.selectedEvaluationDepartmentId = null;
+    this.clientsState.selectedEvaluationMunicipalityId = null;
+    this.selectedDepartmentId = null;
+    this.selectedMunicipalityId = null;
+    this.municipalities = [];
+    this.capacityMbps = null;
+    this.contractTime = null;
+    this.initialCapex = 0;
+  }
+
+  hasActiveFilters(): boolean {
+    return !!(
+      this.selectedService ||
+      this.selectedSubsegment ||
+      this.selectedProduct ||
+      this.selectedDepartmentId ||
+      this.selectedMunicipalityId ||
+      this.capacityMbps !== null ||
+      this.contractTime !== null ||
+      this.initialCapex !== 0 ||
+      this.serviceSearch
+    );
   }
 
 }

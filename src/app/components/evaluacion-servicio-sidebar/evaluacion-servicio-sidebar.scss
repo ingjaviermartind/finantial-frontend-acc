@@ -3,6 +3,8 @@ $Aztk_lightBlue: #e8f1f4;
 $border: #e1e6e9;
 $text: #555;
 $muted: #7a7a7a;
+$warning-bg: #fff4d6;
+$warning-text: #9a6b00;
 
 
 /* ========================= */
@@ -25,11 +27,9 @@ $muted: #7a7a7a;
 }
 
 .evaluacion-servicio-sidebar:not(.expanded) {
-
   flex-basis: 0;
   width: 0;
-
-  border-right: none;
+  border-right: 0;
 }
 
 
@@ -555,4 +555,21 @@ $muted: #7a7a7a;
   &:focus {
     border-color: $Aztk_deepBlue;
   }
+}
+
+
+
+.clear-button {
+  width: 100%;
+  margin-top: 7px;
+  padding: 7px;
+  border: none;
+  background: transparent;
+  color: $muted;
+  font-size: .68rem;
+  cursor: pointer;
+}
+
+.clear-button:hover {
+  color: $Aztk_deepBlue;
 }

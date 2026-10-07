@@ -3,8 +3,18 @@
         [isExpanded]="isFiltersExpanded"
         (evaluate)="evaluateService()">
     </app-evaluacion-servicio-sidebar>
-<div class="evaluacion-servicio-content">
-    <!-- aquí va el contenido principal -->
-  </div>
+  <div class="evaluacion-servicio-content">
+    <button
+        type="button"
+        class="filter-toggle-button"
+        (click)="toggleFilters()">
+        <span class="filters-toggle-icon">
+            {{ isFiltersExpanded ? '‹' : '›' }}
+        </span>
+        {{ isFiltersExpanded ? 'Ocultar filtros' : 'Mostrar filtros' }}
+    </button>
 
+    <!-- Contenido de evaluación -->
+
+  </div>
 </div>

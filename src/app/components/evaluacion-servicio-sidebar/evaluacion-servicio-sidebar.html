@@ -189,6 +189,11 @@
               </option>
 
             }
+            <!-- @if (municipalities.length === 0) {
+              <div class="no-options">
+                No se encontraron Municipios
+              </div>
+            } -->
 
           </select>
 
@@ -333,7 +338,6 @@
       <!-- ========================= -->
 
       <div class="sidebar-actions">
-
         <button
           type="button"
           class="search-button"
@@ -345,7 +349,13 @@
           (click)="evaluateService()">
           EVALUAR SERVICIO
         </button>
-
+        <button
+          type="button"
+          class="clear-button"
+          [disabled]="!hasActiveFilters()"
+          (click)="clearSelection()">
+          Limpiar filtros
+        </button>
       </div>
 
     }
