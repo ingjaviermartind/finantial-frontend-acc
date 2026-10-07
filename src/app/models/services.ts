@@ -27,6 +27,7 @@ export interface ActiveService {
   'Rango Capacidad': string;
   node : string;
   unprofitable : boolean;
+  region : string;
 }
 
 export interface ServicesFilters {

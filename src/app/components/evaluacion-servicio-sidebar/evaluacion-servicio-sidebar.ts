@@ -19,6 +19,11 @@ import { ProductCatalog } from '../../models/product-catalog';
 import { Department } from '../../services/department';
 import { Municipality } from '../../services/municipality';
 
+import {
+  PricingRequest,
+  PricingResponse
+} from '../../models/pricing';
+
 @Component({
   selector: 'app-evaluacion-servicio-sidebar',
   standalone: true,
@@ -31,7 +36,7 @@ import { Municipality } from '../../services/municipality';
 export class EvaluacionServicioSidebar implements OnInit {
 
   @Input() isExpanded = true;
-  @Output() evaluate = new EventEmitter<void>();
+  @Output() evaluate = new EventEmitter<PricingRequest>();
 
   serviceSearch = '';
 
@@ -42,9 +47,9 @@ export class EvaluacionServicioSidebar implements OnInit {
   selectedDepartmentId : string | null = null;
   selectedMunicipalityId : string | null = null;
 
-  capacityMbps: number | null = null;
-  contractTime: number | null = null;
-  initialCapex = 0;
+  // capacityMbps: number | null = null;
+  // contractTime: number | null = null;
+  // initialCapex = 0;
 
   constructor(
     private clientsState: ClientsState,
@@ -57,7 +62,9 @@ export class EvaluacionServicioSidebar implements OnInit {
   ngOnInit(): void {
     this.selectedDepartmentId = this.clientsState.selectedEvaluationDepartmentId;
     this.selectedMunicipalityId = this.clientsState.selectedEvaluationMunicipalityId;
-
+    this.capacityMbps = this.clientsState.evaluationCapacityMbps;
+    this.contractTime = this.clientsState.evaluationContractTime;
+    this.initialCapex = this.clientsState.evaluationInitialCapex;
     this.clientSubsegmentService
       .getAll()
       .subscribe({
@@ -252,9 +259,30 @@ export class EvaluacionServicioSidebar implements OnInit {
   }
 
   evaluateService(): void {
-    if (!this.selectedSubsegment || !this.selectedProduct || this.selectedMunicipalityId) 
+    if (
+      !this.selectedMunicipalityId ||
+      !this.selectedProduct ||
+      !this.selectedSubsegment ||
+      !this.capacityMbps ||
+      !this.contractTime
+    ) {
       return;
-    this.evaluate.emit();
+    }
+    const selectedProduct = this.products.find(product => product.product === this.selectedProduct);
+    const selectedSubsegment = this.subsegments.find(subsegment => subsegment.name === this.selectedSubsegment);
+    if (!selectedProduct || !selectedSubsegment) 
+      return;
+    
+    const request: PricingRequest = {
+      municipality_id: this.selectedMunicipalityId,
+      product_id: selectedProduct.id,
+      subsegment_id: selectedSubsegment.id,
+      capacity_mbps: this.capacityMbps,
+      contract_time: this.contractTime,
+      initial_capex: this.initialCapex,
+      initial_income: 0
+    };
+    this.evaluate.emit(request);
   }
 
   clearSelection(): void {
@@ -286,4 +314,27 @@ export class EvaluacionServicioSidebar implements OnInit {
     );
   }
 
+  get capacityMbps(): number | null {
+    return this.clientsState.evaluationCapacityMbps;
+  }
+
+  set capacityMbps(value: number | null) {
+    this.clientsState.evaluationCapacityMbps = value;
+  }
+
+  get contractTime(): number | null {
+    return this.clientsState.evaluationContractTime;
+  }
+
+  set contractTime(value: number | null) {
+    this.clientsState.evaluationContractTime = value;
+  }
+
+  get initialCapex(): number {
+    return this.clientsState.evaluationInitialCapex;
+  }
+
+  set initialCapex(value: number) {
+    this.clientsState.evaluationInitialCapex = value;
+  }
 }

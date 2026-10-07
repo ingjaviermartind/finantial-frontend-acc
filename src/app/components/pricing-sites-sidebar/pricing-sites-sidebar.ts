@@ -535,4 +535,34 @@ toggleAllProducts(): void {
       this.selectedFunnels = [...funnels];
     }
   }
+
+  clearFilters(): void {
+    this.periodValue = 3;
+    this.periodUnit = 'mes(es)';
+
+    this.capacityMin = null;
+    this.capacityMax = null;
+
+    this.selectedFunnelStatuses = [];
+    this.selectedDepartments = [];
+    this.selectedMunicipalities = [];
+    this.selectedProductFamilies = [];
+    this.selectedProducts = [];
+    this.selectedPlans = [];
+    this.selectedClients = [];
+    this.selectedFunnels = [];
+
+    this.departmentSearch = '';
+    this.municipalitySearch = '';
+    this.productFamilySearch = '';
+    this.productSearch = '';
+    this.planSearch = '';
+    this.clientSearch = '';
+    this.funnelSearch = '';
+
+    this.loadFilterOptions();
+  }
+  
+
 }
+
