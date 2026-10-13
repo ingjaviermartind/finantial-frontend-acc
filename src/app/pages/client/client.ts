@@ -227,21 +227,18 @@ export class Client implements OnInit {
   }
 
   onSidebarSearch(filters: ServicesFilters): void {
+    const hasDepartments = !!filters.department?.length;
     const hasMunicipalities = !!filters.municipality?.length;
     const hasClients = !!filters.client?.length;
-
     // Si no hay filtros de búsqueda, limpiar resultados
-    if (!hasMunicipalities && !hasClients) {
+    if (!hasMunicipalities && !hasClients && !hasDepartments) {
       this.services = [];
       this.clients = [];
       this.servicesSearched = false;
-
       this.clientsState.services = [];
       this.clientsState.servicesSearched = false;
-
       return;
     }
-
     this.servicesSearched = true;
     this.loadingServices = true;
     this.servicesError = null;
@@ -249,7 +246,6 @@ export class Client implements OnInit {
     this.subsegments = [];
     this.capacityRanges = [];
     this.products_clients = [];
-
     this.servicesService
       .getByMunicipalities(filters)
       .pipe(
@@ -261,10 +257,7 @@ export class Client implements OnInit {
         next: response => {
           if (response.success) {
             this.services = response.data;
-            console.log(this.services);
-
             this.buildClients();
-
             this.servicesSearched = true;
             this.clientsState.services = [...response.data];
             this.clientsState.servicesSearched = true;

@@ -175,19 +175,13 @@
               Seleccione un municipio
             </option>
 
-            @for (
-              municipality of municipalities;
-              track municipality.id
-            ) {
-
+            @for (municipality of municipalities; track municipality.id)
+            {
               <option
                 [value]="municipality.id"
                 [class.unprofitable-option]="municipality.unprofitable">
-
                 {{ municipality.unprofitable ? '● ' : '' }}{{ municipality.name }}
-
               </option>
-
             }
             <!-- @if (municipalities.length === 0) {
               <div class="no-options">

@@ -630,3 +630,34 @@
   line-height: 1.4;
   white-space: nowrap;
 }
+
+.range-inputs {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+}
+
+.range-inputs input {
+  width: 100%;
+  min-width: 0;
+  height: 30px;
+  box-sizing: border-box;
+  padding: 0 8px;
+  border: 1px solid #d8dfe3;
+  border-radius: 5px;
+  background: #fff;
+  color: $text;
+  font-size: .66rem;
+  outline: none;
+}
+
+.range-inputs input:focus {
+  border-color: $Aztk_deepBlue;
+  box-shadow: 0 0 0 2px rgba(7, 64, 87, .08);
+}
+
+.range-inputs span {
+  color: $muted;
+  font-size: .7rem;
+}

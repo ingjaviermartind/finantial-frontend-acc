@@ -5,6 +5,8 @@ import { Municipality } from '../../services/municipality';
 import { ActiveClientsService } from '../../services/clients';
 import { ClientOption, ServicesFilters} from '../../models/services';
 import { ClientsSidebarState } from '../../services/clients-state';
+import { ProductCatalogService } from '../../services/product-catalog';
+import { department, municipality } from '../../models/location';
 
 @Component({
   selector: 'app-client-sidebar',
@@ -32,8 +34,8 @@ export class ClientSidebar implements OnInit {
   @Output() stateChange = new EventEmitter<ClientsSidebarState>();
   @Output() search = new EventEmitter<ServicesFilters>();
 
-  departments : any[] = [];
-  municipalities : any[] = [];
+  departments : department[] = [];
+  municipalities : municipality[] = [];
 
   selectedDepartmentIds : any[] = [];
   selectedMunicipalityIds : any[] = [];
@@ -48,10 +50,18 @@ export class ClientSidebar implements OnInit {
   clients: ClientOption[] = [];
   selectedClients: string[] = [];
 
+  capacityMin: number | null = null;
+  capacityMax: number | null = null;
+
+  products: string[] = [];
+  selectedProducts: string[] = [];
+  productSearch = '';
+
   constructor(
     private departmentService : Department,
     private municipalityService : Municipality,
-    private activeClientsService : ActiveClientsService
+    private activeClientsService : ActiveClientsService,
+    private productCatalogService : ProductCatalogService
   ) {}
 
   ngOnInit() : void {
@@ -66,6 +76,56 @@ export class ClientSidebar implements OnInit {
       this.loadMunicipalities();
     }
     this.loadClients();
+    this.loadProducts();
+  }
+
+  private loadProducts(): void {
+    this.productCatalogService.getAll().subscribe({
+      next: data => {
+        this.products = [
+          ...new Set(
+            data
+              .map(item => item.product?.trim())
+              .filter((product): product is string => !!product)
+          )
+        ].sort((a, b) => a.localeCompare(b));
+      },
+      error: err => {
+        console.error('Error cargando productos:', err);
+        this.products = [];
+      }
+    });
+  }
+
+  get filteredProducts(): string[] {
+    const search = this.productSearch.trim().toLowerCase();
+
+    return this.products.filter(product =>
+      product.toLowerCase().includes(search)
+    );
+  }
+
+  get allProductsSelected(): boolean {
+    return this.products.length > 0 &&
+      this.products.every(product =>
+        this.selectedProducts.includes(product)
+      );
+  }
+
+  toggleProduct(product: string): void {
+    if (this.selectedProducts.includes(product)) {
+      this.selectedProducts = this.selectedProducts.filter(
+        item => item !== product
+      );
+    } else {
+      this.selectedProducts = [...this.selectedProducts, product];
+    }
+  }
+
+  toggleAllProducts(): void {
+    this.selectedProducts = this.allProductsSelected
+      ? []
+      : [...this.products];
   }
 
   private loadClients(): void {
@@ -297,7 +357,11 @@ export class ClientSidebar implements OnInit {
   searchServices(): void {
     const filters: ServicesFilters = {
       municipality: [...this.selectedMunicipalityIds],
-      client: [...this.selectedClients]
+      department: [...this.selectedDepartmentIds],
+      client: [...this.selectedClients],
+      capacity_min: this.capacityMin ?? undefined,
+      capacity_max: this.capacityMax ?? undefined,
+      product: [...this.selectedProducts]
     };
     this.search.emit(filters);
   }
@@ -314,6 +378,11 @@ export class ClientSidebar implements OnInit {
     this.municipalities = [];
 
     this.loadingMunicipalities = false;
+
+    this.capacityMin = null;
+    this.capacityMax = null;
+    this.selectedProducts = [];
+    this.productSearch = '';
 
     this.departmentsChange.emit([]);
     this.municipalitiesChange.emit([]);

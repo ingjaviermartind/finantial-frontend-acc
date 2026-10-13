@@ -14,60 +14,52 @@
         </span>
         {{ isFiltersExpanded ? 'Ocultar filtros' : 'Mostrar filtros' }}
     </button>
-    @if (selectedDaneServices.length > 0) {
-      <div class="dane-bar">
-        <span class="dane-bar-label">
-          DANE seleccionados
-        </span>
-        <div class="dane-tags">
-          @for (
-            service of selectedDaneServices;
-            track service['Codigo DANE']
-          ) {
-            <div
-              class="dane-pill"
-              tabindex="0">
-              <span
+    @if (selectedMunicipality) 
+    {
+        <div class="dane-bar">
+            <span class="dane-bar-label">
+            DANE seleccionado
+            </span>
+
+            <div class="dane-tags">
+            <div class="dane-pill" tabindex="0">
+                <span
                 class="dane-pill-dot"
-                [class.unprofitable]="service.unprofitable">
-              </span>
-              <span class="dane-pill-code">
-                {{ service['Codigo DANE'] }}
-              </span>
-              <div class="dane-tooltip">
+                [class.unprofitable]="selectedMunicipality.unprofitable">
+                </span>
+
+                <span class="dane-pill-code">
+                {{ selectedMunicipality.dane }}
+                </span>
+
+                <div class="dane-tooltip">
                 <div class="dane-tooltip-title">
-                  {{ service.Municipio }}, {{ service.Departamento }}
+                    {{ selectedMunicipality.name }}
                 </div>
-                <!-- <div class="dane-tooltip-row">
-                  <span>SER</span>
-                  <strong>{{ service.SER }}</strong>
-                </div>
+
                 <div class="dane-tooltip-row">
-                  <span>Capacidad</span>
-                  <strong>{{ service.Capacidad }}</strong>
+                    <span>Región Tarifaria</span>
+                    <strong>
+                    {{ selectedMunicipality.region || 'Sin Región' }}
+                    </strong>
                 </div>
+
                 <div class="dane-tooltip-row">
-                  <span>Tecnología</span>
-                  <strong>{{ service.TIPO_TECNOLOGIA }}</strong>
-                </div> -->
-                <div class="dane-tooltip-row">
-                  <span>Región Tarifaria</span>
-                  <strong>{{ service.region || 'Sin Región' }}</strong>
+                    <span>Nodo</span>
+                    <strong>
+                    {{ selectedMunicipality.node || 'Sin nodo' }}
+                    </strong>
                 </div>
-                <div class="dane-tooltip-row">
-                  <span>Nodo</span>
-                  <strong>{{ service.node || 'Sin nodo' }}</strong>
-                </div>
-                @if (service.unprofitable) {
-                  <div class="dane-tooltip-warning">
+
+                @if (selectedMunicipality.unprofitable) {
+                    <div class="dane-tooltip-warning">
                     ● No rentable
-                  </div>
+                    </div>
                 }
-              </div>
+                </div>
             </div>
-          }
+            </div>
         </div>
-      </div>
     }
     @if (loadingCalculation) {
 

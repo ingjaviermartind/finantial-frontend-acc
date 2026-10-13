@@ -11,6 +11,8 @@ import { EvaluatorSidebar } from '../../components/evaluator-sidebar/evaluator-s
 
 import { CurrencyPipe, DecimalPipe, PercentPipe} from '@angular/common';
 
+import { municipality } from '../../models/location';
+
 
 
 @Component({
@@ -36,7 +38,7 @@ export class Evaluator {
   priceEvaluationResult: EvaluationResult | undefined;
   private lastPricingRequest: PricingRequest | undefined;
 
-  selectedDaneMunicipality: SelectedDaneLocation | null = null;
+  selectedMunicipality: municipality | null = null;
 
   constructor(
     private clientsState: ClientsState,
@@ -50,18 +52,12 @@ export class Evaluator {
     this.priceEvaluationResult = this.clientsState.evaluationPriceResult;
   }
 
-  get selectedDaneServices():
-    (ActiveService | SelectedDaneLocation)[] {
-    const service = this.clientsState.selectedService;
-    if (service) 
-      return [service];
-    return this.selectedDaneMunicipality
-      ? [this.selectedDaneMunicipality]
-      : [];
+  private normalizeDane(value: unknown): string {
+    return String(value ?? '').trim().padStart(5, '0');
   }
 
-  onSelectedDaneChange(location: SelectedDaneLocation | null): void {
-    this.selectedDaneMunicipality = location;
+  onSelectedDaneChange(location: municipality | null): void {
+    this.selectedMunicipality = location;
   }
 
   toggleFilters(): void {

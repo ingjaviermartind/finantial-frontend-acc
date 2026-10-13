@@ -6,6 +6,8 @@ import {
   OnInit
 } from '@angular/core';
 
+import { Observable, of, catchError, map, tap } from 'rxjs';
+
 import { FormsModule } from '@angular/forms';
 
 import { ClientsState } from '../../services/clients-state';
@@ -18,7 +20,7 @@ import { ProductCatalogService } from '../../services/product-catalog';
 import { ProductCatalog } from '../../models/product-catalog';
 import { Department } from '../../services/department';
 import { Municipality } from '../../services/municipality';
-
+import { department, municipality } from '../../models/location';
 import {
   PricingRequest,
   PricingResponse
@@ -37,14 +39,14 @@ export class EvaluatorSidebar implements OnInit {
 
   @Input() isExpanded = true;
   @Output() evaluate = new EventEmitter<PricingRequest>();
-  @Output() selectedDaneChange = new EventEmitter<SelectedDaneLocation | null>();
+  @Output() selectedDaneChange = new EventEmitter<municipality | null>();
 
   serviceSearch = '';
 
   subsegments: Subsegment[] = [];
   products: ProductCatalog[] = [];
-  departments: any[] = [];
-  municipalities: any[] = [];
+  departments: department[] = [];
+  municipalities: municipality[] = [];
   selectedDepartmentId : string | null = null;
   selectedMunicipalityId : string | null = null;
 
@@ -106,9 +108,7 @@ export class EvaluatorSidebar implements OnInit {
         );
 
         if (this.selectedDepartmentId) {
-          this.loadMunicipalities(
-            this.selectedDepartmentId
-          );
+          this.loadMunicipalities(this.selectedDepartmentId).subscribe();
         }
       },
       error: err => {
@@ -122,49 +122,22 @@ export class EvaluatorSidebar implements OnInit {
   }
 
 
-  loadMunicipalities( departmentId: string, municipalityName?: string, municipalityDane?: string): void {
-    this.municipalityService
+  loadMunicipalities(departmentId: string): Observable<municipality[]> {
+    return this.municipalityService
       .getByDepartments([departmentId])
-      .subscribe({
-        next: data => {
-          this.municipalities = [...data].sort(
-            (a, b) => a.name.localeCompare(b.name)
-          );
-          if (municipalityName || municipalityDane) {
-            const municipality =
-              this.municipalities.find(m => {
-
-                const sameDane =
-                  municipalityDane &&
-                  String(m.dane).padStart(5, '0') ===
-                  String(municipalityDane).padStart(5, '0');
-
-                return (
-                  sameDane ||
-                  m.name === municipalityName
-                );
-              });
-
-            if (municipality) {
-              this.selectedMunicipalityId =
-                municipality.id;
-
-              this.clientsState
-                .selectedEvaluationMunicipalityId =
-                  municipality.id;
-            }
-          }
-          this.emitSelectedDaneMunicipality();
-        },
-        error: err => {
-          console.error(
-            'Error cargando municipios:',
-            err
-          );
-
+      .pipe(
+        map(data =>
+          [...data].sort((a, b) => a.name.localeCompare(b.name))
+        ),
+        tap(data => {
+          this.municipalities = data;
+        }),
+        catchError(err => {
+          console.error('Error cargando municipios:', err);
           this.municipalities = [];
-        }
-      });
+          return of([]);
+        })
+      );
   }
 
   onDepartmentChange(departmentId: string) : void {
@@ -173,31 +146,16 @@ export class EvaluatorSidebar implements OnInit {
     this.municipalities = [];
     this.clientsState.selectedEvaluationDepartmentId = this.selectedDepartmentId;
     this.clientsState.selectedEvaluationMunicipalityId = null;
+    this.clientsState.selectedService = null;
     this.selectedDaneChange.emit(null);
-    if (this.selectedDepartmentId) {
-      this.loadMunicipalities(this.selectedDepartmentId);
-    }
-    this.selectedDaneChange.emit(null);
+    if (this.selectedDepartmentId) 
+      this.loadMunicipalities(this.selectedDepartmentId).subscribe();
   }
 
   onMunicipalityChange(municipalityId: string | null): void {
     this.selectedMunicipalityId = municipalityId || null;
     this.clientsState.selectedEvaluationMunicipalityId = this.selectedMunicipalityId;
-    const municipality = this.municipalities.find(m => String(m.id) === String(this.selectedMunicipalityId));
-    const selectedService = this.clientsState.selectedService;
-    // Si el usuario cambia a otra ubicación,
-    // ya no debe quedar seleccionado el servicio anterior.
-    if (
-      selectedService &&
-      (
-        !municipality ||
-        this.normalizeDane(selectedService['Codigo DANE']) !==
-        this.normalizeDane(municipality.dane)
-      )
-    ) {
-      this.clientsState.selectedService = null;
-    }
-
+    this.clientsState.selectedService = null;
     this.emitSelectedDaneMunicipality();
   }
 
@@ -206,44 +164,10 @@ export class EvaluatorSidebar implements OnInit {
   }
 
   private emitSelectedDaneMunicipality(): void {
-    if (!this.selectedMunicipalityId) {
-      this.selectedDaneChange.emit(null);
-      return;
-    }
-
-    const municipality = this.municipalities.find(
+    const SelectedMunicipality = this.municipalities.find(
       m => String(m.id) === String(this.selectedMunicipalityId)
     );
-
-    if (
-      !municipality ||
-      municipality.dane == null ||
-      String(municipality.dane).trim() === ''
-    ) {
-      this.selectedDaneChange.emit(null);
-      return;
-    }
-
-    const dane = this.normalizeDane(municipality.dane);
-
-    // Buscar información complementaria entre los servicios disponibles.
-    const referenceService = this.clientsState.services.find(
-      service =>
-        this.normalizeDane(service['Codigo DANE']) === dane
-    );
-
-    const departmentName = this.departments.find(
-      d => String(d.id) === String(this.selectedDepartmentId)
-    )?.name ?? referenceService?.Departamento ?? '';
-
-    this.selectedDaneChange.emit({
-      'Codigo DANE': dane,
-      Municipio: municipality.name,
-      Departamento: departmentName,
-      region: referenceService?.region ?? null,
-      node: null,
-      unprofitable: false
-    });
+    this.selectedDaneChange.emit(SelectedMunicipality);
   }
 
   get services(): ActiveService[] {
@@ -289,30 +213,41 @@ export class EvaluatorSidebar implements OnInit {
 
   selectService(service: ActiveService): void {
     this.clientsState.selectedService = service;
-    const subsegment = service.Subsegmento?.trim();
-    const product = service.Producto?.trim()
-    this.clientsState.selectedSubsegment = subsegment || null;
-    this.clientsState.selectedProduct = product || null;
-    
+    this.clientsState.selectedSubsegment = service.Subsegmento?.trim() || null;
+    this.clientsState.selectedProduct = service.Producto?.trim() || null;
     this.capacityMbps = service.CAPACIDADBPS ?? null;
-
-     const department = this.departments.find(d => d.name === service.Departamento);
+    const department = this.departments.find(
+      d => d.name === service.Departamento
+    );
     if (!department) {
       this.selectedDepartmentId = null;
       this.selectedMunicipalityId = null;
       this.municipalities = [];
+      this.clientsState.selectedEvaluationDepartmentId = null;
+      this.clientsState.selectedEvaluationMunicipalityId = null;
+      this.selectedDaneChange.emit(null);
       return;
     }
     this.selectedDepartmentId = department.id;
-    this.clientsState.selectedEvaluationDepartmentId = department.id;
-
     this.selectedMunicipalityId = null;
+    this.clientsState.selectedEvaluationDepartmentId = department.id;
     this.clientsState.selectedEvaluationMunicipalityId = null;
-    this.loadMunicipalities(
-      department.id,
-      service.Municipio,
-      service['Codigo DANE']
-    );
+    this.loadMunicipalities(department.id).subscribe(municipalities => {
+      const serviceDane = this.normalizeDane(service['Codigo DANE']);
+      const municipality = municipalities.find(
+        m => this.normalizeDane(m.dane) === serviceDane
+      );
+      if (!municipality) {
+        this.selectedMunicipalityId = null;
+        this.clientsState.selectedEvaluationMunicipalityId = null;
+        this.selectedDaneChange.emit(null);
+        console.warn(`No se encontró el municipio con DANE ${serviceDane}`);
+        return;
+      }
+      this.selectedMunicipalityId = municipality.id;
+      this.clientsState.selectedEvaluationMunicipalityId = municipality.id;
+      this.emitSelectedDaneMunicipality();
+    });
   }
 
   onSubsegmentChange(subsegment: string): void {

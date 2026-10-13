@@ -32,6 +32,7 @@ export interface ActiveService {
 
 export interface ServicesFilters {
   municipality?: string[];
+  department?: string[];
   client?: string[];
   capacity_min?: number;
   capacity_max?: number;

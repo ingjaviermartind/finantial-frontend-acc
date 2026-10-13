@@ -306,6 +306,71 @@
 
         </section>
 
+        <!-- ========================= -->
+        <!-- 3. SERVICIO                -->
+        <!-- ========================= -->
+        <section class="filter-section">
+          <div class="section-title">
+            3. ESPECIFICACIONES DEL SERVICIO
+          </div>
+          <!-- CAPACIDAD -->
+          <div class="filter-group">
+            <div class="filter-label-row">
+              <label>Capacidad (Mbps)</label>
+            </div>
+            <div class="range-inputs">
+              <input
+                type="number"
+                placeholder="Min"
+                min="0"
+                [(ngModel)]="capacityMin">
+              <span>–</span>
+              <input
+                type="number"
+                placeholder="Max"
+                min="0"
+                [(ngModel)]="capacityMax">
+            </div>
+          </div>
+          <!-- PRODUCTO -->
+          <div class="filter-group">
+            <div class="filter-label-row">
+              <label>Producto</label>
+              <button
+                type="button"
+                class="select-all-button"
+                (click)="toggleAllProducts()">
+                {{ allProductsSelected ? 'Ninguno' : 'Todos' }}
+              </button>
+            </div>
+            <div class="checkbox-search">
+              <input
+                type="text"
+                placeholder="Buscar producto..."
+                [(ngModel)]="productSearch">
+            </div>
+            <div class="checkbox-list">
+              @for (product of filteredProducts; track product) {
+                <label class="checkbox-option">
+                  <input
+                    type="checkbox"
+                    [checked]="selectedProducts.includes(product)"
+                    (change)="toggleProduct(product)">
+                  <span class="checkbox-box"></span>
+                  <span class="checkbox-label">
+                    {{ product }}
+                  </span>
+                </label>
+              }
+              @if (filteredProducts.length === 0) {
+                <div class="no-options">
+                  No se encontraron productos
+                </div>
+              }
+            </div>
+          </div>
+        </section>
+
       </div>
 
 
@@ -321,7 +386,10 @@
           [disabled]="
             !selectedClients.length &&
             !selectedDepartmentIds.length &&
-            !selectedMunicipalityIds.length
+            !selectedMunicipalityIds.length &&
+            capacityMin === null &&
+            capacityMax === null &&
+            !selectedProducts.length
           "
           (click)="searchServices()">
 
@@ -337,9 +405,13 @@
             !selectedClients.length &&
             !selectedDepartmentIds.length &&
             !selectedMunicipalityIds.length &&
+            capacityMin === null &&
+            capacityMax === null &&
+            !selectedProducts.length &&
             !clientSearch &&
             !departmentSearch &&
-            !municipalitySearch
+            !municipalitySearch &&
+            !productSearch
           "
           (click)="clearFilters()">
 
