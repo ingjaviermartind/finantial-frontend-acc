@@ -9,7 +9,7 @@ import {
 import { FormsModule } from '@angular/forms';
 
 import { ClientsState } from '../../services/clients-state';
-import { ActiveService } from '../../models/services';
+import { ActiveService, SelectedDaneLocation } from '../../models/services';
 
 import { ClientSubsegmentService } from '../../services/subsegments';
 import { Subsegment } from '../../models/subsegment';
@@ -37,6 +37,7 @@ export class EvaluatorSidebar implements OnInit {
 
   @Input() isExpanded = true;
   @Output() evaluate = new EventEmitter<PricingRequest>();
+  @Output() selectedDaneChange = new EventEmitter<SelectedDaneLocation | null>();
 
   serviceSearch = '';
 
@@ -126,13 +127,10 @@ export class EvaluatorSidebar implements OnInit {
       .getByDepartments([departmentId])
       .subscribe({
         next: data => {
-
           this.municipalities = [...data].sort(
             (a, b) => a.name.localeCompare(b.name)
           );
-
           if (municipalityName || municipalityDane) {
-
             const municipality =
               this.municipalities.find(m => {
 
@@ -156,6 +154,7 @@ export class EvaluatorSidebar implements OnInit {
                   municipality.id;
             }
           }
+          this.emitSelectedDaneMunicipality();
         },
         error: err => {
           console.error(
@@ -174,14 +173,77 @@ export class EvaluatorSidebar implements OnInit {
     this.municipalities = [];
     this.clientsState.selectedEvaluationDepartmentId = this.selectedDepartmentId;
     this.clientsState.selectedEvaluationMunicipalityId = null;
+    this.selectedDaneChange.emit(null);
     if (this.selectedDepartmentId) {
       this.loadMunicipalities(this.selectedDepartmentId);
     }
+    this.selectedDaneChange.emit(null);
   }
 
-  onMunicipalityChange( municipalityId: string): void {
+  onMunicipalityChange(municipalityId: string | null): void {
     this.selectedMunicipalityId = municipalityId || null;
     this.clientsState.selectedEvaluationMunicipalityId = this.selectedMunicipalityId;
+    const municipality = this.municipalities.find(m => String(m.id) === String(this.selectedMunicipalityId));
+    const selectedService = this.clientsState.selectedService;
+    // Si el usuario cambia a otra ubicación,
+    // ya no debe quedar seleccionado el servicio anterior.
+    if (
+      selectedService &&
+      (
+        !municipality ||
+        this.normalizeDane(selectedService['Codigo DANE']) !==
+        this.normalizeDane(municipality.dane)
+      )
+    ) {
+      this.clientsState.selectedService = null;
+    }
+
+    this.emitSelectedDaneMunicipality();
+  }
+
+  private normalizeDane(value: unknown): string {
+    return String(value ?? '').trim().padStart(5, '0');
+  }
+
+  private emitSelectedDaneMunicipality(): void {
+    if (!this.selectedMunicipalityId) {
+      this.selectedDaneChange.emit(null);
+      return;
+    }
+
+    const municipality = this.municipalities.find(
+      m => String(m.id) === String(this.selectedMunicipalityId)
+    );
+
+    if (
+      !municipality ||
+      municipality.dane == null ||
+      String(municipality.dane).trim() === ''
+    ) {
+      this.selectedDaneChange.emit(null);
+      return;
+    }
+
+    const dane = this.normalizeDane(municipality.dane);
+
+    // Buscar información complementaria entre los servicios disponibles.
+    const referenceService = this.clientsState.services.find(
+      service =>
+        this.normalizeDane(service['Codigo DANE']) === dane
+    );
+
+    const departmentName = this.departments.find(
+      d => String(d.id) === String(this.selectedDepartmentId)
+    )?.name ?? referenceService?.Departamento ?? '';
+
+    this.selectedDaneChange.emit({
+      'Codigo DANE': dane,
+      Municipio: municipality.name,
+      Departamento: departmentName,
+      region: referenceService?.region ?? null,
+      node: null,
+      unprofitable: false
+    });
   }
 
   get services(): ActiveService[] {
@@ -298,6 +360,7 @@ export class EvaluatorSidebar implements OnInit {
     this.capacityMbps = null;
     this.contractTime = null;
     this.initialCapex = 0;
+    this.selectedDaneChange.emit(null);
   }
 
   hasActiveFilters(): boolean {

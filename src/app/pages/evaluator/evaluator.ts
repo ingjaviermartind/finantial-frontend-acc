@@ -4,7 +4,7 @@ import { finalize } from 'rxjs';
 
 import { ClientsState } from '../../services/clients-state';
 import { PricingService } from '../../services/pricing';
-import { ActiveService } from '../../models/services';
+import { ActiveService, SelectedDaneLocation } from '../../models/services';
 import { PricingRequest, PricingResponse, EvaluationResult} from '../../models/pricing';
 
 import { EvaluatorSidebar } from '../../components/evaluator-sidebar/evaluator-sidebar';
@@ -35,7 +35,9 @@ export class Evaluator {
 
   priceEvaluationResult: EvaluationResult | undefined;
   private lastPricingRequest: PricingRequest | undefined;
-  
+
+  selectedDaneMunicipality: SelectedDaneLocation | null = null;
+
   constructor(
     private clientsState: ClientsState,
     private pricingService : PricingService
@@ -48,9 +50,18 @@ export class Evaluator {
     this.priceEvaluationResult = this.clientsState.evaluationPriceResult;
   }
 
-  get selectedDaneServices() : ActiveService[] {
+  get selectedDaneServices():
+    (ActiveService | SelectedDaneLocation)[] {
     const service = this.clientsState.selectedService;
-    return service ? [service] : [];
+    if (service) 
+      return [service];
+    return this.selectedDaneMunicipality
+      ? [this.selectedDaneMunicipality]
+      : [];
+  }
+
+  onSelectedDaneChange(location: SelectedDaneLocation | null): void {
+    this.selectedDaneMunicipality = location;
   }
 
   toggleFilters(): void {

@@ -202,7 +202,11 @@
                   <span class="checkbox-label">
                     {{ department.name }}
                   </span>
-
+                  @if (department.unprofitable) {
+                    <span class="unprofitable-tag">
+                      No rentable
+                    </span>
+                  }
                 </label>
 
               }
@@ -275,7 +279,11 @@
                   <span class="checkbox-label">
                     {{ municipality.name }}
                   </span>
-
+                  @if (municipality.unprofitable) {
+                    <span class="unprofitable-tag">
+                      No rentable
+                    </span>
+                  }
                 </label>
 
               }
@@ -311,6 +319,8 @@
           type="button"
           class="search-button"
           [disabled]="
+            !selectedClients.length &&
+            !selectedDepartmentIds.length &&
             !selectedMunicipalityIds.length
           "
           (click)="searchServices()">

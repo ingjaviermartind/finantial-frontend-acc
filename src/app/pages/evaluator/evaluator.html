@@ -1,7 +1,8 @@
 <div class="evaluacion-servicio-container">
     <app-evaluator-sidebar
         [isExpanded]="isFiltersExpanded"
-        (evaluate)="evaluateService($event)">
+        (evaluate)="evaluateService($event)"
+        (selectedDaneChange)="onSelectedDaneChange($event)">
     </app-evaluator-sidebar>
   <div class="evaluacion-servicio-content">
     <button

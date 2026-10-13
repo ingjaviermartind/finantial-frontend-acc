@@ -6,21 +6,13 @@
 /* ========================= */
 
 .client-sidebar {
-
   flex: 0 0 280px;
-
   width: 280px;
-
   height: 100%;
-
   box-sizing: border-box;
-
   background: #fff;
-
   border-right: 1px solid $border;
-
   overflow: hidden;
-
   transition:
     flex-basis .25s ease,
     width .25s ease;
@@ -64,15 +56,10 @@
 /* ========================= */
 
 .sidebar-header {
-
   min-height: 38px;
-
   display: flex;
-
   align-items: center;
-
   justify-content: space-between;
-
   padding-bottom: 14px;
 
   margin-bottom: 16px;
@@ -575,15 +562,12 @@
 
 
 .search-button:disabled {
-
   opacity: .65;
-
   cursor: not-allowed;
 }
 
 
 .search-button:disabled:hover {
-
   background: $Aztk_deepBlue;
 }
 
@@ -593,34 +577,56 @@
 /* ========================= */
 
 .clear-button {
-
   width: 100%;
-
   margin-top: 7px;
-
   padding: 7px;
-
   border: none;
-
   background: transparent;
-
   color: $muted;
-
   font-size: .68rem;
-
   cursor: pointer;
 }
 
 
 .clear-button:hover {
-
   color: $Aztk_deepBlue;
 }
 
 
 .clear-button:disabled {
-
   opacity: .5;
-
   cursor: not-allowed;
+}
+
+/* Nombre de departamento o municipio */
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  width: 100%;
+  min-width: 0;
+}
+
+.location-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Indicador de ubicación no rentable */
+.unprofitable-tag {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  padding: 2px 5px;
+  border-radius: 4px;
+  background: $unprofitable-tag-background;
+  color: $unprofitable-tag;
+  font-size: 0.55rem;
+  font-weight: 700;
+  line-height: 1.4;
+  white-space: nowrap;
 }

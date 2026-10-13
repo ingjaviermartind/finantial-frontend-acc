@@ -41,6 +41,15 @@ export interface ServicesFilters {
   subsegment?: string[];
 }
 
+export interface SelectedDaneLocation {
+  'Codigo DANE': string;
+  Municipio: string;
+  Departamento: string;
+  region: string | null;
+  node: string | null;
+  unprofitable: boolean;
+}
+
 export interface ActiveClient {
   nit: string;
   razonSocial: string;

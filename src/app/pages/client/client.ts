@@ -226,15 +226,22 @@ export class Client implements OnInit {
     this.selectedMunicipalityIds = ids;
   }
 
-  onSidebarSearch(municipalityIds: any[]): void {
-    if (municipalityIds.length === 0) {
+  onSidebarSearch(filters: ServicesFilters): void {
+    const hasMunicipalities = !!filters.municipality?.length;
+    const hasClients = !!filters.client?.length;
+
+    // Si no hay filtros de búsqueda, limpiar resultados
+    if (!hasMunicipalities && !hasClients) {
       this.services = [];
       this.clients = [];
       this.servicesSearched = false;
+
       this.clientsState.services = [];
       this.clientsState.servicesSearched = false;
+
       return;
     }
+
     this.servicesSearched = true;
     this.loadingServices = true;
     this.servicesError = null;
@@ -243,44 +250,39 @@ export class Client implements OnInit {
     this.capacityRanges = [];
     this.products_clients = [];
 
-    const filters: ServicesFilters = {
-      municipality: municipalityIds
-    };
+    this.servicesService
+      .getByMunicipalities(filters)
+      .pipe(
+        finalize(() => {
+          this.loadingServices = false;
+        })
+      )
+      .subscribe({
+        next: response => {
+          if (response.success) {
+            this.services = response.data;
+            console.log(this.services);
 
-  this.servicesService
-    .getByMunicipalities(filters)
-    .pipe(
-      finalize(() => {
-        this.loadingServices = false;
-      })
-    )
-    .subscribe({
-      next: response => {
-        if (response.success) 
-        {
-          this.services = response.data;
-          console.log(this.services);
-          this.buildClients();
-          this.servicesSearched = true;
-          this.clientsState.services = [...response.data];
-          this.clientsState.servicesSearched = true;
-        } 
-        else 
-        {
+            this.buildClients();
+
+            this.servicesSearched = true;
+            this.clientsState.services = [...response.data];
+            this.clientsState.servicesSearched = true;
+          } else {
+            this.services = [];
+            this.servicesSearched = false;
+            this.servicesError =
+              response.message ??
+              'No fue posible consultar los servicios.';
+          }
+        },
+        error: err => {
           this.services = [];
-          this.servicesSearched = false;
           this.servicesError =
-            response.message ??
-            'No fue posible consultar los servicios.';
+            err.error?.message ??
+            'Error inesperado consultando servicios.';
         }
-      },
-      error: err => {
-        this.services = [];
-        this.servicesError =
-          err.error?.message ??
-          'Error inesperado consultando servicios.';
-      }
-    });
+      });
   }
 
   get canShowResults(): boolean {
