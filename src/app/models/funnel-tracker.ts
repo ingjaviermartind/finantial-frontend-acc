@@ -7,12 +7,22 @@ export interface LocationTrackerMetrics {
   Razon_Viabilidad_Pct: MetricValue;
   Sedes_Viables_Con_Coordenadas: MetricValue;
   Razon_Viables_Con_Coordenadas_Pct: MetricValue;
+  coordinates_original_count : MetricValue;
+  coordinates_recovered_count : MetricValue;
+  coordinates_recovery_failed_count : MetricValue;
+  coordinates_count : MetricValue;
+  coordinates_coverage_pct : MetricValue;
 }
 
 export interface ServiceTrackerMetrics {
   Total_Servicios: MetricValue;
   Servicios_Con_Coordenadas: MetricValue;
   Razon_Servicios_Con_Coordenadas_Pct: MetricValue;
+  coordinates_original_count : MetricValue;
+  coordinates_recovered_count : MetricValue;
+  coordinates_recovery_failed_count : MetricValue;
+  coordinates_count : MetricValue;
+  coordinates_coverage_pct : MetricValue;
 }
 
 export interface ProximityMetrics {

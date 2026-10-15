@@ -41,7 +41,7 @@ export class LocationTracker implements OnInit {
     this.errorMessage = null;
 
     this.funnelTrackerService
-      .getTrackerData(100)
+      .getTrackerData(80)
       .pipe(
         finalize(() => {
           this.isLoading = false;
@@ -111,13 +111,13 @@ export class LocationTracker implements OnInit {
 
   get viableSitesWithCoordinates(): number {
     return this.toNumber(
-      this.data?.metrics.locations.Sedes_Viables_Con_Coordenadas
+      this.data?.metrics.locations.coordinates_count
     );
   }
 
   get viableCoordinatesPct(): number {
     const storedValue =
-      this.data?.metrics.locations.Razon_Viables_Con_Coordenadas_Pct;
+      this.data?.metrics.locations.coordinates_coverage_pct;
 
     return storedValue != null
       ? this.toNumber(storedValue)
@@ -169,13 +169,26 @@ export class LocationTracker implements OnInit {
 
   get servicesWithCoordinates(): number {
     return this.toNumber(
-      this.data?.metrics.services.Servicios_Con_Coordenadas
+      this.data?.metrics.services.coordinates_count
     );
   }
 
   get servicesWithCoordinatesPct(): number {
     return this.toNumber(
-      this.data?.metrics.services.Razon_Servicios_Con_Coordenadas_Pct
+      this.data?.metrics.services.coordinates_coverage_pct
+    );
+  }
+
+  get servicesSortedByMrc() {
+    return [...(this.data?.services_with_nearby_sites ?? [])]
+      .sort((a, b) =>
+        Number(b.service_tariff ?? 0) - Number(a.service_tariff ?? 0)
+      );
+  }
+
+  get Radius () {
+    return this.toNumber(
+      this.data?.metrics.proximity.radius_m
     );
   }
 }
