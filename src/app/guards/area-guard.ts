@@ -16,7 +16,6 @@ export const areaGuard = (...areas: string[]): CanActivateFn => {
     const routes: Record<string, string> = {
       ventas: '/evaluator',
       pricing: '/evaluator',
-      preventa: '/pre-sales',
       retencion: '/main'
     };
 

@@ -1,0 +1,545 @@
+<div class="location-tracker-page">
+
+  <header class="tracker-page-header">
+    <div>
+      <span class="tracker-eyebrow">AUDITORÍA DE PRICING</span>
+      <h1>Seguimiento de Funnels y Validación de Planta Activa</h1>
+      <p>
+        Cruce sistematico entre oportunidades comerciales en pipeline y planta activa. Detección temprana de canibalizaciones y solapamientos de sedes.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      class="tracker-refresh-button"
+      [disabled]="isLoading"
+      (click)="loadTracker()">
+
+      @if (isLoading) {
+        ACTUALIZANDO...
+      } @else {
+        ↻ Actualizar
+      }
+
+    </button>
+  </header>
+
+  @if (isLoading && !data) {
+
+    <div class="tracker-state">
+      <div class="tracker-spinner"></div>
+      <span>Consultando sedes, servicios y cruces geográficos...</span>
+    </div>
+
+  } @else if (errorMessage && !data) {
+
+    <div class="tracker-error">
+      <strong>No fue posible cargar Location Tracker</strong>
+      <p>{{ errorMessage }}</p>
+
+      <button
+        type="button"
+        class="tracker-refresh-button"
+        (click)="loadTracker()">
+        Reintentar
+      </button>
+    </div>
+
+  } @else if (data) {
+
+    <section class="tracker-kpi-grid">
+
+      <!-- TOTAL DE SEDES Y FACTIBILIDAD -->
+      <article class="tracker-kpi-card sites-card">
+
+        <div class="tracker-kpi-header">
+          <span class="tracker-kpi-title">
+            TOTAL DE SEDES
+          </span>
+          <!-- <span class="tracker-kpi-symbol">01</span> -->
+        </div>
+
+        <strong class="tracker-kpi-value">
+          {{ totalSites | number:'1.0-0' }}
+        </strong>
+
+        <div class="tracker-kpi-divider"></div>
+
+        <div class="tracker-kpi-details">
+          <div>
+            <span>Factibilidad</span>
+            <strong>
+              {{ feasibilityPct | number:'1.1-1' }}%
+            </strong>
+          </div>
+
+          <div>
+            <span>Sedes factibles</span>
+            <strong>
+              {{ viableSites | number:'1.0-0' }}
+            </strong>
+          </div>
+        </div>
+
+      </article>
+
+
+      <!-- SEDES FACTIBLES CON COORDENADAS -->
+      <article class="tracker-kpi-card coordinates-card">
+
+        <div class="tracker-kpi-header">
+          <span class="tracker-kpi-title">
+            SEDES FACTIBLES CON COORDENADAS
+          </span>
+          <!-- <span class="tracker-kpi-symbol">02</span> -->
+        </div>
+
+        <strong class="tracker-kpi-value">
+          {{ viableCoordinatesPct | number:'1.1-1' }}%
+        </strong>
+
+        <span class="tracker-kpi-description">
+          De las sedes factibles
+        </span>
+
+        <div class="tracker-kpi-divider"></div>
+
+        <div class="tracker-kpi-details single-detail">
+          <div>
+            <span>Sedes factibles con coordenadas</span>
+            <strong>
+              {{ viableSitesWithCoordinates | number:'1.0-0' }}
+            </strong>
+          </div>
+        </div>
+
+      </article>
+
+
+        <!-- SERVICIOS DE CONECTIVIDAD -->
+        <article class="tracker-kpi-card services-card">
+
+        <div class="tracker-kpi-header">
+            <span class="tracker-kpi-title">
+            SERVICIOS DE CONECTIVIDAD
+            </span>
+        </div>
+
+        <strong class="tracker-kpi-value">
+            {{ totalServices | number:'1.0-0' }}
+        </strong>
+
+        <span class="tracker-kpi-description">
+            Servicios activos de conectividad
+        </span>
+
+        <div class="tracker-kpi-divider"></div>
+
+        <div class="tracker-kpi-details">
+
+            <div>
+            <span>Con coordenadas</span>
+            <strong>
+                {{ servicesWithCoordinates | number:'1.0-0' }}
+            </strong>
+            </div>
+
+            <div>
+            <span>Cobertura geográfica</span>
+            <strong>
+                {{ servicesWithCoordinatesPct | number:'1.1-1' }}%
+            </strong>
+            </div>
+
+        </div>
+
+        </article>
+
+      <!-- CRUCES GEOGRÁFICOS -->
+      <article class="tracker-kpi-card matches-card">
+
+        <div class="tracker-kpi-header">
+          <span class="tracker-kpi-title">
+            CRUCES GEOGRÁFICOS
+          </span>
+          <!-- <span class="tracker-kpi-symbol">03</span> -->
+        </div>
+
+        <strong class="tracker-kpi-value">
+          {{ matchedPairs | number:'1.0-0' }}
+        </strong>
+
+        <span class="tracker-kpi-description">
+          Pares sede-servicio a 100 metros o menos
+        </span>
+
+        <div class="tracker-kpi-divider"></div>
+
+        <div class="tracker-kpi-details single-detail">
+          <div>
+            <span>MRC de servicios cruzados</span>
+            <strong>
+              {{ crossedServicesMrc | currency:'COP':'symbol-narrow':'1.0-0' }}
+            </strong>
+          </div>
+        </div>
+
+        <div class="tracker-kpi-footer">
+          {{ sitesWithMatches | number:'1.0-0' }}
+          sedes con coincidencias ·
+          {{ matchedServices | number:'1.0-0' }}
+          servicios activos distintos
+        </div>
+
+      </article>
+
+    </section>
+
+    <!-- ========================= -->
+    <!-- SERVICIOS CON COINCIDENCIAS -->
+    <!-- ========================= -->
+
+    <section class="tracker-results-table">
+
+    <div class="tracker-table-summary">
+        <div>
+        <h2>Servicios con sedes cercanas</h2>
+        <p>
+            Servicios activos que tienen al menos una sede de funnel
+            a 100 metros o menos.
+        </p>
+        </div>
+
+        <span>
+        {{ data.services_with_nearby_sites.length }}
+        servicios ·
+        {{ matchedPairs | number:'1.0-0' }} cruces
+        </span>
+    </div>
+
+    @if (data.services_with_nearby_sites.length === 0) {
+
+        <div class="tracker-table-empty">
+        No se encontraron servicios con sedes cercanas.
+        </div>
+
+    } @else {
+
+        <div class="tracker-service-table">
+
+        <!-- HEADER SERVICIOS -->
+        <div class="tracker-services-header">
+            <div></div>
+            <div>SER</div>
+            <div>CLIENTE</div>
+            <div>UBICACIÓN</div>
+            <div>PRODUCTO</div>
+            <div>CAPACIDAD</div>
+            <div>TARIFA MENSUAL</div>
+            <div>SEDES</div>
+        </div>
+
+        @for (
+            service of data.services_with_nearby_sites;
+            track service.active_service_ser
+        ) {
+
+            <div class="tracker-service-block">
+
+            <!-- FILA DEL SERVICIO -->
+            <div
+                class="tracker-service-row"
+                [class.expanded]="isServiceExpanded(service)"
+                (click)="toggleService(service)">
+
+                <div class="tracker-service-expand">
+                <button
+                    type="button"
+                    class="expand-button"
+                    [attr.aria-expanded]="isServiceExpanded(service)"
+                    (click)="$event.stopPropagation(); toggleService(service)">
+
+                    {{ isServiceExpanded(service) ? '⌄' : '›' }}
+
+                </button>
+                </div>
+
+                <!-- SER -->
+                <div class="tracker-service-id">
+                {{ service.active_service_ser }}
+                </div>
+
+                <!-- CLIENTE + SUBSEGMENTO -->
+                <div class="tracker-service-client">
+
+                <div class="tracker-service-client-name">
+                    {{ service.service_client || 'Sin razón social' }}
+                </div>
+
+                <div class="tracker-service-nit">
+                    NIT: {{ service.service_nit || 'N/A' }}
+                </div>
+
+                @if (service.client_subsegment) {
+                    <span class="tracker-subsegment-tag">
+                    {{ service.client_subsegment }}
+                    </span>
+                } @else {
+                    <span class="tracker-subsegment-tag muted">
+                    Sin subsegmento
+                    </span>
+                }
+
+                </div>
+
+                <!-- UBICACIÓN -->
+                <div class="tracker-service-location">
+
+                <div class="tracker-location-main">
+                    {{ service.service_department || 'N/A' }}
+                    ·
+                    {{ service.service_municipality || 'N/A' }}
+                </div>
+
+                <!-- <span class="tracker-dane-tag">
+                    DANE: {{ service.service_dane || 'N/A' }}
+                </span> -->
+
+                <span class="tracker-coordinate">
+                    {{ service.service_latitude ?? 'N/A' }},
+                    {{ service.service_longitude ?? 'N/A' }}
+                </span>
+
+                @if (service.service_latitude != null && service.service_longitude != null) {
+                    <a
+                    class="tracker-map-link"
+                    [href]="'https://www.google.com/maps?q=' +
+                        service.service_latitude + ',' + service.service_longitude"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    (click)="$event.stopPropagation()">
+                    Ver servicio en Maps ↗
+                    </a>
+                }
+
+                </div>
+
+                <!-- PRODUCTO -->
+                <div class="tracker-service-product">
+
+                <div class="tracker-product-name">
+                    {{ service.service_product || 'N/A' }}
+                </div>
+
+                @if (service.service_family) {
+                    <span class="tracker-family-tag">
+                    {{ service.service_family }}
+                    </span>
+                }
+
+                <div class="tracker-plan-name">
+                    Plan: {{ service.service_plan || 'N/A' }}
+                </div>
+
+                </div>
+
+                <!-- CAPACIDAD -->
+                <div>
+                <span class="capacity">
+                    {{ service.service_capacity ?? 'N/A' }}
+                    @if (service.service_capacity != null) {
+                    Mbps
+                    }
+                </span>
+                </div>
+
+                <!-- TARIFA + VALOR POR MBPS -->
+                <div class="tracker-service-tariff">
+
+                <div class="money">
+                    {{
+                    service.service_tariff
+                        | currency:'COP':'symbol-narrow':'1.0-0'
+                    }}
+                </div>
+
+                <span
+                    class="tracker-price-per-mbps"
+                    [class.vlr-low]="
+                    service.service_price_per_mbps != null &&
+                    +service.service_price_per_mbps < 1500
+                    ">
+
+                    {{
+                    service.service_price_per_mbps
+                        | currency:'COP':'symbol-narrow':'1.0-0'
+                    }}
+                    / Mbps
+
+                </span>
+
+                </div>
+
+                <!-- CANTIDAD DE SEDES CERCANAS -->
+                <div>
+                <span class="sites-badge">
+                    {{ service.nearby_sites.length }}
+                    {{ service.nearby_sites.length === 1 ? 'Sede' : 'Sedes' }}
+                </span>
+                </div>
+
+            </div>
+
+            <!-- DETALLE: SEDES CERCANAS -->
+            @if (isServiceExpanded(service)) {
+
+                <div class="tracker-nearby-detail">
+
+                <div class="tracker-nearby-summary">
+                    <div>
+                    <strong>Sedes de funnel cercanas</strong>
+                    <span>
+                        {{ service.nearby_sites.length }}
+                        coincidencias para
+                        {{ service.active_service_ser }}
+                    </span>
+                    </div>
+                </div>
+
+                <div class="tracker-nearby-table">
+
+                    <!-- HEADER SEDES -->
+                    <div class="tracker-nearby-header">
+                    <div>FUNNEL</div>
+                    <div>SEDE</div>
+                    <div>ESTADO</div>
+                    <div>CLIENTE DEL FUNNEL</div>
+                    <div>COMERCIAL</div>
+                    <div>UBICACIÓN / DISTANCIA</div>
+                    <div>PRODUCTO</div>
+                    <div>CAPACIDAD</div>
+                    </div>
+
+                    @for (site of service.nearby_sites; track site.site_id) {
+                        <div class="tracker-nearby-row">
+                        <div class="tracker-funnel-id">
+                            <strong>{{ site.funnel || 'N/A' }}</strong>
+                            <span class="tracker-site-date">
+                            {{ site.creation_date
+                                ? (site.creation_date | date:'dd/MM/yyyy HH:mm')
+                                : 'Sin fecha' }}
+                            </span>
+                        </div>
+
+                        <div class="tracker-site-id">
+                            {{ site.site_id || 'N/A' }}
+                        </div>
+
+                        <div>
+                            <span class="tracker-status-tag">
+                            {{ site.site_status || 'Sin estado' }}
+                            </span>
+                        </div>
+
+                        <div class="tracker-site-client">
+                            {{ site.client || 'N/A' }}
+                            <span class="tracker-site-nit">
+                            NIT: {{ site.site_nit || 'N/A' }}
+                            </span>
+                        </div>
+
+                        <div class="tracker-salesman">
+                            {{ site.salesman || 'N/A' }}
+                        </div>
+
+                        <div class="tracker-site-location">
+                            <div class="tracker-location-main">
+                            {{ site.site_department || 'N/A' }} ·
+                            {{ site.site_municipality || 'N/A' }}
+                            </div>
+
+                            <!-- <span class="tracker-site-address">
+                            {{ site.site_address || 'Sin dirección' }}
+                            </span> -->
+
+                            <span class="tracker-coordinate">
+                            {{ site.site_latitude ?? 'N/A' }},
+                            {{ site.site_longitude ?? 'N/A' }}
+                            </span>
+
+                            <span class="tracker-distance">
+                            Distancia: {{ site.distance_m | number:'1.1-1' }} m
+                            </span>
+
+                            @if (site.site_latitude != null && site.site_longitude != null) {
+                            <div class="tracker-map-actions">
+                                <a
+                                class="tracker-map-link"
+                                [href]="'https://www.google.com/maps?q=' +
+                                    site.site_latitude + ',' + site.site_longitude"
+                                target="_blank"
+                                rel="noopener noreferrer">
+                                Ver sede ↗
+                                </a>
+
+                                @if (
+                                service.service_latitude != null &&
+                                service.service_longitude != null
+                                ) {
+                                <a
+                                    class="tracker-map-link"
+                                    [href]="'https://www.google.com/maps/dir/' +
+                                    service.service_latitude + ',' +
+                                    service.service_longitude + '/' +
+                                    site.site_latitude + ',' +
+                                    site.site_longitude"
+                                    target="_blank"
+                                    rel="noopener noreferrer">
+                                    Comparar ruta ↗
+                                </a>
+                                }
+                            </div>
+                            }
+                        </div>
+
+                        <div class="tracker-site-product">
+                            <strong>{{ site.site_product || 'N/A' }}</strong>
+                            <span>Plan: {{ site.site_plan || 'N/A' }}</span>
+                        </div>
+
+                        <div>
+                            <span class="capacity">
+                            {{ site.site_capacity_mbps ?? 'N/A' }}
+                            @if (site.site_capacity_mbps != null) {
+                                Mbps
+                            }
+                            </span>
+                        </div>
+                        </div>
+                    }
+
+                </div>
+
+                </div>
+
+            }
+
+            </div>
+
+        }
+
+        </div>
+
+    }
+
+    </section>
+
+    @if (errorMessage) {
+      <div class="tracker-inline-error">
+        {{ errorMessage }}
+      </div>
+    }
+
+  }
+
+</div>

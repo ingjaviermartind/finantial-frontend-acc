@@ -17,6 +17,9 @@ import { ChangePassword } from './pages/change-password/change-password';
 import { Evaluator } from './pages/evaluator/evaluator';
 
 
+import { MainFunnelTracker } from './pages/funnel-tracker/main-funnel-tracker/main-funnel-tracker';
+import { LocationTracker } from './pages/funnel-tracker/location-tracker/location-tracker';
+
 export const routes: Routes = [
   {
     path: '',
@@ -67,6 +70,21 @@ export const routes: Routes = [
       {
         path: 'change-password',
         component: ChangePassword
+      },
+      {
+        path: 'funnel-tracker',
+        component: MainFunnelTracker,
+        children: [
+          {
+            path: '',
+            redirectTo: 'location-tracker',
+            pathMatch: 'full'
+          },
+          {
+            path: 'location-tracker',
+            component: LocationTracker
+          }
+        ]
       },
     ]
   },

@@ -17,6 +17,9 @@
 
     <!-- PRICING & VENTAS -->
     @if (userService.hasArea('pricing') || userService.hasArea('ventas')) {
+      <a routerLink="/funnel-tracker">
+        Funnel Tracker
+      </a>
       <a routerLink="/pricing-sites">
         Pricing por Sede
       </a>
@@ -27,17 +30,8 @@
         Evaluador
       </a>
       
+      
     }
-    <!-- PREVENTA -->
-    @if (userService.hasArea('preventa')) {
-      <a routerLink="/pre-sales">
-        Preventas
-      </a>
-      <a routerLink="/feasibility">
-        Viabilización
-      </a>
-    }
-
 
     <!-- RETENCIÓN -->
     @if (userService.hasArea('retencion')) {
