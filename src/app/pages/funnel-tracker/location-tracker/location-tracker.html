@@ -175,21 +175,20 @@
 
         <div class="tracker-kpi-divider"></div>
 
-        <div class="tracker-kpi-details single-detail">
-          <div>
-            <span>MRC de servicios cruzados</span>
-            <strong>
-              {{ crossedServicesMrc | currency:'COP':'symbol-narrow':'1.0-0' }}
-            </strong>
-          </div>
+        <div class="tracker-kpi-details">
+        <div>
+          <span>MRC de servicios cruzados</span>
+          <strong>
+            {{ crossedServicesMrc | currency:'COP':'symbol-narrow':'1.0-0' }}
+          </strong>
         </div>
-
-        <div class="tracker-kpi-footer">
-          {{ sitesWithMatches | number:'1.0-0' }}
-          sedes con coincidencias ·
-          {{ matchedServices | number:'1.0-0' }}
-          servicios activos distintos
+        <div>
+          <span>Servicios distintos</span>
+          <strong>
+            {{ matchedServices | number:'1.0-0' }}
+          </strong>
         </div>
+      </div>
 
       </article>
 
@@ -412,7 +411,7 @@
                     <div class="tracker-nearby-header">
                     <div>FUNNEL</div>
                     <div>SEDE</div>
-                    <div>ESTADO</div>
+                    <!-- <div>ESTADO</div> -->
                     <div>CLIENTE DEL FUNNEL</div>
                     <div>COMERCIAL</div>
                     <div>UBICACIÓN / DISTANCIA</div>
@@ -424,6 +423,9 @@
                         <div class="tracker-nearby-row">
                         <div class="tracker-funnel-id">
                             <strong>{{ site.funnel || 'N/A' }}</strong>
+                            <span class="tracker-status-tag">
+                              {{ site.site_status || 'Sin estado' }}
+                            </span>
                             <span class="tracker-site-date">
                             {{ site.creation_date
                                 ? (site.creation_date | date:'dd/MM/yyyy HH:mm')
@@ -435,11 +437,11 @@
                             {{ site.site_id || 'N/A' }}
                         </div>
 
-                        <div>
+                        <!-- <div>
                             <span class="tracker-status-tag">
                             {{ site.site_status || 'Sin estado' }}
                             </span>
-                        </div>
+                        </div> -->
 
                         <div class="tracker-site-client">
                             {{ site.client || 'N/A' }}
@@ -453,53 +455,57 @@
                         </div>
 
                         <div class="tracker-site-location">
-                            <div class="tracker-location-main">
+                          <div class="tracker-location-main">
                             {{ site.site_department || 'N/A' }} ·
                             {{ site.site_municipality || 'N/A' }}
-                            </div>
+                          </div>
 
-                            <!-- <span class="tracker-site-address">
+                          <span class="tracker-site-address">
                             {{ site.site_address || 'Sin dirección' }}
-                            </span> -->
+                          </span>
 
+                          <div class="tracker-location-meta">
                             <span class="tracker-coordinate">
-                            {{ site.site_latitude ?? 'N/A' }},
-                            {{ site.site_longitude ?? 'N/A' }}
+                              {{ site.site_latitude ?? 'N/A' }},
+                              {{ site.site_longitude ?? 'N/A' }}
                             </span>
 
-                            <span class="tracker-distance">
-                            Distancia: {{ site.distance_m | number:'1.1-1' }} m
-                            </span>
+                            @if (site.distance_m != null) {
+                              <span class="tracker-distance">
+                                {{ site.distance_m | number:'1.1-1' }} m
+                              </span>
+                            }
+                          </div>
 
-                            @if (site.site_latitude != null && site.site_longitude != null) {
+                          @if (site.site_latitude != null && site.site_longitude != null) {
                             <div class="tracker-map-actions">
-                                <a
+                              <a
                                 class="tracker-map-link"
                                 [href]="'https://www.google.com/maps?q=' +
-                                    site.site_latitude + ',' + site.site_longitude"
+                                  site.site_latitude + ',' + site.site_longitude"
                                 target="_blank"
                                 rel="noopener noreferrer">
                                 Ver sede ↗
-                                </a>
+                              </a>
 
-                                @if (
+                              @if (
                                 service.service_latitude != null &&
                                 service.service_longitude != null
-                                ) {
+                              ) {
                                 <a
-                                    class="tracker-map-link"
-                                    [href]="'https://www.google.com/maps/dir/' +
+                                  class="tracker-map-link"
+                                  [href]="'https://www.google.com/maps/dir/' +
                                     service.service_latitude + ',' +
                                     service.service_longitude + '/' +
                                     site.site_latitude + ',' +
                                     site.site_longitude"
-                                    target="_blank"
-                                    rel="noopener noreferrer">
-                                    Comparar ruta ↗
+                                  target="_blank"
+                                  rel="noopener noreferrer">
+                                  Comparar ruta ↗
                                 </a>
-                                }
+                              }
                             </div>
-                            }
+                          }
                         </div>
 
                         <div class="tracker-site-product">

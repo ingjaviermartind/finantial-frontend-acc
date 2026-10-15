@@ -25,3 +25,26 @@ $teal-500: #00bbdc;
 $teal-700: #097695;
 $teal-800: #116079;
 $teal-900: #134f66;
+
+/* ========================= */
+/* TOKENS DE TIPOGRAFÍA       */
+/* ========================= */
+
+$font-family-base: 'Inter', 'Segoe UI', Roboto, Arial, sans-serif !default;
+$font-family-mono: 'Cascadia Code', Consolas, 'Courier New', monospace !default;
+
+$font-scale: 1 !default;
+
+$type-2xs: 0.52rem !default;
+$type-xs: 0.57rem !default;
+$type-sm: 0.62rem !default;
+$type-md: 0.66rem !default;
+$type-lg: 0.72rem !default;
+$type-xl: 0.80rem !default;
+
+$type-page-title: 1.15rem !default;
+$type-kpi-value: 1.55rem !default;
+
+$font-weight-regular: 400 !default;
+$font-weight-medium: 600 !default;
+$font-weight-bold: 700 !default;

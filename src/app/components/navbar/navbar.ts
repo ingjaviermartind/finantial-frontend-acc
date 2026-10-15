@@ -1,33 +1,31 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, HostListener } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 import { Auth } from '../../services/auth';
 import { UserService } from '../../services/user';
 import { User } from '../../models/user';
-import { HostListener } from '@angular/core';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
   imports: [
-    RouterLink, 
+    RouterLink,
+    RouterLinkActive,
     CommonModule
   ],
   templateUrl: './navbar.html',
   styleUrl: './navbar.scss',
 })
-
 export class Navbar {
-  
+
   showUserMenu = false;
   user: User | null;
 
   constructor(
     private auth: Auth,
     public userService: UserService
-  ) 
-  {
+  ) {
     this.user = this.userService.getUser();
   }
 
@@ -44,5 +42,4 @@ export class Navbar {
   onDocumentClick(): void {
     this.showUserMenu = false;
   }
-
 }

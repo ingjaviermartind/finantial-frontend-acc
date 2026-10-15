@@ -1,1 +1,21 @@
-// Cosas que deben aplicarse a toda la aplicación, no a un componente concreto.
+// Cosas que deben aplicarse a toda la aplicación, no a un componente concreto.@use 'tokens' as *;
+
+/* ========================= */
+/* TIPOGRAFÍA DE LA APP      */
+/* ========================= */
+
+html {
+  font-size: 100% * $font-scale;
+}
+
+body {
+  font-family: $font-family-base;
+}
+
+/* Los controles heredan la tipografía global */
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}

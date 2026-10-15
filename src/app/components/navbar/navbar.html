@@ -1,130 +1,180 @@
-<div class="navbar">
+<nav class="navbar">
 
-  <!-- ===================== -->
-  <!-- BRAND -->
-  <!-- ===================== -->
+  <!-- Marca corporativa -->
+  <!-- <a class="navbar-brand" routerLink="/funnel-tracker">
+    <span class="brand-mark">
+      <svg viewBox="0 0 40 40" fill="none" aria-hidden="true">
+        <path
+          d="M6 12L20 4L34 12V28L20 36L6 28V12Z"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linejoin="round"
+        />
+        <path
+          d="M12 16L20 12L28 16V24L20 28L12 24V16Z"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linejoin="round"
+        />
+        <path
+          d="M20 12V20M12 16L20 20L28 16M20 20V28"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </span>
 
-  <div class="brand">
-    <!-- Logo ACC -->
+    <span class="brand-copy">
+      <span class="brand-name">AZTECA</span>
+      <span class="brand-caption">COMUNICACIONES</span>
+    </span>
+  </a> -->
+
+  <!-- <span class="navbar-divider" aria-hidden="true"></span> -->
+
+  <!-- Navegación principal -->
+  <div class="navbar-links">
+
+    <a
+      routerLink="/funnel-tracker"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: false }"
+      class="navbar-link"
+    >
+      <span class="nav-link-icon">◎</span>
+      <span>Funnel Tracker</span>
+    </a>
+
+    <a
+      routerLink="/pricing-sites"
+      routerLinkActive="active"
+      class="navbar-link"
+    >
+      <span class="nav-link-icon">▦</span>
+      <span>Pricing por Sede</span>
+    </a>
+
+    <a
+      routerLink="/client"
+      routerLinkActive="active"
+      class="navbar-link"
+    >
+      <span class="nav-link-icon">♙</span>
+      <span>Clientes</span>
+    </a>
+
+    <a
+      routerLink="/evaluator"
+      routerLinkActive="active"
+      class="navbar-link"
+    >
+      <span class="nav-link-icon">⌁</span>
+      <span>Evaluador</span>
+    </a>
+
+    @if (userService.isAdmin()) {
+      @if (userService.hasArea('pricing')) {
+        <a
+          routerLink="/pricing-variables"
+          routerLinkActive="active"
+          class="navbar-link"
+        >
+          <span class="nav-link-icon">◈</span>
+          <span>Variables financieras</span>
+        </a>
+      }
+    }
+
   </div>
 
 
-  <!-- ===================== -->
-  <!-- NAVIGATION -->
-  <!-- ===================== -->
+  <span class="navbar-spacer"></span>
 
-  <div class="nav-links">
+  <!-- Indicador corporativo -->
+  <!-- <div class="navbar-status">
+    <span class="status-dot"></span>
+    <span>Operación comercial</span>
+  </div> -->
 
-    <!-- PRICING & VENTAS -->
-    @if (userService.hasArea('pricing') || userService.hasArea('ventas')) {
-      <a routerLink="/funnel-tracker">
-        Funnel Tracker
-      </a>
-      <a routerLink="/pricing-sites">
-        Pricing por Sede
-      </a>
-      <a routerLink="/client">
-        Clientes
-      </a>
-      <a routerLink="/evaluator">
-        Evaluador
-      </a>
-      
-      
-    }
+  <span class="navbar-divider user-divider" aria-hidden="true"></span>
 
-    <!-- RETENCIÓN -->
-    @if (userService.hasArea('retencion')) {
-      <a routerLink="/retention">
-        Retención
-      </a>
-    }
-  </div>
-
-
-  <!-- ===================== -->
-  <!-- USER MENU -->
-  <!-- ===================== -->
-
-  <div class="user-menu">
+  <!-- Usuario y menú desplegable -->
+  <div class="navbar-user">
 
     <button
-      class="user-button"
-      (click)="toggleUserMenu($event)">
-      {{ user?.first_name }}
+      type="button"
+      class="user-trigger"
+      (click)="toggleUserMenu($event)"
+      [attr.aria-expanded]="showUserMenu"
+      aria-haspopup="true"
+      aria-label="Abrir menú de usuario"
+    >
+      <span class="user-avatar">
+        {{ user?.first_name?.charAt(0) || 'U' }}{{ user?.last_name?.charAt(0) || '' }}
+      </span>
+
+      <span class="user-info">
+        <span class="user-name">
+          {{ user?.first_name || user?.username || 'Usuario' }}
+        </span>
+
+        <!-- <span class="user-role">
+          Acceso corporativo
+        </span> -->
+      </span>
+
+      <span
+        class="user-chevron"
+        [class.rotated]="showUserMenu"
+        aria-hidden="true"
+      >
+        ⌄
+      </span>
     </button>
 
+    <div
+      class="user-dropdown"
+      *ngIf="showUserMenu"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="dropdown-header">
+        <span class="dropdown-avatar">
+          {{ user?.first_name?.charAt(0) || 'U' }}{{ user?.last_name?.charAt(0) || '' }}
+        </span>
 
-    @if (showUserMenu) {
-      <div
-        class="dropdown"
-        (click)="$event.stopPropagation()">
-        <div class="user-info">
-          <strong>
-            {{ user?.first_name }}
-            {{ user?.last_name }}
-          </strong>
-          <small>
-            {{ user?.email }}
-          </small>
-          <small>
-            {{ user?.cargo }} · {{ user?.area }}
-          </small>
+        <div class="dropdown-user-info">
+          <span class="dropdown-user-name">
+            {{ user?.first_name || user?.username || 'Usuario' }}
+            {{ user?.last_name || '' }}
+          </span>
+
+          <span class="dropdown-user-email">
+            {{ user?.email || 'Sesión iniciada' }}
+          </span>
         </div>
-        <hr>
-
-
-        <!-- VARIABLES -->
-        <!-- Solo usuarios del grupo admin -->
-
-        @if (userService.isAdmin()) {
-          @if (userService.hasArea('pricing')) {
-            <button
-              class="dropdown-item"
-              routerLink="/pricing-variables"
-              (click)="showUserMenu = false">
-              Variables
-            </button>
-          }
-
-          @if (userService.hasArea('preventa')) {
-            <button
-              class="dropdown-item"
-              routerLink="/preventa-variables"
-              (click)="showUserMenu = false">
-              Variables
-            </button>
-          }
-
-        }
-
-
-        <!-- CAMBIAR CONTRASEÑA -->
-
-        <button
-          class="dropdown-item"
-          routerLink="/change-password"
-          (click)="showUserMenu = false">
-
-          Cambiar contraseña
-
-        </button>
-
-
-        <!-- LOGOUT -->
-
-        <button
-          class="dropdown-item"
-          (click)="logout()">
-
-          Cerrar sesión
-
-        </button>
-
       </div>
 
-    }
+      <div class="dropdown-divider"></div>
+      <button
+        type="button"
+        class="dropdown-item"
+        routerLink="/change-password"
+        (click)="showUserMenu = false"
+      >
+        <span class="dropdown-item-icon" aria-hidden="true">🔒</span>
+        <span>Cambiar contraseña</span>
+      </button>
+      <button
+        type="button"
+        class="dropdown-item logout-item"
+        (click)="logout()"
+      >
+        <span class="dropdown-item-icon" aria-hidden="true">↪</span>
+        <span>Cerrar sesión</span>
+      </button>
+    </div>
 
   </div>
 
-</div>
+</nav>

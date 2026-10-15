@@ -1,0 +1,155 @@
+
+@use 'tokens' as *;
+
+.tracker-subnav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 10px 24px;
+
+  background: #fff;
+  color: $Aztk_deepBlue;
+  border-bottom: 1px solid $border;
+
+  box-sizing: border-box;
+}
+
+/* Identidad del módulo */
+
+.tracker-subnav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.tracker-subnav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 34px;
+  height: 34px;
+
+  border-radius: 6px;
+  background: $Aztk_deepBlue;
+  color: #fff;
+
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .04em;
+}
+
+.tracker-subnav-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.tracker-subnav-heading strong {
+  color: $Aztk_deepBlue;
+  font-size: .82rem;
+  font-weight: 700;
+}
+
+.tracker-subnav-heading span {
+  color: $muted;
+  font-size: .61rem;
+}
+
+/* Navegación contextual */
+
+.tracker-subnav-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.tracker-subnav-links a {
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  min-height: 38px;
+  padding: 0 12px;
+
+  border-radius: 5px;
+  color: #526779;
+  background: transparent;
+
+  font-size: .68rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+
+  transition:
+    background .15s ease,
+    color .15s ease;
+}
+
+.tracker-subnav-links a:hover {
+  background: #f1f7f9;
+  color: $Aztk_deepBlue;
+}
+
+.tracker-subnav-links a.active {
+  background: #eaf7fc;
+  color: $Aztk_deepBlue;
+}
+
+.tracker-subnav-links a.active::after {
+  content: '';
+  position: absolute;
+
+  left: 10px;
+  right: 10px;
+  bottom: 0;
+
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: #087ca4;
+}
+
+.nav-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .95rem;
+  line-height: 1;
+}
+
+/* Responsive */
+
+@media (max-width: 1050px) {
+  .tracker-subnav {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .tracker-subnav-links {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+}
+
+@media (max-width: 600px) {
+  .tracker-subnav {
+    padding: 10px 14px;
+  }
+
+  .tracker-subnav-heading span {
+    display: none;
+  }
+
+  .tracker-subnav-links a {
+    padding: 0 10px;
+    font-size: .64rem;
+  }
+}
