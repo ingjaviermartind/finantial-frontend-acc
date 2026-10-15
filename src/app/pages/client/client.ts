@@ -230,8 +230,9 @@ export class Client implements OnInit {
     const hasDepartments = !!filters.department?.length;
     const hasMunicipalities = !!filters.municipality?.length;
     const hasClients = !!filters.client?.length;
+    const hasSubsegment = !!filters.subsegment?.length;
     // Si no hay filtros de búsqueda, limpiar resultados
-    if (!hasMunicipalities && !hasClients && !hasDepartments) {
+    if (!hasMunicipalities && !hasClients && !hasDepartments && !hasSubsegment) {
       this.services = [];
       this.clients = [];
       this.servicesSearched = false;

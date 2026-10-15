@@ -137,6 +137,42 @@
 
           </div>
 
+          <!-- SUBSEGMENTO -->
+          <div class="filter-group">
+            <div class="filter-label-row">
+              <label>Subsegmento</label>
+
+              <button
+                type="button"
+                class="select-all-button"
+                (click)="toggleAllSubsegments()">
+                {{ allSubsegmentsSelected ? 'Ninguno' : 'Todos' }}
+              </button>
+            </div>
+
+            <div class="checkbox-list">
+              @for (subsegment of subsegments; track subsegment.id) {
+                <label class="checkbox-option">
+                  <input
+                    type="checkbox"
+                    [checked]="selectedSubsegmentIds.includes(subsegment.id)"
+                    (change)="toggleSubsegment(subsegment.id)">
+                  <span class="checkbox-box"></span>
+
+                  <span class="checkbox-label">
+                    {{ subsegment.name }}
+                  </span>
+                </label>
+              }
+
+              @if (subsegments.length === 0) {
+                <div class="no-options">
+                  No hay subsegmentos disponibles
+                </div>
+              }
+            </div>
+          </div>
+
         </section>
 
 
@@ -389,7 +425,8 @@
             !selectedMunicipalityIds.length &&
             capacityMin === null &&
             capacityMax === null &&
-            !selectedProducts.length
+            !selectedProducts.length &&
+            !selectedSubsegmentIds.length
           "
           (click)="searchServices()">
 

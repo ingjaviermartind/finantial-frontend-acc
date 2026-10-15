@@ -7,6 +7,8 @@ import { ClientOption, ServicesFilters} from '../../models/services';
 import { ClientsSidebarState } from '../../services/clients-state';
 import { ProductCatalogService } from '../../services/product-catalog';
 import { department, municipality } from '../../models/location';
+import { Subsegment } from '../../models/subsegment';
+import { ClientSubsegmentService } from '../../services/subsegments';
 
 @Component({
   selector: 'app-client-sidebar',
@@ -57,11 +59,15 @@ export class ClientSidebar implements OnInit {
   selectedProducts: string[] = [];
   productSearch = '';
 
+  subsegments: Subsegment[] = [];
+  selectedSubsegmentIds: any[] = [];
+
   constructor(
     private departmentService : Department,
     private municipalityService : Municipality,
     private activeClientsService : ActiveClientsService,
-    private productCatalogService : ProductCatalogService
+    private productCatalogService : ProductCatalogService,
+    private clientSubsegmentService : ClientSubsegmentService
   ) {}
 
   ngOnInit() : void {
@@ -77,6 +83,48 @@ export class ClientSidebar implements OnInit {
     }
     this.loadClients();
     this.loadProducts();
+    this.loadSubsegments();
+  }
+  
+  private loadSubsegments(): void {
+    this.clientSubsegmentService.getAll().subscribe({
+      next: data => {
+        this.subsegments = [...data].sort(
+          (a, b) => a.name.localeCompare(b.name)
+        );
+      },
+      error: err => {
+        console.error('Error cargando subsegmentos:', err);
+        this.subsegments = [];
+      }
+    });
+  }
+
+  get allSubsegmentsSelected(): boolean {
+    return this.subsegments.length > 0 &&
+      this.subsegments.every(subsegment =>
+        this.selectedSubsegmentIds.includes(subsegment.id)
+      );
+  }
+
+  toggleSubsegment(id: string): void {
+    if (this.selectedSubsegmentIds.includes(id)) {
+      this.selectedSubsegmentIds =
+        this.selectedSubsegmentIds.filter(
+          subsegmentId => subsegmentId !== id
+        );
+    } else {
+      this.selectedSubsegmentIds = [
+        ...this.selectedSubsegmentIds,
+        id
+      ];
+    }
+  }
+
+  toggleAllSubsegments(): void {
+    this.selectedSubsegmentIds = this.allSubsegmentsSelected
+      ? []
+      : this.subsegments.map(subsegment => subsegment.id);
   }
 
   private loadProducts(): void {
@@ -361,7 +409,8 @@ export class ClientSidebar implements OnInit {
       client: [...this.selectedClients],
       capacity_min: this.capacityMin ?? undefined,
       capacity_max: this.capacityMax ?? undefined,
-      product: [...this.selectedProducts]
+      product: [...this.selectedProducts],
+      subsegment: [...this.selectedSubsegmentIds]
     };
     this.search.emit(filters);
   }
@@ -383,6 +432,8 @@ export class ClientSidebar implements OnInit {
     this.capacityMax = null;
     this.selectedProducts = [];
     this.productSearch = '';
+
+    this.selectedSubsegmentIds = [];
 
     this.departmentsChange.emit([]);
     this.municipalitiesChange.emit([]);
