@@ -257,6 +257,7 @@ export class Client implements OnInit {
       .subscribe({
         next: response => {
           if (response.success) {
+            console.log(response.data);
             this.services = response.data;
             this.buildClients();
             this.servicesSearched = true;
@@ -402,7 +403,7 @@ export class Client implements OnInit {
   {
     const grouped = new Map<string, ActiveService[]>();
     for (const service of this.services) {
-      const nit = service.NIT;
+      const nit = service.nit;
       if (!grouped.has(nit)) {
         grouped.set(nit, []);
       }

@@ -11,6 +11,7 @@ import { Observable, of, catchError, map, tap } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 
 import { ClientsState } from '../../services/clients-state';
+import { ServiceOptionsService } from '../../services/service-options';
 import { ActiveService, SelectedDaneLocation } from '../../models/services';
 
 import { ClientSubsegmentService } from '../../services/subsegments';
@@ -21,6 +22,7 @@ import { ProductCatalog } from '../../models/product-catalog';
 import { Department } from '../../services/department';
 import { Municipality } from '../../services/municipality';
 import { department, municipality } from '../../models/location';
+import { ServiceOption } from '../../models/services';
 import {
   PricingRequest,
   PricingResponse
@@ -43,6 +45,8 @@ export class EvaluatorSidebar implements OnInit {
 
   serviceSearch = '';
 
+  serviceOptions: ServiceOption[] = [];
+  selectedService: ServiceOption | null = null;
   subsegments: Subsegment[] = [];
   products: ProductCatalog[] = [];
   departments: department[] = [];
@@ -56,6 +60,7 @@ export class EvaluatorSidebar implements OnInit {
 
   constructor(
     private clientsState: ClientsState,
+    private serviceOptionsService : ServiceOptionsService,
     private clientSubsegmentService: ClientSubsegmentService,
     private productCatalogService : ProductCatalogService,
     private departmentService : Department,
@@ -68,6 +73,17 @@ export class EvaluatorSidebar implements OnInit {
     this.capacityMbps = this.clientsState.evaluationCapacityMbps;
     this.contractTime = this.clientsState.evaluationContractTime;
     this.initialCapex = this.clientsState.evaluationInitialCapex;
+    this.serviceOptionsService
+    .getServiceOptions()
+    .subscribe({
+      next: data => {
+        this.serviceOptions = data;
+      },
+      error: err => {
+        console.error('Error cargando servicios:', err);
+        this.serviceOptions = [];
+      }
+    });
     this.clientSubsegmentService
       .getAll()
       .subscribe({
@@ -175,11 +191,6 @@ export class EvaluatorSidebar implements OnInit {
   }
 
 
-  get selectedService(): ActiveService | null {
-    return this.clientsState.selectedService;
-  }
-
-
   get selectedSubsegment(): string | null {
     return this.clientsState.selectedSubsegment;
   }
@@ -192,32 +203,95 @@ export class EvaluatorSidebar implements OnInit {
     this.clientsState.selectedProduct = product || null;
   }
 
-  get filteredServices(): ActiveService[] {
+  get filteredServices(): ServiceOption[] {
     const search = this.serviceSearch.trim().toLowerCase();
-    if (!search) 
-      return this.services;
-    return this.services.filter(service =>
-      service.SER.toLowerCase().includes(search) ||
-      service['Razón Social']
-        .toLowerCase()
-        .includes(search) ||
-      service.Producto
-        .toLowerCase()
-        .includes(search) ||
-      service.Municipio
-        .toLowerCase()
-        .includes(search)
+    if (!search) {
+      return this.serviceOptions;
+    }
+    return this.serviceOptions.filter(service =>
+      service.ser.toLowerCase().includes(search) ||
+      (service.razon_social ?? '').toLowerCase().includes(search) ||
+      (service.producto ?? '').toLowerCase().includes(search)
     );
   }
 
+  // get filteredServices(): ActiveService[] {
+  //   const search = this.serviceSearch.trim().toLowerCase();
+  //   if (!search) 
+  //     return this.services;
+  //   return this.services.filter(service =>
+  //     service.SER.toLowerCase().includes(search) ||
+  //     service['Razón Social']
+  //       .toLowerCase()
+  //       .includes(search) ||
+  //     service.Producto
+  //       .toLowerCase()
+  //       .includes(search) ||
+  //     service.Municipio
+  //       .toLowerCase()
+  //       .includes(search)
+  //   );
+  // }
 
-  selectService(service: ActiveService): void {
-    this.clientsState.selectedService = service;
-    this.clientsState.selectedSubsegment = service.Subsegmento?.trim() || null;
-    this.clientsState.selectedProduct = service.Producto?.trim() || null;
-    this.capacityMbps = service.CAPACIDADBPS ?? null;
+
+  // selectService(service: ActiveService): void {
+  //   this.clientsState.selectedService = service;
+  //   this.clientsState.selectedSubsegment = service.Subsegmento?.trim() || null;
+  //   this.clientsState.selectedProduct = service.Producto?.trim() || null;
+  //   this.capacityMbps = service.CAPACIDADBPS ?? null;
+  //   const department = this.departments.find(
+  //     d => d.name === service.Departamento
+  //   );
+  //   if (!department) {
+  //     this.selectedDepartmentId = null;
+  //     this.selectedMunicipalityId = null;
+  //     this.municipalities = [];
+  //     this.clientsState.selectedEvaluationDepartmentId = null;
+  //     this.clientsState.selectedEvaluationMunicipalityId = null;
+  //     this.selectedDaneChange.emit(null);
+  //     return;
+  //   }
+  //   this.selectedDepartmentId = department.id;
+  //   this.selectedMunicipalityId = null;
+  //   this.clientsState.selectedEvaluationDepartmentId = department.id;
+  //   this.clientsState.selectedEvaluationMunicipalityId = null;
+  //   this.loadMunicipalities(department.id).subscribe(municipalities => {
+  //     const serviceDane = this.normalizeDane(service['Codigo DANE']);
+  //     const municipality = municipalities.find(
+  //       m => this.normalizeDane(m.dane) === serviceDane
+  //     );
+  //     if (!municipality) {
+  //       this.selectedMunicipalityId = null;
+  //       this.clientsState.selectedEvaluationMunicipalityId = null;
+  //       this.selectedDaneChange.emit(null);
+  //       console.warn(`No se encontró el municipio con DANE ${serviceDane}`);
+  //       return;
+  //     }
+  //     this.selectedMunicipalityId = municipality.id;
+  //     this.clientsState.selectedEvaluationMunicipalityId = municipality.id;
+  //     this.emitSelectedDaneMunicipality();
+  //   });
+  // }
+
+  selectService(service: ServiceOption): void {
+    this.selectedService = service;
+    // Cargar producto y subsegmento
+    this.clientsState.selectedSubsegment =
+      service.nvosubsegmento?.trim() || null;
+    this.clientsState.selectedProduct =
+      service.producto?.trim() || null;
+    // Cargar capacidad
+    const capacity = service.capacidadbps !== null
+      ? Number(service.capacidadbps)
+      : null;
+    this.capacityMbps =
+      capacity !== null && Number.isFinite(capacity)
+        ? capacity
+        : null;
+    // Buscar departamento
     const department = this.departments.find(
-      d => d.name === service.Departamento
+      d => d.name.trim().toLowerCase() ===
+        (service.departamento ?? '').trim().toLowerCase()
     );
     if (!department) {
       this.selectedDepartmentId = null;
@@ -228,12 +302,14 @@ export class EvaluatorSidebar implements OnInit {
       this.selectedDaneChange.emit(null);
       return;
     }
+
     this.selectedDepartmentId = department.id;
     this.selectedMunicipalityId = null;
     this.clientsState.selectedEvaluationDepartmentId = department.id;
     this.clientsState.selectedEvaluationMunicipalityId = null;
+    // Cargar municipios y seleccionar por código DANE
     this.loadMunicipalities(department.id).subscribe(municipalities => {
-      const serviceDane = this.normalizeDane(service['Codigo DANE']);
+      const serviceDane = this.normalizeDane(service.codigo_dane);
       const municipality = municipalities.find(
         m => this.normalizeDane(m.dane) === serviceDane
       );
@@ -241,11 +317,14 @@ export class EvaluatorSidebar implements OnInit {
         this.selectedMunicipalityId = null;
         this.clientsState.selectedEvaluationMunicipalityId = null;
         this.selectedDaneChange.emit(null);
-        console.warn(`No se encontró el municipio con DANE ${serviceDane}`);
+        console.warn(
+          `No se encontró el municipio con DANE ${serviceDane}`
+        );
         return;
       }
       this.selectedMunicipalityId = municipality.id;
-      this.clientsState.selectedEvaluationMunicipalityId = municipality.id;
+      this.clientsState.selectedEvaluationMunicipalityId =
+        municipality.id;
       this.emitSelectedDaneMunicipality();
     });
   }

@@ -146,68 +146,68 @@
                     <!-- SERVICIOS -->
                     @for (
                       service of client.services;
-                      track service.SER
+                      track service.ser
                     ) {
                       <div class="service-row">
                         <!-- SER -->
                         <div class="service-id">
                           <div>
-                            {{ service.SER }}
+                            {{ service.ser }}
                           </div>
                           <span class="cycle-tag">
-                            Ciclo {{ service.Ciclo }}
+                            Ciclo {{ service.ciclo_final }}
                           </span>
                         </div>
                         
                         <!-- UBICACIÓN -->
                         <div class="service-location">
                           <div class="location-main">
-                            {{ service.Departamento }}
+                            {{ service.departamento }}
                             ·
-                            {{ service.Municipio }}
+                            {{ service.municipio }}
                           </div>
                           <span
                             class="dane-tag"
                             [class.unprofitable-dane]="service.unprofitable">
-                            DANE: {{ service['Codigo DANE'] }}
+                            DANE: {{ service.codigo_dane }}
                           </span>
                         </div>
                         <!-- PRODUCTO -->
                         <div class="service-product">
                           <div class="product-name">
-                            {{ service.Producto }}
+                            {{ service.producto }}
                             <span class="family-tag">
-                              {{ service.FAMILIA_PRODUCTOS }}
+                              {{ service.familia_productos }}
                             </span>
                           </div>
                           <div class="plan-name">
-                            Plan: {{ service.Plan }}
+                            Plan: {{ service.plan }}
                           </div>
                           <div class="technology-name">
                             Tecnología:
-                            {{ service.TIPO_TECNOLOGIA || 'N/A' }}
+                            {{ service.tipo_tecnologia || 'N/A' }}
                           </div>
                         </div>
                         <!-- CAPACIDAD -->
                         <div>
                           <span class="capacity">
-                            {{ service.Capacidad || 'N/A' }}
+                            {{ service.capacidad || 'N/A' }}
                           </span>
                         </div>
                         <!-- TARIFA -->
                         <div class="money">
                           <div>
                             {{
-                              service.Tarifa
+                              service.tarifa
                                 | currency:'COP':'symbol-narrow':'1.0-0'
                             }}
                           </div>
                           <span
                             class="dane-tag"
-                            [class.vlr-low]="service['Vlr x Mbps'] < 1500">
+                            [class.vlr-low]="service.vlr_mbps < 1500">
                             Vlr x Mbps:
                             {{
-                              service['Vlr x Mbps']
+                              service.vlr_mbps
                                 | currency:'COP':'symbol-narrow':'1.0-0'
                             }}
                           </span>
@@ -216,7 +216,7 @@
                         <!-- PERMANENCIA -->
                         <div>
                           {{
-                            service['Fecha Fin Permanencia']
+                            service.fecha_fin_permanencia
                               | date:'dd/MM/yyyy'
                           }}
                         </div>

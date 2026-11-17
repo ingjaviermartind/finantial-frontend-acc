@@ -6,24 +6,24 @@ export interface ServicesResponse {
 }
 
 export interface ActiveService {
-  SER: string;
-  Ciclo: string;
-  Departamento: string;
-  Municipio: string;
-  'Codigo DANE': string;
-  NIT: string;
-  'Razón Social': string;
-  'Tarifa Total Cliente': number;
-  Capacidad: string;
-  CAPACIDADBPS: number;
-  Tarifa: number;
-  'Vlr x Mbps': number;
-  'Fecha Fin Permanencia': string;
-  FAMILIA_PRODUCTOS: string;
-  Producto: string;
-  Plan: string;
-  TIPO_TECNOLOGIA: string;
-  Subsegmento: string;
+  ser: string;
+  ciclo_final: string;
+  departamento: string;
+  municipio: string;
+  codigo_dane : string;
+  nit: string;
+  'razon_social': string;
+  'tarifa_total_cliente': number;
+  capacidad: string;
+  capacidadbps: number;
+  tarifa: number;
+  vlr_mbps: number;
+  fecha_fin_permanencia: string;
+  familia_productos: string;
+  producto: string;
+  plan: string;
+  tipo_tecnologia: string;
+  subsegmento: string;
   'Rango Capacidad': string;
   node : string;
   unprofitable : boolean;
@@ -76,9 +76,9 @@ export class ActiveClientGroup {
 
     const first = services[0];
 
-    this.nit = first.NIT;
-    this.razonSocial = first['Razón Social'];
-    this.subsegmento = first.Subsegmento
+    this.nit = first.nit;
+    this.razonSocial = first.razon_social;
+    this.subsegmento = first.subsegmento
   }
 
   get serviceCount(): number {
@@ -87,12 +87,24 @@ export class ActiveClientGroup {
 
   get mrcTotal(): number {
     return this.services.reduce(
-      (total, service) => total + service.Tarifa,
+      (total, service) => total + service.tarifa,
       0
     );
   }
 
   get tarifaTotalCliente(): number {
-    return this.services[0]['Tarifa Total Cliente'];
+    return this.services[0].tarifa_total_cliente;
   }
+}
+
+
+export interface ServiceOption {
+  ser: string;
+  razon_social: string | null;
+  producto: string | null;
+  nvosubsegmento: string | null;
+  capacidadbps: number | string | null;
+  anchodebanda: string | null;
+  departamento: string | null;
+  codigo_dane: string | null;
 }

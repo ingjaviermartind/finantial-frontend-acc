@@ -64,21 +64,21 @@
 
               @for (
                 service of filteredServices;
-                track service.SER
+                track service.ser
               ) {
 
                 <label
                   class="service-option"
                   [class.selected]="
-                    selectedService?.SER === service.SER
+                    selectedService?.ser === service.ser
                   ">
 
                   <input
                     type="radio"
                     name="selectedService"
-                    [value]="service.SER"
+                    [value]="service.ser"
                     [checked]="
-                      selectedService?.SER === service.SER
+                      selectedService?.ser === service.ser
                     "
                     (change)="selectService(service)">
 
@@ -89,17 +89,17 @@
                     <span class="service-main">
 
                       <span class="service-ser">
-                        {{ service.SER }}
+                        {{ service.ser }}
                       </span>
 
                       <span class="service-capacity">
-                        {{ service.Capacidad }}
+                        {{ service.anchodebanda }}
                       </span>
 
                     </span>
 
                     <span class="service-client">
-                      {{ service['Razón Social'] }}
+                      {{ service['razon_social'] }}
                     </span>
 
                   </span>
