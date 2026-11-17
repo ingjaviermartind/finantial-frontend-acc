@@ -81,6 +81,7 @@ export class Evaluator {
       next : response => {
         this.pricingResult = response;
         this.clientsState.saveEvaluationResult(response);
+        console.log(response);
       },
       error : err => {
         console.error('Error evaluando servicio:', err);

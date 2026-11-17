@@ -57,9 +57,9 @@ export class Login {
     private redirectByArea() : void {
         const routes: Record<string, string> = {
         ventas: '/client',
-        pricing: '/client',
+        pricing: '/evaluator',
         // preventa: '/pre-sales',
-        retencion: '/main'
+        retencion: '/client'
       };
       const user = this.userService.getUser();
       const route = routes[user?.area ?? ''];

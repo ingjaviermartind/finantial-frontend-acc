@@ -64,7 +64,7 @@ export const routes: Routes = [
         path: 'evaluator',
         component: Evaluator,
         canActivate: [
-          areaGuard('pricing', 'ventas')
+          areaGuard('pricing', 'ventas', 'retencion')
         ]
       },
       {
