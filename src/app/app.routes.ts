@@ -8,7 +8,7 @@ import { areaGuard } from './guards/area-guard'
 
 import { Main } from './pages/main/main';
 import { Client } from './pages/client/client';
-import { FinancialVariables } from './pages/financial-variables/financial-variables';
+import { FinancialVariables } from './pages/financial-variables/financial-variable';
 import { PricingSites } from './pages/pricing-sites/pricing-sites'; 
 
 import { ChangePassword } from './pages/change-password/change-password';

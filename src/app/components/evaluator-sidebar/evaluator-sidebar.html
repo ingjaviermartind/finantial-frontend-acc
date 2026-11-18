@@ -24,94 +24,113 @@
         <!-- SERVICIOS                 -->
         <!-- ========================= -->
 
+        
         <section class="filter-section">
 
           <div class="section-title">
-            SERVICIOS
+            SERVICIO
           </div>
 
-          <div class="filter-label-row">
-            <label>
-              Seleccione un servicio
-            </label>
+          @if (selectedService) {
 
-            @if (selectedService) {
+            <div class="selected-service-card">
+              <div class="selected-service-header">
+                <span class="service-ser">
+                  {{ selectedService.ser }}
+                </span>
+                <span class="service-capacity">
+                  {{ selectedService.anchodebanda }}
+                </span>
+              </div>
+              <div class="service-client">
+                {{ selectedService.razon_social }}
+              </div>
+
               <button
                 type="button"
                 class="select-all-button"
                 (click)="clearSelection()">
-                Limpiar
+                Cambiar servicio
               </button>
-            }
-          </div>
 
-          <div class="service-search">
-            <input
-              type="text"
-              placeholder="Buscar SER, cliente, producto..."
-              [(ngModel)]="serviceSearch">
-          </div>
+            </div>
 
-          <div class="service-list">
+          } @else {
 
-            @if (filteredServices.length === 0) {
-
-              <div class="no-options">
-                No se encontraron servicios.
+            
+            @if (loadingServiceOptions) {
+              <div class="service-loading">
+                <span class="service-spinner"></span>
+                <span>Cargando servicios...</span>
               </div>
-
             } @else {
+              <div class="service-search">
+                <input
+                  type="text"
+                  placeholder="Buscar por SER, razón social o NIT..."
+                  [(ngModel)]="serviceSearch">
+              </div>
+            }
+            @if (serviceSearch.trim().length < 2) {
+              <!-- <div class="no-options">
+                Escribe al menos 2 caracteres para buscar.
+              </div> -->
+            } @else {
+              @if (searchServices(serviceSearch).length === 0) {
+                <div class="no-options">
+                  No se encontraron servicios.
+                </div>
+              } @else {
 
-              @for (
-                service of filteredServices;
-                track service.ser
-              ) {
+                <div class="service-list">
 
-                <label
-                  class="service-option"
-                  [class.selected]="
-                    selectedService?.ser === service.ser
-                  ">
+                  @for (
+                    service of searchServices(serviceSearch);
+                    track service.ser
+                  ) {
 
-                  <input
-                    type="radio"
-                    name="selectedService"
-                    [value]="service.ser"
-                    [checked]="
-                      selectedService?.ser === service.ser
-                    "
-                    (change)="selectService(service)">
+                    <label
+                      class="service-option"
+                      (click)="selectService(service)">
 
-                  <span class="radio-box"></span>
+                      <span class="service-option-content">
 
-                  <span class="service-option-content">
+                        <span class="service-main">
+                          <span class="service-ser">
+                            {{ service.ser }}
+                          </span>
 
-                    <span class="service-main">
+                          <span class="service-capacity">
+                            {{ service.anchodebanda }}
+                          </span>
+                        </span>
 
-                      <span class="service-ser">
-                        {{ service.ser }}
+                        <span class="service-client">
+                          {{ service.razon_social }}
+                        </span>
+
                       </span>
 
-                      <span class="service-capacity">
-                        {{ service.anchodebanda }}
-                      </span>
+                    </label>
 
-                    </span>
+                  }
 
-                    <span class="service-client">
-                      {{ service['razon_social'] }}
-                    </span>
+                </div>
 
-                  </span>
+                @if (searchServices(serviceSearch).length === 30) {
+                  <div class="no-options">
+                    Mostrando 30 resultados. Refina tu búsqueda.
+                  </div>
+                }
 
-                </label>
               }
 
             }
 
-          </div>
+          }
 
         </section>
+
 
 
         <!-- ========================= -->
@@ -335,13 +354,9 @@
         <button
           type="button"
           class="search-button"
-          [disabled]="
-            !selectedSubsegment ||
-            !selectedProduct ||
-            !selectedMunicipalityId
-          "
+          [disabled]="!canEvaluate"
           (click)="evaluateService()">
-          EVALUAR SERVICIO
+          Evaluar
         </button>
         <button
           type="button"

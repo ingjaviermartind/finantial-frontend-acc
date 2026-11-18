@@ -6,8 +6,7 @@ import {
   OnInit
 } from '@angular/core';
 
-import { Observable, of, catchError, map, tap } from 'rxjs';
-
+import { finalize, Observable, of, catchError, map, tap } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 
 import { ClientsState } from '../../services/clients-state';
@@ -54,6 +53,8 @@ export class EvaluatorSidebar implements OnInit {
   selectedDepartmentId : string | null = null;
   selectedMunicipalityId : string | null = null;
 
+  loadingServiceOptions = false;
+
   // capacityMbps: number | null = null;
   // contractTime: number | null = null;
   // initialCapex = 0;
@@ -73,8 +74,14 @@ export class EvaluatorSidebar implements OnInit {
     this.capacityMbps = this.clientsState.evaluationCapacityMbps;
     this.contractTime = this.clientsState.evaluationContractTime;
     this.initialCapex = this.clientsState.evaluationInitialCapex;
+    this.loadingServiceOptions = true;
     this.serviceOptionsService
     .getServiceOptions()
+    .pipe(
+      finalize(() => {
+        this.loadingServiceOptions = false;
+      })
+    )
     .subscribe({
       next: data => {
         this.serviceOptions = data;
@@ -203,17 +210,30 @@ export class EvaluatorSidebar implements OnInit {
     this.clientsState.selectedProduct = product || null;
   }
 
-  get filteredServices(): ServiceOption[] {
-    const search = this.serviceSearch.trim().toLowerCase();
-    if (!search) {
-      return this.serviceOptions;
+  searchServices(value: string): ServiceOption[] {
+    const search = value.trim().toLowerCase();
+    if (search.length < 2) {
+      return [];
     }
-    return this.serviceOptions.filter(service =>
-      service.ser.toLowerCase().includes(search) ||
-      (service.razon_social ?? '').toLowerCase().includes(search) ||
-      (service.producto ?? '').toLowerCase().includes(search)
-    );
+    return this.serviceOptions
+      .filter(service =>
+        service.ser.toLowerCase().includes(search) ||
+        (service.razon_social ?? '').toLowerCase().includes(search)
+      )
+      .slice(0, 30);
   }
+
+  // get filteredServices(): ServiceOption[] {
+  //   const search = this.serviceSearch.trim().toLowerCase();
+  //   if (!search) {
+  //     return this.serviceOptions;
+  //   }
+  //   return this.serviceOptions.filter(service =>
+  //     service.ser.toLowerCase().includes(search) ||
+  //     (service.razon_social ?? '').toLowerCase().includes(search) ||
+  //     (service.producto ?? '').toLowerCase().includes(search)
+  //   );
+  // }
 
   // get filteredServices(): ActiveService[] {
   //   const search = this.serviceSearch.trim().toLowerCase();
@@ -274,12 +294,25 @@ export class EvaluatorSidebar implements OnInit {
   // }
 
   selectService(service: ServiceOption): void {
+
+    console.log('[1] SERVICIO SELECCIONADO:', service);
+    console.log('[2] PRODUCTO RECIBIDO:', {
+      producto: service.producto,
+      subsegmento: service.nvosubsegmento,
+      ser: service.ser
+    });
     this.selectedService = service;
     // Cargar producto y subsegmento
-    this.clientsState.selectedSubsegment =
-      service.nvosubsegmento?.trim() || null;
-    this.clientsState.selectedProduct =
-      service.producto?.trim() || null;
+    this.clientsState.selectedSubsegment = service.nvosubsegmento?.trim() || null;
+    this.clientsState.selectedProduct = service.producto?.trim() || null;
+    console.log('[3] ESTADO DESPUÉS DE ASIGNAR:', {
+      selectedProduct: this.selectedProduct,
+      selectedSubsegment: this.selectedSubsegment,
+      productosDisponibles: this.products.map(p => p.product),
+      productoEncontrado: this.products.find(
+        p => p.product === this.selectedProduct
+      )
+    });
     // Cargar capacidad
     const capacity = service.capacidadbps !== null
       ? Number(service.capacidadbps)
@@ -335,6 +368,9 @@ export class EvaluatorSidebar implements OnInit {
   }
 
   evaluateService(): void {
+    if (!this.canEvaluate) {
+      return;
+    }
     if (
       !this.selectedMunicipalityId ||
       !this.selectedProduct ||
@@ -344,6 +380,13 @@ export class EvaluatorSidebar implements OnInit {
     ) {
       return;
     }
+    console.log('[4] VALIDACIÓN DEL PRODUCTO:', {
+      selectedProduct: this.selectedProduct,
+      productosDisponibles: this.products.map(p => p.product),
+      productoEncontrado: this.products.find(
+        p => p.product === this.selectedProduct
+      )
+    });
     const selectedProduct = this.products.find(product => product.product === this.selectedProduct);
     const selectedSubsegment = this.subsegments.find(subsegment => subsegment.name === this.selectedSubsegment);
     if (!selectedProduct || !selectedSubsegment) 
@@ -355,7 +398,7 @@ export class EvaluatorSidebar implements OnInit {
       subsegment_id: selectedSubsegment.id,
       capacity_mbps: this.capacityMbps,
       contract_time: this.contractTime,
-      initial_capex: this.initialCapex,
+      initial_capex: this.initialCapex ?? 0,
       initial_income: 0
     };
     this.evaluate.emit(request);
@@ -363,6 +406,7 @@ export class EvaluatorSidebar implements OnInit {
 
   clearSelection(): void {
     this.serviceSearch = '';
+    this.selectedService = null;
     this.clientsState.selectedService = null;
     this.clientsState.selectedSubsegment = null;
     this.clientsState.selectedProduct = null;
@@ -413,5 +457,17 @@ export class EvaluatorSidebar implements OnInit {
 
   set initialCapex(value: number) {
     this.clientsState.evaluationInitialCapex = value;
+  }
+
+  get canEvaluate(): boolean {
+    return !!(
+      this.selectedMunicipalityId &&
+      this.selectedProduct &&
+      this.selectedSubsegment &&
+      this.capacityMbps &&
+      this.contractTime !== null &&
+      this.contractTime !== undefined &&
+      this.contractTime > 0
+    );
   }
 }

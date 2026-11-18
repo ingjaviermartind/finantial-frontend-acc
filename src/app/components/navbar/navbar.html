@@ -36,45 +36,66 @@
   <!-- Navegación principal -->
   <div class="navbar-links">
 
-    <a
-      routerLink="/funnel-tracker"
-      routerLinkActive="active"
-      [routerLinkActiveOptions]="{ exact: false }"
-      class="navbar-link"
-    >
-      <span class="nav-link-icon">◎</span>
-      <span>Funnel Tracker</span>
-    </a>
+    @if (userService.hasArea('retencion')) {
 
-    <a
-      routerLink="/pricing-sites"
-      routerLinkActive="active"
-      class="navbar-link"
-    >
-      <span class="nav-link-icon">▦</span>
-      <span>Pricing por Sede</span>
-    </a>
+      <a
+        routerLink="/client"
+        routerLinkActive="active"
+        class="navbar-link"
+      >
+        <span class="nav-link-icon">♙</span>
+        <span>Clientes</span>
+      </a>
 
-    <a
-      routerLink="/client"
-      routerLinkActive="active"
-      class="navbar-link"
-    >
-      <span class="nav-link-icon">♙</span>
-      <span>Clientes</span>
-    </a>
+      <a
+        routerLink="/evaluator"
+        routerLinkActive="active"
+        class="navbar-link"
+      >
+        <span class="nav-link-icon">⌁</span>
+        <span>Evaluador</span>
+      </a>
 
-    <a
-      routerLink="/evaluator"
-      routerLinkActive="active"
-      class="navbar-link"
-    >
-      <span class="nav-link-icon">⌁</span>
-      <span>Evaluador</span>
-    </a>
+    } @else {
 
-    @if (userService.isAdmin()) {
-      @if (userService.hasArea('pricing')) {
+      <a
+        routerLink="/funnel-tracker"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: false }"
+        class="navbar-link"
+      >
+        <span class="nav-link-icon">◎</span>
+        <span>Funnel Tracker</span>
+      </a>
+
+      <a
+        routerLink="/pricing-sites"
+        routerLinkActive="active"
+        class="navbar-link"
+      >
+        <span class="nav-link-icon">▦</span>
+        <span>Pricing por Sede</span>
+      </a>
+
+      <a
+        routerLink="/client"
+        routerLinkActive="active"
+        class="navbar-link"
+      >
+        <span class="nav-link-icon">♙</span>
+        <span>Clientes</span>
+      </a>
+
+      <a
+        routerLink="/evaluator"
+        routerLinkActive="active"
+        class="navbar-link"
+      >
+        <span class="nav-link-icon">⌁</span>
+        <span>Evaluador</span>
+      </a>
+
+      @if (userService.isAdmin() && userService.hasArea('pricing')) {
         <a
           routerLink="/pricing-variables"
           routerLinkActive="active"
@@ -84,6 +105,7 @@
           <span>Variables financieras</span>
         </a>
       }
+
     }
 
   </div>

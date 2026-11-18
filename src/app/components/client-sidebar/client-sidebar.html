@@ -29,151 +29,136 @@
         <!-- 1. CLIENTES               -->
         <!-- ========================= -->
 
+        
         <section class="filter-section">
-
           <div class="section-title">
             1. CLIENTES
           </div>
-
-
           <div class="filter-group">
-
             <div class="filter-label-row">
-
-              <label>
-                Cliente
-              </label>
+              <label>Cliente</label>
 
               <button
                 type="button"
                 class="select-all-button"
+                [disabled]="isLoadingClients || clients.length === 0"
                 (click)="toggleAllClients()">
-
-                {{ allClientsSelected ? 'Ninguno' : 'Todos' }}
-
+                <!-- {{ allClientsSelected ? 'Ninguno' : 'Todos' }} -->
               </button>
-
             </div>
-
-
-            <!-- BUSCADOR -->
-
-            <div class="checkbox-search">
-
-              <input
-                type="text"
-                placeholder="Buscar NIT o razón social..."
-                [(ngModel)]="clientSearch">
-
-            </div>
-
-
-            <!-- LISTA CLIENTES -->
-
-            <div class="checkbox-list client-list">
-
-              @if (isLoadingClients) {
-
+            @if (isLoadingClients) {
+              <div class="client-loading">
+                <span class="client-spinner"></span>
+                <span>Cargando clientes...</span>
+              </div>
+            } @else {
+              <div class="checkbox-search">
+                <input
+                  type="text"
+                  placeholder="Buscar NIT o razón social..."
+                  [ngModel]="clientSearch"
+                  (ngModelChange)="onClientSearchChange($event)">
+              </div>
+              @if (clientSearch.trim().length < 2) {
                 <div class="no-options">
-                  Cargando clientes...
+                  Escribe al menos 2 caracteres para buscar.
+                </div>
+              } @else if (clientResults.length === 0) {
+                <div class="no-options">
+                  No se encontraron clientes.
+                </div>
+              } @else {
+                <div class="checkbox-list client-list">
+                  @for (client of clientResults; track client.NIT) {
+                    <label class="checkbox-option client-option">
+                      <input
+                        type="checkbox"
+                        [checked]="selectedClients.includes(client.NIT)"
+                        (change)="toggleClient(client.NIT)">
+                      <span class="checkbox-box"></span>
+                      <span class="client-info">
+                        <span class="client-nit">
+                          {{ client.NIT }}
+                        </span>
+                        <span class="client-business-names">
+                          @for (
+                            businessName of client.business_names;
+                            track businessName
+                          ) {
+                            <span class="client-business-name">
+                              {{ businessName }}
+                            </span>
+                          }
+                        </span>
+                      </span>
+                    </label>
+                  }
                 </div>
 
-              } @else {
+                @if (clientResults.length === 30) {
+                  <div class="no-options">
+                    Mostrando hasta 30 resultados. Refina tu búsqueda.
+                  </div>
+                }
 
-                @for (
-                  client of filteredClients;
-                  track client.NIT
-                ) {
+              }
+              @if (selectedClients.length > 0) {
+                <div class="selected-clients-panel">
 
-                  <label class="checkbox-option client-option">
+                  <button
+                    type="button"
+                    class="selected-clients-header"
+                    (click)="toggleSelectedClients()">
 
-                    <input
-                      type="checkbox"
-                      [checked]="selectedClients.includes(client.NIT)"
-                      (change)="toggleClient(client.NIT)">
-
-                    <span class="checkbox-box"></span>
-
-
-                    <span class="client-info">
-
-                      <span class="client-nit">
-                        {{ client.NIT }}
+                    <span class="selected-clients-title">
+                      Clientes seleccionados
+                      <span class="selected-clients-count">
+                        {{ selectedClients.length }}
                       </span>
-
-                      <span class="client-business-names">
-
-                        @for (
-                          businessName of client.business_names;
-                          track businessName
-                        ) {
-
-                          <span class="client-business-name">
-                            {{ businessName }}
-                          </span>
-
-                        }
-
-                      </span>
-
                     </span>
 
-                  </label>
+                    <span class="selected-clients-toggle">
+                      {{ showSelectedClients ? '−' : '+' }}
+                    </span>
 
-                }
+                  </button>
 
+                  @if (showSelectedClients) {
+                    <div class="selected-clients-list">
 
-                @if (filteredClients.length === 0) {
+                      @for (client of selectedClientOptions; track client.NIT) {
+                        <div class="selected-client-item">
 
-                  <div class="no-options">
-                    No se encontraron clientes
-                  </div>
+                          <div class="selected-client-info">
+                            <strong>{{ client.NIT }}</strong>
 
-                }
+                            @for (name of client.business_names; track name) {
+                              <span>{{ name }}</span>
+                            }
+                          </div>
 
-              }
+                          <button
+                            type="button"
+                            class="remove-selected-client"
+                            title="Quitar cliente"
+                            (click)="removeSelectedClient(client.NIT)">
+                            ×
+                          </button>
 
-            </div>
+                        </div>
+                      }
 
-          </div>
+                    </div>
+                  }
 
-          <!-- SUBSEGMENTO -->
-          <div class="filter-group">
-            <div class="filter-label-row">
-              <label>Subsegmento</label>
-
-              <button
-                type="button"
-                class="select-all-button"
-                (click)="toggleAllSubsegments()">
-                {{ allSubsegmentsSelected ? 'Ninguno' : 'Todos' }}
-              </button>
-            </div>
-
-            <div class="checkbox-list">
-              @for (subsegment of subsegments; track subsegment.id) {
-                <label class="checkbox-option">
-                  <input
-                    type="checkbox"
-                    [checked]="selectedSubsegmentIds.includes(subsegment.id)"
-                    (change)="toggleSubsegment(subsegment.id)">
-                  <span class="checkbox-box"></span>
-
-                  <span class="checkbox-label">
-                    {{ subsegment.name }}
-                  </span>
-                </label>
-              }
-
-              @if (subsegments.length === 0) {
-                <div class="no-options">
-                  No hay subsegmentos disponibles
                 </div>
               }
-            </div>
-          </div>
 
+            }
+
+          </div>
         </section>
+
 
 
         <!-- ========================= -->

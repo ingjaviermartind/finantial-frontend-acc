@@ -9,6 +9,7 @@ import { ProductCatalogService } from '../../services/product-catalog';
 import { department, municipality } from '../../models/location';
 import { Subsegment } from '../../models/subsegment';
 import { ClientSubsegmentService } from '../../services/subsegments';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-client-sidebar',
@@ -51,6 +52,7 @@ export class ClientSidebar implements OnInit {
 
   clients: ClientOption[] = [];
   selectedClients: string[] = [];
+  clientResults: ClientOption[] = [];
 
   capacityMin: number | null = null;
   capacityMax: number | null = null;
@@ -61,6 +63,9 @@ export class ClientSidebar implements OnInit {
 
   subsegments: Subsegment[] = [];
   selectedSubsegmentIds: any[] = [];
+
+  showSelectedClients = true;
+
 
   constructor(
     private departmentService : Department,
@@ -178,105 +183,136 @@ export class ClientSidebar implements OnInit {
 
   private loadClients(): void {
     this.isLoadingClients = true;
+
     this.activeClientsService
       .getActiveClients()
+      .pipe(
+        finalize(() => {
+          this.isLoadingClients = false;
+        })
+      )
       .subscribe({
         next: clients => {
           this.clients = clients;
-          
+          this.updateClientResults();
         },
         error: error => {
-          console.error(
-            'Error cargando clientes activos:',
-            error
-          );
-        },
-        complete: () => {
-          this.isLoadingClients = false;
+          console.error('Error cargando clientes activos:', error);
+          this.clients = [];
+          this.clientResults = [];
         }
-
       });
   }
 
-  get filteredClients(): ClientOption[] {
-    const search = this.clientSearch
-      .trim()
-      .toLowerCase();
+    // get filteredClients(): ClientOption[] {
+    //   const search = this.clientSearch
+    //     .trim()
+    //     .toLowerCase();
 
-    if (!search) {
-      return this.clients;
+    //   if (!search) {
+    //     return this.clients;
+    //   }
+    //   return this.clients.filter(client => {
+    //     const nitMatches = client.NIT
+    //       .toLowerCase()
+    //       .includes(search);
+    //     const businessNameMatches =
+    //       client.business_names.some(
+    //         name =>
+    //           name.toLowerCase().includes(search)
+    //       );
+    //     return nitMatches || businessNameMatches;
+    //   });
+    // }
+
+  onClientSearchChange(value: string): void {
+    this.clientSearch = value;
+    this.updateClientResults();
+  }
+
+  private updateClientResults(): void {
+    const search = this.clientSearch.trim().toLowerCase();
+
+    if (search.length < 2) {
+      this.clientResults = [];
+      return;
     }
-    return this.clients.filter(client => {
-      const nitMatches = client.NIT
-        .toLowerCase()
-        .includes(search);
-      const businessNameMatches =
-        client.business_names.some(
-          name =>
-            name.toLowerCase().includes(search)
+
+    this.clientResults = this.clients
+      .filter(client => {
+        const nitMatches = String(client.NIT ?? '')
+          .toLowerCase()
+          .includes(search);
+
+        const businessNameMatches = (
+          client.business_names ?? []
+        ).some(name =>
+          name.toLowerCase().includes(search)
         );
-      return nitMatches || businessNameMatches;
+
+        return nitMatches || businessNameMatches;
+      })
+      .slice(0, 30);
+  }
+
+    toggleClient(nit: string): void {
+      if (this.selectedClients.includes(nit)) {
+        this.selectedClients =
+          this.selectedClients.filter(
+            clientNit => clientNit !== nit
+          );
+      } else {
+        this.selectedClients = [
+          ...this.selectedClients,
+          nit
+        ];
+      }
+    }
+
+    toggleAllClients(): void {
+      if (this.allClientsSelected) {
+        this.selectedClients = [];
+      } else {
+        this.selectedClients =
+          this.clients.map(client => client.NIT);
+      }
+    }
+
+    get allClientsSelected(): boolean {
+      return (
+        this.clients.length > 0 &&
+        this.selectedClients.length === this.clients.length
+      );
+    }
+
+    loadDepartments() : void {
+      this.departmentService
+        .getDepartments()
+        .subscribe({
+          next: data => {
+            this.departments = [...data].sort(
+              (a, b) => a.name.localeCompare(b.name)
+            );
+          },
+          error: err => {
+            console.error(
+              'Error cargando departamentos:',
+              err
+            );
+          }
+        });
+    }
+
+    emitState(): void {
+    this.stateChange.emit({
+      selectedDepartmentIds: [...this.selectedDepartmentIds],
+      selectedMunicipalityIds: [...this.selectedMunicipalityIds],
+      selectedClients: [...this.selectedClients],
+      departmentSearch: this.departmentSearch,
+      municipalitySearch: this.municipalitySearch,
+      clientSearch: this.clientSearch
     });
   }
-
-  toggleClient(nit: string): void {
-    if (this.selectedClients.includes(nit)) {
-      this.selectedClients =
-        this.selectedClients.filter(
-          clientNit => clientNit !== nit
-        );
-    } else {
-      this.selectedClients = [
-        ...this.selectedClients,
-        nit
-      ];
-    }
-  }
-
-  toggleAllClients(): void {
-    if (this.allClientsSelected) {
-      this.selectedClients = [];
-    } else {
-      this.selectedClients =
-        this.clients.map(client => client.NIT);
-    }
-  }
-
-  get allClientsSelected(): boolean {
-    return (
-      this.clients.length > 0 &&
-      this.selectedClients.length === this.clients.length
-    );
-  }
-
-  loadDepartments() : void {
-    this.departmentService
-      .getDepartments()
-      .subscribe({
-        next: data => {
-          this.departments = [...data].sort(
-            (a, b) => a.name.localeCompare(b.name)
-          );
-        },
-        error: err => {
-          console.error(
-            'Error cargando departamentos:',
-            err
-          );
-        }
-      });
-  }
-
-  emitState(): void {
-  this.stateChange.emit({
-    selectedDepartmentIds: [...this.selectedDepartmentIds],
-    selectedMunicipalityIds: [...this.selectedMunicipalityIds],
-    selectedClients: [...this.selectedClients],
-    departmentSearch: this.departmentSearch,
-    municipalitySearch: this.municipalitySearch,
-    clientSearch: this.clientSearch
-  });
-}
 
   get allDepartmentsSelected(): boolean {
     return this.departments.length > 0 &&
@@ -423,6 +459,7 @@ export class ClientSidebar implements OnInit {
     this.departmentSearch = '';
     this.municipalitySearch = '';
     this.clientSearch = '';
+    this.clientResults = [];
 
     this.municipalities = [];
 
@@ -446,6 +483,19 @@ export class ClientSidebar implements OnInit {
     });
   }
 
-  
+  get selectedClientOptions(): ClientOption[] {
+    const selected = new Set(this.selectedClients);
+    return this.clients.filter(client => selected.has(client.NIT));
+  }
+
+  toggleSelectedClients(): void {
+    this.showSelectedClients = !this.showSelectedClients;
+  }
+
+  removeSelectedClient(nit: string): void {
+    this.selectedClients = this.selectedClients.filter(
+      selectedNit => selectedNit !== nit
+    );
+  }
   
 }

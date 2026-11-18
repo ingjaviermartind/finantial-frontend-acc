@@ -1,0 +1,218 @@
+
+<div class="financial-variables-page">
+
+  <!-- Navegación de áreas -->
+  <nav class="financial-subnav">
+
+    <div class="financial-subnav-brand">
+      <div class="financial-subnav-icon">
+        <span>FV</span>
+      </div>
+
+      <div class="financial-subnav-heading">
+        <strong>Variables Financieras</strong>
+        <span>Configuración de parámetros de evaluación</span>
+      </div>
+    </div>
+
+    <div class="financial-subnav-links">
+      @for (area of areas; track area.id) {
+        <button
+          type="button"
+          [class.active]="selectedAreaId === area.id"
+          (click)="selectArea(area.id)">
+          {{ area.name }}
+        </button>
+      }
+    </div>
+
+  </nav>
+
+  <!-- Contenido principal -->
+  <main class="variables-content">
+
+    <!-- Encabezado -->
+    <header class="variables-header">
+      <div>
+        <span class="variables-eyebrow">
+          CONFIGURACIÓN FINANCIERA
+        </span>
+
+        <h2>
+          {{ areas.find(a => a.id === selectedAreaId)?.name || 'Variables' }}
+        </h2>
+
+        <p>
+          Consulta y modifica los parámetros utilizados en las evaluaciones.
+        </p>
+      </div>
+
+      <div class="variables-count">
+        <strong>{{ filteredVariables.length }}</strong>
+        <span>Variables</span>
+      </div>
+    </header>
+
+    <!-- Cargando -->
+    @if (isLoading) {
+
+      <div class="variables-loading">
+        <span class="variables-spinner"></span>
+        <span>Cargando variables financieras...</span>
+      </div>
+
+    }
+
+    <!-- Error de carga -->
+    @else if (errorMessage && variables.length === 0) {
+
+      <div class="variables-error">
+        {{ errorMessage }}
+
+        <button type="button" (click)="loadVariables()">
+          Reintentar
+        </button>
+      </div>
+
+    }
+
+    <!-- Tabla de variables -->
+    @else {
+
+      <section class="variables-card">
+
+        <!-- Área con scroll independiente -->
+        <div class="variables-table-wrapper">
+
+          <table class="variables-table">
+
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Valor</th>
+                <th>Unidad</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+              @for (variable of filteredVariables; track variable.id) {
+
+                <tr [class.modified-row]="isModified(variable)">
+
+                  <td class="variable-name">
+                    {{ variable.name }}
+                  </td>
+
+                  <td>
+                    <input
+                      type="number"
+                      min="0"
+                      step="any"
+                      [(ngModel)]="variable.value"
+                      class="value-input"
+                      [class.modified-input]="isModified(variable)"
+                      [disabled]="isSaving">
+                  </td>
+
+                  <td class="variable-unit">
+                    {{ variable.unit }}
+                  </td>
+
+                  <td>
+                    @if (isModified(variable)) {
+                      <span class="modified-status">
+                        Modificada
+                      </span>
+                    }
+                    @else {
+                      <span class="unchanged-status">
+                        Sin cambios
+                      </span>
+                    }
+                  </td>
+
+                </tr>
+
+              }
+
+              @if (filteredVariables.length === 0) {
+                <tr>
+                  <td colspan="4" class="empty-state">
+                    No hay variables registradas para esta área.
+                  </td>
+                </tr>
+              }
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+        <!-- Footer fijo respecto al scroll de la tabla -->
+        <footer class="variables-footer">
+
+          <div class="changes-summary">
+
+            @if (hasChanges()) {
+              <span class="modified-dot"></span>
+
+              <span>
+                {{ getModifiedVariables().length }}
+                variable(s) modificada(s)
+              </span>
+            }
+            @else {
+              <span class="unchanged-status">
+                Todos los valores están guardados
+              </span>
+            }
+
+          </div>
+
+          <div class="variables-actions">
+
+            <button
+              type="button"
+              class="cancel-btn"
+              [disabled]="!hasChanges() || isSaving"
+              (click)="cancelChanges()">
+              Cancelar
+            </button>
+
+            <button
+              type="button"
+              class="save-btn"
+              [disabled]="!hasChanges() || isSaving"
+              (click)="saveChanges()">
+
+              @if (isSaving) {
+                <span class="button-spinner"></span>
+                Guardando...
+              }
+              @else {
+                Guardar cambios
+              }
+
+            </button>
+
+          </div>
+
+        </footer>
+
+      </section>
+
+      <!-- Error durante otras operaciones -->
+      @if (errorMessage) {
+        <div class="variables-error">
+          {{ errorMessage }}
+        </div>
+      }
+
+    }
+
+  </main>
+
+</div>

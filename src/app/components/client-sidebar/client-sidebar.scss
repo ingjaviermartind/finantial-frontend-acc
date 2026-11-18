@@ -687,3 +687,140 @@
   border-color: $Aztk_deepBlue;
   box-shadow: 0 0 0 2px rgba(7, 64, 87, .08);
 }
+
+.client-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 24px 12px;
+  color: $text-muted;
+  font-size: $type-sm;
+}
+
+.client-spinner {
+  width: 17px;
+  height: 17px;
+  border: 2px solid $border;
+  border-top-color: $teal-700;
+  border-radius: 50%;
+  animation: client-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes client-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.client-results-info {
+  display: flex;
+  justify-content: flex-end;
+  padding: 6px 2px;
+  color: $text-muted;
+  font-size: $type-xs;
+}
+
+
+.selected-clients-panel {
+  margin: 10px 0;
+  border: 1px solid $border;
+  border-radius: 6px;
+  background: #f8fbfc;
+  overflow: hidden;
+}
+
+.selected-clients-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  background: transparent;
+  color: $Aztk_deepBlue;
+  cursor: pointer;
+  text-align: left;
+}
+
+.selected-clients-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: $type-sm;
+  font-weight: 700;
+}
+
+.selected-clients-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 10px;
+  background: #eaf7fc;
+  color: $teal-700;
+  font-size: $type-xs;
+}
+
+.selected-clients-toggle {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.selected-clients-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  max-height: 220px;
+  padding: 0 8px 8px;
+  overflow-y: auto;
+}
+
+.selected-client-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid #e8eef1;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.selected-client-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+
+  strong {
+    color: $Aztk_deepBlue;
+    font-size: $type-xs;
+  }
+
+  span {
+    color: $text-muted;
+    font-size: $type-xs;
+    overflow-wrap: anywhere;
+  }
+}
+
+.remove-selected-client {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: #a34d4d;
+  font-size: 1.1rem;
+  cursor: pointer;
+
+  &:hover {
+    background: #fff0f0;
+    color: #b42318;
+  }
+}
