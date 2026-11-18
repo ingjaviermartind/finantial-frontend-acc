@@ -1,6 +1,16 @@
+
+export interface ServicesMetrics {
+  total_services: number;
+  unique_clients: number;
+  total_mbps: number;
+  total_mrc: number;
+  mrc_svas: number;
+}
+
 export interface ServicesResponse {
   success: boolean;
   data: ActiveService[];
+  metrics: ServicesMetrics;
   code?: string;
   message?: string;
 }
@@ -23,7 +33,9 @@ export interface ActiveService {
   producto: string;
   plan: string;
   tipo_tecnologia: string;
+  tipo_producto : string;
   subsegmento: string;
+  servicio_de_conectividad : string;
   'Rango Capacidad': string;
   node : string;
   unprofitable : boolean;

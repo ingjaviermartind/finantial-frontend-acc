@@ -41,38 +41,49 @@
   display: flex;
   align-items: center;
   gap: 20px;
-
+  min-width: 0;
   min-height: 48px;
   margin-bottom: 14px;
 }
 
 .metrics {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   align-items: center;
-  gap: 18px;
+  flex: 1;
+  min-width: 0;
+  gap: 12px;
+  padding: 0 4px;
 }
 
 .metric {
   display: flex;
-  align-items: baseline;
-  gap: 6px;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
 }
 
 .metric-value {
   color: $Aztk_deepBlue;
-  font-size: 1rem;
+  font-size: .95rem;
   font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-variant-numeric: tabular-nums;
 }
 
 .metric-label {
   color: $muted;
-  font-size: .72rem;
+  font-size: .58rem;
+  font-weight: 700;
+  letter-spacing: .045em;
+  white-space: nowrap;
 }
 
 .metric-divider {
-  width: 1px;
-  height: 22px;
-  background: $border;
+  display: none;
 }
 
 
@@ -594,3 +605,8 @@
   font-weight: 500;
 }
 
+.vlr-low {
+  color: #dc2626;
+  background-color: #fef2f2;
+  border-color: #fecaca;
+}

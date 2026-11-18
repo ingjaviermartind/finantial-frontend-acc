@@ -61,64 +61,39 @@
             </div>
         </div>
     }
-    @if (loadingCalculation) {
-
-      <div class="loading-results">
-        <div class="spinner"></div>
-        <span>Evaluando servicio...</span>
-      </div>
-
-    } @else if (pricingResult) {
+    @if (loadingCalculation || loadingPriceEvaluation) {
+        <div class="loading-results">
+            <div class="spinner"></div>
+            <span>
+            {{ loadingCalculation ? 'Evaluando servicio...' : 'Evaluando precio...' }}
+            </span>
+        </div>
+    }
+    @else if (pricingResult) {
 
         <!-- ========================= -->
         <!-- INDICADORES FINANCIEROS  -->
         <!-- ========================= -->
 
-        <div class="financial-summary-cards">
+        @if (isDetailed) {
+            <div class="financial-summary-cards">
 
-            <!-- <div class="financial-summary-card">
-            <span class="financial-summary-label">
-                WACC
-            </span>
+                <div class="financial-summary-card">
+                <span class="financial-summary-label">CAPEX INICIAL</span>
+                <strong class="financial-summary-value">
+                    {{ pricingResult!.suggested.capex | currency:'COP':'symbol-narrow':'1.0-0' }}
+                </strong>
+                </div>
 
-            <strong class="financial-summary-value">
-                {{ pricingResult.wacc | percent:'1.2-2' }}
-            </strong>
+                <div class="financial-summary-card">
+                <span class="financial-summary-label">OPEX MENSUAL</span>
+                <strong class="financial-summary-value">
+                    {{ pricingResult!.suggested.opex_m | currency:'COP':'symbol-narrow':'1.0-0' }}
+                </strong>
+                </div>
 
-            <span class="financial-summary-detail">
-                E.A.
-            </span>
-            </div> -->
-
-
-            <div class="financial-summary-card">
-            <span class="financial-summary-label">
-                CAPEX INICIAL
-            </span>
-
-            <strong class="financial-summary-value">
-                {{
-                pricingResult.suggested.capex
-                    | currency:'COP':'symbol-narrow':'1.0-0'
-                }}
-            </strong>
             </div>
-
-
-            <div class="financial-summary-card">
-            <span class="financial-summary-label">
-                OPEX MENSUAL
-            </span>
-
-            <strong class="financial-summary-value">
-                {{
-                pricingResult.suggested.opex_m
-                    | currency:'COP':'symbol-narrow':'1.0-0'
-                }}
-            </strong>
-            </div>
-
-        </div>
+        }
 
 
         <!-- ========================= -->
@@ -171,46 +146,41 @@
 
             <div class="pricing-card-metrics">
 
-                <div class="pricing-metric">
-                <span>VPN</span>
-                <strong>
-                    {{
-                    pricingResult.suggested.vpn
-                        | currency:'COP':'symbol-narrow':'1.0-0'
-                    }}
-                </strong>
-                </div>
-
-                <div class="pricing-metric">
-                <span>TIR</span>
-                <strong>
-                    {{ pricingResult.suggested.tir | percent:'1.1-1' }}
-                </strong>
-                </div>
-
-                <div class="pricing-metric">
-                <span>Margen de Contribución</span>
-                <strong>
-                    {{ pricingResult.suggested.margin | percent:'1.1-1' }}
-                </strong>
-                </div>
-
-                <div class="pricing-metric">
+                @if (pricingResult.suggested.vpn != null) {
+                    <div class="pricing-metric">
+                    <span>VPN</span>
+                    <strong>
+                        {{ pricingResult.suggested.vpn | currency:'COP':'symbol-narrow':'1.0-0' }}
+                    </strong>
+                    </div>
+                }
+                @if (pricingResult.suggested.tir != null) {
+                    <div class="pricing-metric">
+                    <span>TIR</span>
+                    <strong>{{ pricingResult.suggested.tir | percent:'1.1-1' }}</strong>
+                    </div>
+                }
+                @if (pricingResult.suggested.margin != null) {
+                    <div class="pricing-metric">
+                    <span>Margen de contribución</span>
+                    <strong>{{ pricingResult.suggested.margin | percent:'1.1-1' }}</strong>
+                    </div>
+                }
+                @if (pricingResult.suggested.payback != null) {
+                    <div class="pricing-metric">
                     <span>Payback</span>
                     <strong>
-                        {{ pricingResult.suggested.payback | number:'1.1-1' }}
-                        meses
+                        {{ pricingResult.suggested.payback | number:'1.1-1' }} meses
                     </strong>
-                    <small>
-                        {{
-                        (
-                            pricingResult.suggested.payback_percent
-                        ) * 100
-                        | number:'1.1-1'
-                        }}% del contrato
-                    </small>
-                </div>
 
+                    @if (pricingResult.suggested.payback_percent != null) {
+                        <small>
+                        {{ pricingResult.suggested.payback_percent * 100 | number:'1.1-1' }}%
+                        del contrato
+                        </small>
+                    }
+                    </div>
+                }
             </div>
 
 
@@ -336,20 +306,19 @@
                     [disabled]="loadingPriceEvaluation">
                 </div>
                 <button
-                type="button"
-                class="evaluate-price-button"
-                [disabled]="
-                    priceToEvaluate === null ||
-                    priceToEvaluate < 0 ||
-                    loadingPriceEvaluation
-                "
-                (click)="evaluatePrice()">
-
-                @if (loadingPriceEvaluation) {
-                    EVALUANDO...
-                } @else {
-                    EVALUAR PRECIO
-                }
+                    type="button"
+                    class="evaluate-price-button"
+                    [disabled]="
+                        priceToEvaluate === null ||
+                        priceToEvaluate < 0 ||
+                        loadingPriceEvaluation
+                    "
+                    (click)="evaluatePrice()">
+                    @if (loadingPriceEvaluation) {
+                        EVALUANDO PRECIO...
+                    } @else {
+                        EVALUAR PRECIO
+                    }
                 </button>
             } @else {
                 <div class="pricing-card-header">
@@ -422,6 +391,65 @@
             }
             </div>
         </div>
+
+        @if (priceMarkers.length > 0 && priceRange && 0) {
+        <section class="price-comparison">
+
+            <header class="price-comparison-header">
+            <div>
+                <span class="price-comparison-eyebrow">ANÁLISIS DE MERCADO</span>
+                <h3>Comparativo de precios</h3>
+            </div>
+            <span class="price-comparison-unit">COP / Mbps</span>
+            </header>
+
+            <div class="price-chart">
+
+            <div class="price-marker-layer">
+                @for (marker of priceMarkers; track marker.key) {
+                <div
+                    class="price-marker"
+                    [class.align-start]="marker.alignment === 'start'"
+                    [class.align-center]="marker.alignment === 'center'"
+                    [class.align-end]="marker.alignment === 'end'"
+                    [style.left.%]="marker.position">
+
+                    <div class="price-marker-value" [class]="marker.colorClass">
+                    {{ marker.value | currency:'COP':'symbol-narrow':'1.0-0' }}
+                    </div>
+
+                    <span class="price-marker-name" [class]="marker.colorClass">
+                    {{ marker.label }}
+                    </span>
+
+                    <span class="price-marker-line"></span>
+                </div>
+                }
+            </div>
+
+            <div class="price-track">
+                @for (segment of priceSegments; track $index) {
+                <div
+                    class="price-track-segment"
+                    [class]="segment.colorClass"
+                    [style.width.%]="segment.width">
+                </div>
+                }
+            </div>
+
+            </div>
+
+            <footer class="price-comparison-range">
+            <span>
+                {{ priceRange.min | currency:'COP':'symbol-narrow':'1.0-0' }}
+            </span>
+            <span>
+                {{ priceRange.max | currency:'COP':'symbol-narrow':'1.0-0' }}
+            </span>
+            </footer>
+
+        </section>
+        }
     }
   </div>
 </div>

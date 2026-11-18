@@ -17,7 +17,7 @@ import {
   PricingResponse
 } from '../../models/pricing';
 
-import {ServicesFilters, ActiveService, ActiveClientGroup} from '../../models/services'
+import {ServicesFilters, ActiveService, ActiveClientGroup, ServicesMetrics} from '../../models/services'
 
 import { finalize } from 'rxjs/operators';
 import { ProductCatalog } from '../../models/product-catalog';
@@ -54,6 +54,13 @@ export class Client implements OnInit {
 
 
   services: ActiveService[] = [];
+  metrics: ServicesMetrics = {
+    total_services: 0,
+    unique_clients: 0,
+    total_mbps: 0,
+    total_mrc: 0,
+    mrc_svas: 0
+  };
   clients: ActiveClientGroup[] = [];
 
   subsegments: string[] = [];
@@ -73,6 +80,7 @@ export class Client implements OnInit {
   servicesError: string | null | undefined = null;
   sidebarState: ClientsSidebarState;
 
+  protected readonly Number = Number;
 
   constructor(
     private fb: FormBuilder,
@@ -166,6 +174,13 @@ export class Client implements OnInit {
           m => m.id === municipalityId
         );
       this.services = [];
+      this.metrics = {
+        total_services: 0,
+        unique_clients: 0,
+        total_mbps: 0,
+        total_mrc: 0,
+        mrc_svas: 0
+      };
       // this.form.get('product')!.setValue('');
       // this.selectedSubsegment = '';
       // this.selectedCapacityRange = '';
@@ -238,8 +253,22 @@ export class Client implements OnInit {
       this.servicesSearched = false;
       this.clientsState.services = [];
       this.clientsState.servicesSearched = false;
+      this.metrics = {
+        total_services: 0,
+        unique_clients: 0,
+        total_mbps: 0,
+        total_mrc: 0,
+        mrc_svas: 0
+      };
       return;
     }
+    this.metrics = {
+      total_services: 0,
+      unique_clients: 0,
+      total_mbps: 0,
+      total_mrc: 0,
+      mrc_svas: 0
+    };
     this.servicesSearched = true;
     this.loadingServices = true;
     this.servicesError = null;
@@ -257,7 +286,9 @@ export class Client implements OnInit {
       .subscribe({
         next: response => {
           if (response.success) {
-            console.log(response.data);
+            // console.log(response.data);
+            // console.log(response.metrics);
+            this.metrics = response.metrics;
             this.services = response.data;
             this.buildClients();
             this.servicesSearched = true;

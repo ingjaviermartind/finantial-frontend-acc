@@ -23,6 +23,48 @@
         {{ isFiltersExpanded ? 'Ocultar filtros' : 'Mostrar filtros' }}
       </button>
       <div class="metrics">
+        <div class="metric">
+          <span class="metric-label">SERVICIOS</span>
+          <span class="metric-value">
+            {{ metrics.total_services | number:'1.0-0' }}
+          </span>
+        </div>
+
+        <div class="metric-divider"></div>
+
+        <div class="metric">
+          <span class="metric-label">CLIENTES</span>
+          <span class="metric-value">
+            {{ metrics.unique_clients | number:'1.0-0' }}
+          </span>
+        </div>
+
+        <div class="metric-divider"></div>
+
+        <div class="metric">
+          <span class="metric-label">CAPACIDAD</span>
+          <span class="metric-value">
+            {{ metrics.total_mbps | number:'1.0-0' }} Mbps
+          </span>
+        </div>
+
+        <div class="metric-divider"></div>
+
+        <div class="metric">
+          <span class="metric-label">MRC CONECTIVIDAD</span>
+          <span class="metric-value">
+            {{ metrics.total_mrc | currency:'COP':'symbol-narrow':'1.0-0' }}
+          </span>
+        </div>
+
+        <div class="metric-divider"></div>
+
+        <div class="metric">
+          <span class="metric-label">MRC SVAS</span>
+          <span class="metric-value">
+            {{ metrics.mrc_svas | currency:'COP':'symbol-narrow':'1.0-0' }}
+          </span>
+        </div>
       </div>
     </div>
     <!-- ========================= -->
@@ -52,7 +94,7 @@
         @else {
           <div class="services-content">
             <!-- CONTADOR -->
-            <div class="services-summary">
+            <!-- <div class="services-summary">
               <span>
                 {{ clients.length }}
                 {{ clients.length === 1 ? 'cliente' : 'clientes' }}
@@ -60,7 +102,7 @@
                 {{ services.length }}
                 {{ services.length === 1 ? 'servicio' : 'servicios' }}
               </span>
-            </div>
+            </div>  -->
             <!-- ========================= -->
             <!-- HEADER CLIENTES            -->
             <!-- ========================= -->
@@ -202,15 +244,17 @@
                                 | currency:'COP':'symbol-narrow':'1.0-0'
                             }}
                           </div>
-                          <span
-                            class="dane-tag"
-                            [class.vlr-low]="service.vlr_mbps < 1500">
-                            Vlr x Mbps:
-                            {{
-                              service.vlr_mbps
-                                | currency:'COP':'symbol-narrow':'1.0-0'
-                            }}
-                          </span>
+                          @if (service.tipo_producto === 'L2' || service.tipo_producto === 'L3') {
+                            <span
+                              class="dane-tag"
+                              [class.vlr-low]="Number(service.vlr_mbps) < 1500">
+                              Vlr x Mbps:
+                              {{
+                                service.vlr_mbps
+                                  | currency:'COP':'symbol-narrow':'1.0-0'
+                              }}
+                            </span>
+                        }
                         </div>
 
                         <!-- PERMANENCIA -->

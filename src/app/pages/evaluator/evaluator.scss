@@ -1,4 +1,9 @@
-@use 'tokens' as *;
+
+// @use 'tokens' as *;
+@use '../../../styles/tokens' as *;
+/* =========================
+   CONTENEDOR PRINCIPAL
+========================= */
 
 .evaluacion-servicio-container {
   display: flex;
@@ -17,6 +22,10 @@
   box-sizing: border-box;
 }
 
+/* =========================
+   BOTÓN MOSTRAR / OCULTAR FILTROS
+========================= */
+
 .filter-toggle-button {
   display: inline-flex;
   align-items: center;
@@ -30,9 +39,7 @@
   font-size: .65rem;
   font-weight: 600;
   cursor: pointer;
-  transition:
-    background .15s ease,
-    border-color .15s ease;
+  transition: background .15s ease, border-color .15s ease;
 
   &:hover {
     background: $Aztk_lightBlue;
@@ -45,9 +52,9 @@
   line-height: 1;
 }
 
-/* ========================= */
-/* BARRA DANES               */
-/* ========================= */
+/* =========================
+   BARRA DANE
+========================= */
 
 .dane-bar {
   display: flex;
@@ -106,10 +113,9 @@
   background: $warning-text;
 }
 
-
-/* ========================= */
-/* TOOLTIP                   */
-/* ========================= */
+/* =========================
+   TOOLTIP DANE
+========================= */
 
 .dane-tooltip {
   position: absolute;
@@ -122,16 +128,13 @@
   border-radius: 6px;
   background: #fff;
   box-shadow: 0 6px 18px rgba(0, 0, 0, .10);
-
   opacity: 0;
   visibility: hidden;
   transform: translateY(-3px);
-
   transition:
     opacity .15s ease,
     transform .15s ease,
     visibility .15s ease;
-
   pointer-events: none;
 }
 
@@ -178,69 +181,96 @@
   font-weight: 700;
 }
 
-$Aztk_deepBlue: #074057;
-$Aztk_lightBlue: #e8f1f4;
-$border: #e1e6e9;
-$text: #555;
-$muted: #7a7a7a;
-$warning-bg: #fff4d6;
-$warning-text: #9a6b00;
+/* =========================
+   RESUMEN FINANCIERO
+========================= */
 
+.financial-summary-cards {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 8px;
+  margin-bottom: 10px;
+}
 
-/* ========================= */
-/* RESULTADOS PRICING       */
-/* ========================= */
+.financial-summary-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  min-width: 130px;
+  padding: 8px 11px;
+  border: 1px solid $border;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.financial-summary-label {
+  color: $muted;
+  font-size: .56rem;
+  font-weight: 700;
+  letter-spacing: .035em;
+}
+
+.financial-summary-value {
+  color: $Aztk_deepBlue;
+  font-size: .88rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.financial-summary-detail {
+  display: block;
+  margin-top: 2px;
+  color: $muted;
+  font-size: .53rem;
+}
+
+/* =========================
+   RESULTADOS PRICING
+========================= */
 
 .pricing-result-cards {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  align-items: stretch;
   gap: 12px;
-  margin-top: 14px;
 }
 
-
-/* ========================= */
-/* TARJETA                  */
-/* ========================= */
+/* =========================
+   TARJETAS DE PRICING
+========================= */
 
 .pricing-card {
-  position: relative;
+  display: flex;
+  flex-direction: column;
   min-width: 0;
-  padding: 14px;
+  padding: 12px;
+  gap: 8px;
   border: 1px solid $border;
   border-radius: 7px;
   background: #fff;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, .035);
 }
 
-
-
-
-/* ========================= */
-/* HEADER TARJETA            */
-/* ========================= */
+/* =========================
+   HEADER DE TARJETA
+========================= */
 
 .pricing-card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  margin-bottom: 10px;
+  margin-bottom: 2px;
 }
 
 .pricing-card-title {
   color: $Aztk_deepBlue;
   font-size: .66rem;
   font-weight: 700;
-  letter-spacing: .03em;
+  letter-spacing: .035em;
 }
-
-
-/* ========================= */
-/* ESTADO                   */
-/* ========================= */
 
 .pricing-card-status {
   flex-shrink: 0;
@@ -260,33 +290,71 @@ $warning-text: #9a6b00;
   color: $warning-text;
 }
 
-
-/* ========================= */
-/* PRECIO PRINCIPAL          */
-/* ========================= */
+/* =========================
+   PRECIO PRINCIPAL
+========================= */
 
 .pricing-card-value {
   color: $Aztk_deepBlue;
-  font-size: 1.35rem;
+  font-size: 1.3rem;
   font-weight: 700;
   line-height: 1.2;
+  font-variant-numeric: tabular-nums;
 }
 
 .pricing-card-subvalue {
-  margin-top: 4px;
   color: $muted;
-  font-size: .62rem;
+  font-size: .76rem;
   font-weight: 500;
 }
 
+/* =========================
+   MÉTRICAS
+========================= */
 
-/* ========================= */
-/* DETALLE                  */
-/* ========================= */
+.pricing-card-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+  margin-top: 8px;
+  padding-top: 9px;
+  border-top: 1px solid #edf0f2;
+}
+
+.pricing-metric {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 3px;
+}
+
+.pricing-metric span {
+  color: $muted;
+  font-size: .56rem;
+  font-weight: 500;
+}
+
+.pricing-metric strong {
+  color: $text;
+  font-size: .68rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+
+.pricing-metric small {
+  color: $muted;
+  font-size: .50rem;
+  font-weight: 500;
+}
+
+/* =========================
+   DETALLE Y ADVERTENCIAS
+========================= */
 
 .pricing-card-detail {
-  margin-top: 12px;
-  padding-top: 9px;
+  margin-top: 10px;
+  padding-top: 8px;
   border-top: 1px solid #edf0f2;
   color: $muted;
   font-size: .59rem;
@@ -297,13 +365,8 @@ $warning-text: #9a6b00;
   font-weight: 700;
 }
 
-
-/* ========================= */
-/* ADVERTENCIA              */
-/* ========================= */
-
 .pricing-card-warning {
-  margin-top: 9px;
+  margin-top: 8px;
   padding: 5px 7px;
   border-radius: 4px;
   background: $warning-bg;
@@ -312,41 +375,9 @@ $warning-text: #9a6b00;
   font-weight: 700;
 }
 
-
-/* ========================= */
-/* MÉTRICAS PISO            */
-/* ========================= */
-
-.pricing-card-metrics {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 13px;
-  padding-top: 10px;
-  border-top: 1px solid #edf0f2;
-}
-
-.pricing-card-metrics > div {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.pricing-card-metrics span {
-  color: $muted;
-  font-size: .56rem;
-}
-
-.pricing-card-metrics strong {
-  color: $text;
-  font-size: .63rem;
-  font-weight: 700;
-}
-
-
-/* ========================= */
-/* TARJETA SUGERIDO         */
-/* ========================= */
+/* =========================
+   IDENTIFICACIÓN DE TARJETAS
+========================= */
 
 .suggested-card {
   border-top: 3px solid $Aztk_deepBlue;
@@ -356,31 +387,20 @@ $warning-text: #9a6b00;
   border-top-color: $warning-text;
 }
 
-
-/* ========================= */
-/* TARJETA PISO             */
-/* ========================= */
-
 .floor-card {
   border-top: 3px solid #9aa9af;
 }
-
-
-/* ========================= */
-/* EVALUAR PRECIO           */
-/* ========================= */
 
 .evaluate-price-card {
   border-top: 3px solid #cbd9de;
 }
 
-
-/* ========================= */
-/* INPUT PRECIO             */
-/* ========================= */
+/* =========================
+   EVALUAR PRECIO
+========================= */
 
 .evaluate-price-input {
-  margin-top: 8px;
+  margin-top: 7px;
 }
 
 .evaluate-price-input label {
@@ -413,15 +433,17 @@ $warning-text: #9a6b00;
   box-shadow: 0 0 0 2px rgba(7, 64, 87, .08);
 }
 
-
-/* ========================= */
-/* BOTÓN EVALUAR PRECIO     */
-/* ========================= */
+/* =========================
+   BOTÓN EVALUAR PRECIO
+========================= */
 
 .evaluate-price-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   min-height: 34px;
-  margin-top: 10px;
+  margin-top: 9px;
   border: none;
   border-radius: 5px;
   background: $Aztk_deepBlue;
@@ -429,9 +451,7 @@ $warning-text: #9a6b00;
   font-size: .64rem;
   font-weight: 700;
   cursor: pointer;
-  transition:
-    background .15s ease,
-    transform .1s ease;
+  transition: background .15s ease, transform .1s ease;
 }
 
 .evaluate-price-button:hover:not(:disabled) {
@@ -446,6 +466,33 @@ $warning-text: #9a6b00;
   opacity: .55;
   cursor: not-allowed;
 }
+
+.button-loading {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.button-spinner {
+  width: 12px;
+  height: 12px;
+  flex: 0 0 12px;
+  border: 2px solid rgba(255, 255, 255, .35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: button-spin .7s linear infinite;
+}
+
+@keyframes button-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================
+   REINICIAR EVALUACIÓN
+========================= */
 
 .reset-price-button {
   align-self: flex-start;
@@ -466,55 +513,254 @@ $warning-text: #9a6b00;
   text-decoration: underline;
 }
 
-/* ========================= */
-/* RESUMEN FINANCIERO        */
-/* ========================= */
+/* =========================
+   CARGANDO RESULTADOS
+========================= */
 
-.financial-summary-cards {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+.loading-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: 12px;
-  margin-top: 14px;
-  margin-bottom: 12px;
-}
-
-.financial-summary-card {
-  min-width: 0;
-  padding: 11px 14px;
-  border: 1px solid $border;
-  border-radius: 7px;
-  background: #fff;
-  box-sizing: border-box;
-}
-
-.financial-summary-label {
-  display: block;
-  margin-bottom: 5px;
+  min-height: 180px;
   color: $muted;
-  font-size: .58rem;
-  font-weight: 700;
-  letter-spacing: .04em;
+  font-size: .72rem;
+  font-weight: 600;
 }
 
-.financial-summary-value {
-  display: block;
+.spinner {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  border: 3px solid rgba(36, 59, 83, .2);
+  border-top-color: $Aztk_deepBlue;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 900px) {
+  .evaluacion-servicio-content {
+    padding: 14px;
+  }
+
+  .pricing-result-cards {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .financial-summary-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .financial-summary-card {
+    min-width: 0;
+  }
+
+  .pricing-result-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .price-comparison {
+  width: 100%;
+  margin: 8px 0 24px;
+  padding: 20px 22px;
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: 12px;
   overflow: hidden;
-  color: $Aztk_deepBlue;
-  font-size: .92rem;
+}
+
+.price-comparison-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+
+  h3 {
+    margin: 4px 0 0;
+    color: $text-primary;
+    font-size: 16px;
+    font-weight: 700;
+  }
+}
+
+.price-comparison-eyebrow {
+  color: $text-muted;
+  font-size: 10px;
   font-weight: 700;
-  text-overflow: ellipsis;
+  letter-spacing: 1px;
+}
+
+.price-comparison-unit {
+  color: $text-muted;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.price-chart {
+  position: relative;
+  height: 145px;
+  margin: 0 2px;
+}
+
+.price-marker-layer {
+  position: absolute;
+  inset: 0;
+}
+
+.price-marker {
+  position: absolute;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  width: max-content;
+  align-items: center;
+  z-index: 2;
+
+  &.align-start {
+    transform: translateX(0);
+    align-items: flex-start;
+  }
+
+  &.align-center {
+    transform: translateX(-50%);
+  }
+
+  &.align-end {
+    transform: translateX(-100%);
+    align-items: flex-end;
+  }
+}
+
+.price-marker-value {
+  padding: 5px 8px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 700;
   white-space: nowrap;
 }
 
-.financial-summary-detail {
-  display: block;
-  margin-top: 2px;
-  color: $muted;
-  font-size: .53rem;
+.price-marker-name {
+  margin-top: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
-.pricing-metric small {
-  color: $muted;
-  font-size: .50rem;
-  font-weight: 500;
+.price-marker-line {
+  height: 42px;
+  width: 1px;
+  margin-top: 5px;
+  background: #94a3b8;
+  opacity: 0.85;
+}
+
+.price-track {
+  position: absolute;
+  bottom: 4px;
+  left: 0;
+  right: 0;
+  height: 16px;
+  display: flex;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #e2e8f0;
+}
+
+.price-track-segment {
+  height: 100%;
+  flex-shrink: 0;
+  transition: width 250ms ease;
+}
+
+.segment-red {
+  background: #d65b5b;
+}
+
+.segment-orange {
+  background: #e6a23c;
+}
+
+.segment-teal {
+  background: #269b91;
+}
+
+.segment-gray {
+  background: #475569;
+}
+
+.marker-floor {
+  background: #fff0d9;
+  color: #b66b0d;
+  border-color: #e6a23c;
+}
+
+.marker-ml {
+  background: #dceeff;
+  color: #1769aa;
+  border-color: #7db9e8;
+}
+
+.marker-average {
+  background: #475569;
+  color: #fff;
+  border-color: #475569;
+}
+
+.marker-median {
+  background: #bce9df;
+  color: #176b60;
+  border-color: #65b8a8;
+}
+
+.marker-special {
+  background: #fff0b8;
+  color: #876400;
+  border-color: #e5c45c;
+}
+
+.marker-discount {
+  background: #dceeff;
+  color: #27658f;
+  border-color: #8abce0;
+}
+
+.marker-base {
+  background: #f8fafc;
+  color: #263445;
+  border-color: #cbd5e1;
+}
+
+.price-comparison-range {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 7px;
+  color: $text-muted;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+@media (max-width: 700px) {
+  .price-comparison {
+    overflow-x: auto;
+  }
+
+  .price-chart {
+    min-width: 650px;
+  }
+}
 }
