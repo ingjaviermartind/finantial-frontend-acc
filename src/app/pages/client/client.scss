@@ -1,3 +1,4 @@
+
 @use 'tokens' as *;
 
 
@@ -20,15 +21,19 @@
 }
 
 .evaluator-content {
-  flex: 1;
-  min-width: 0;
-  min-height: 0;
-  height: 100%;
-  box-sizing: border-box;
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 0;
+
+  width: 0;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+
+  box-sizing: border-box;
   padding: 18px 20px;
+
   overflow: hidden;
 }
 
@@ -41,8 +46,10 @@
   display: flex;
   align-items: center;
   gap: 20px;
+
   min-width: 0;
   min-height: 48px;
+
   margin-bottom: 14px;
 }
 
@@ -50,8 +57,10 @@
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   align-items: center;
+
   flex: 1;
   min-width: 0;
+
   gap: 12px;
   padding: 0 4px;
 }
@@ -61,6 +70,7 @@
   flex-direction: column;
   justify-content: center;
   gap: 4px;
+
   min-width: 0;
 }
 
@@ -68,9 +78,11 @@
   color: $Aztk_deepBlue;
   font-size: .95rem;
   font-weight: 700;
+
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
   font-variant-numeric: tabular-nums;
 }
 
@@ -79,6 +91,7 @@
   font-size: .58rem;
   font-weight: 700;
   letter-spacing: .045em;
+
   white-space: nowrap;
 }
 
@@ -113,11 +126,11 @@
   transition:
     background .15s ease,
     border-color .15s ease;
-}
 
-.filters-toggle-button:hover {
-  background: $Aztk_lightBlue;
-  border-color: #cbd9de;
+  &:hover {
+    background: $Aztk_lightBlue;
+    border-color: #cbd9de;
+  }
 }
 
 .filters-toggle-icon {
@@ -127,31 +140,50 @@
 
 
 /* ========================= */
-/* TABLA CLIENTES            */
+/* TABLA DE SERVICIOS        */
 /* ========================= */
 
 .services-table {
+  display: flex;
   flex: 1 1 0;
+  flex-direction: column;
 
   min-width: 0;
   min-height: 0;
 
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: auto;
 
   border: 1px solid $border;
   border-radius: 7px;
 
   background: #fff;
+
+  scrollbar-width: thin;
+  scrollbar-color: #b9cbd3 #f5f8f9;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #b9cbd3;
+    border-radius: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f5f8f9;
+  }
 }
 
 .services-content {
   width: 100%;
+  min-width: 1150px;
 }
 
 
 /* ========================= */
-/* CONTADOR                  */
+/* RESUMEN                   */
 /* ========================= */
 
 .services-summary {
@@ -166,117 +198,68 @@
 
 
 /* ========================= */
-/* HEADER CLIENTES           */
+/* HEADER                    */
 /* ========================= */
 
-.clients-header {
+.services-header,
+.service-row {
   display: grid;
 
   grid-template-columns:
-    42px
-    2fr
-    1.2fr
+    1.8fr
+    1.15fr
+    .85fr
+    1.35fr
+    1.55fr
     .8fr
-    1.2fr;
-
-  min-height: 38px;
+    1.15fr;
 
   align-items: center;
+  column-gap: 12px;
 
-  padding: 0 14px;
+  padding: 0 16px;
+}
+
+.services-header {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+
+  min-height: 42px;
 
   background: $Aztk_deepBlue;
   color: #fff;
 
-  font-size: .62rem;
+  font-size: .64rem;
   font-weight: 700;
-  letter-spacing: .04em;
-}
-
-.client-row > div:last-child,
-.clients-header > div:last-child {
-  padding-left: 30px;
-}
-
-/* ========================= */
-/* CLIENT BLOCK              */
-/* ========================= */
-
-.client-block {
-  border-bottom: 1px solid $border;
-}
-
-.client-block:last-child {
-  border-bottom: none;
+  letter-spacing: .045em;
 }
 
 
 /* ========================= */
-/* CLIENT ROW                */
+/* FILAS                     */
 /* ========================= */
 
-.client-row {
-  display: grid;
+.service-row {
+  min-height: 82px;
 
-  grid-template-columns:
-    42px
-    2fr
-    1.2fr
-    .8fr
-    1.2fr;
-
-  min-height: 68px;
-
-  align-items: center;
-
-  padding: 0 14px;
+  border-bottom: 1px solid #edf0f2;
 
   background: #fff;
-
-  cursor: pointer;
 
   transition: background .15s ease;
-}
 
-.client-row:hover {
-  background: #f7fafb;
-}
+  &:hover {
+    background: #f7fafb;
+  }
 
-.client-row.expanded {
-  background: #f1f6f8;
-}
+  &:last-child {
+    border-bottom: none;
+  }
 
-
-/* ========================= */
-/* CHEVRON                  */
-/* ========================= */
-
-.client-expand {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.expand-button {
-  width: 28px;
-  height: 28px;
-
-  padding: 0;
-
-  border: 1px solid #d7e0e4;
-  border-radius: 5px;
-
-  background: #fff;
-  color: $Aztk_deepBlue;
-
-  font-size: 18px;
-  line-height: 1;
-
-  cursor: pointer;
-}
-
-.expand-button:hover {
-  background: $Aztk_lightBlue;
+  > div {
+    min-width: 0;
+  }
 }
 
 
@@ -284,7 +267,7 @@
 /* CLIENTE                   */
 /* ========================= */
 
-.client-info {
+.service-client {
   min-width: 0;
 }
 
@@ -293,125 +276,78 @@
 
   color: $text;
 
-  font-size: .74rem;
+  font-size: .73rem;
   font-weight: 700;
 
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.subsegment-tag {
-  display: inline-block;
-  margin-top: 4px;
-  padding: 2px 5px;
-  border-radius: 3px;
-  background: $Aztk_lightBlue;
-  color: $Aztk_deepBlue;
-  font-size: .52rem;
-  font-weight: 600;
+.client-metadata {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+
+  margin-top: 5px;
 }
 
 .client-nit {
-  color: $text;
-  font-size: .62rem;
+  color: $muted;
+  font-size: .61rem;
+  font-weight: 600;
+}
+
+.subsegment-tag {
+  display: inline-block;
+
+  padding: 3px 6px;
+
+  border-radius: 3px;
+
+  background: $Aztk_lightBlue;
+  color: $Aztk_deepBlue;
+
+  font-size: .53rem;
   font-weight: 600;
 }
 
 
 /* ========================= */
-/* BADGE SERVICIOS           */
+/* MRC ACTIVO                */
 /* ========================= */
+
+.service-mrc {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+}
+
+.money {
+  color: $text;
+
+  font-size: .69rem;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
 
 .sites-badge {
   display: inline-flex;
   align-items: center;
 
-  padding: 5px 8px;
+  padding: 4px 7px;
 
-  border-radius: 5px;
+  border-radius: 4px;
 
   background: $Aztk_lightBlue;
   color: $Aztk_deepBlue;
 
-  font-size: .62rem;
-  font-weight: 700;
-}
-
-
-/* ========================= */
-/* MONEY                     */
-/* ========================= */
-
-.money {
-  color: $text;
-  font-size: .68rem;
-  font-weight: 600;
-  text-align: right;
-}
-.client-row .money,
-.service-row .money {
-  text-align: left;
-}
-
-
-/* ========================= */
-/* DETALLE CLIENTE            */
-/* ========================= */
-
-.client-detail {
-  padding: 0 14px 14px;
-
-  background: #f8fafb;
-
-  border-top: 1px solid $border;
-}
-
-
-/* ========================= */
-/* HEADER SERVICIOS           */
-/* ========================= */
-
-.services-header {
-  display: grid;
-  grid-template-columns:
-    1.1fr
-    1.8fr
-    2fr
-    .9fr
-    1.2fr
-    1.1fr;
-  min-height: 34px;
-  align-items: center;
-  padding: 0 12px;
-  border-bottom: 1px solid $border;
-  color: $muted;
   font-size: .56rem;
   font-weight: 700;
-  letter-spacing: .03em;
-}
 
-/* ========================= */
-/* SERVICE ROW               */
-/* ========================= */
-
-.service-row {
-  display: grid;
-  grid-template-columns:
-    1.1fr
-    1.8fr
-    2fr
-    .9fr
-    1.2fr
-    1.1fr;
-  min-height: 68px;
-  align-items: center;
-  padding: 0 12px;
-  border-bottom: 1px solid #edf0f2;
-  background: #fff;
-}
-
-.service-row:last-child {
-  border-bottom: none;
+  white-space: nowrap;
 }
 
 
@@ -422,23 +358,30 @@
 .service-id {
   color: $Aztk_deepBlue;
 
-  font-size: .66rem;
+  font-size: .68rem;
   font-weight: 700;
 }
 
 .cycle-tag {
   display: inline-block;
-  margin-top: 4px;
-  padding: 2px 5px;
+
+  margin-top: 5px;
+  padding: 3px 6px;
+
   border-radius: 3px;
+
   background: $Aztk_lightBlue;
   color: $Aztk_deepBlue;
-  font-size: .52rem;
+
+  font-size: .53rem;
   font-weight: 600;
+
+  white-space: nowrap;
 }
 
+
 /* ========================= */
-/* LOCATION                  */
+/* UBICACIÓN                 */
 /* ========================= */
 
 .service-location {
@@ -446,29 +389,49 @@
 }
 
 .location-main {
+  overflow: hidden;
+
   color: $text;
 
-  font-size: .65rem;
+  font-size: .67rem;
   font-weight: 700;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.location-municipality {
+  margin-top: 3px;
+
+  color: $muted;
+  font-size: .62rem;
 }
 
 .dane-tag {
   display: inline-block;
+
   margin-top: 5px;
-  padding: 2px 5px;
+  padding: 3px 6px;
+
   border-radius: 3px;
+
   background: #f1f3f4;
   color: $muted;
+
   font-size: .54rem;
+  font-weight: 600;
+
+  white-space: nowrap;
 }
 
 .unprofitable-dane {
-  background: #fff4d6; 
-  color: #9a6b00; 
+  background: #fff4d6;
+  color: #9a6b00;
 }
 
+
 /* ========================= */
-/* PRODUCT                   */
+/* PRODUCTO                  */
 /* ========================= */
 
 .service-product {
@@ -476,51 +439,44 @@
 }
 
 .product-name {
+  overflow: hidden;
+
   color: $text;
 
-  font-size: .65rem;
+  font-size: .68rem;
   font-weight: 700;
-}
 
-.family-tag {
-  display: inline-block;
-
-  margin-left: 5px;
-  padding: 2px 5px;
-
-  border-radius: 3px;
-
-  background: $Aztk_lightBlue;
-  color: $Aztk_deepBlue;
-
-  font-size: .52rem;
-  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .plan-name {
   margin-top: 4px;
 
   color: $muted;
-
-  font-size: .57rem;
+  font-size: .59rem;
 }
 
 .technology-name {
-  margin-top: 2px;
+  margin-top: 3px;
 
   color: #888;
-
-  font-size: .62rem;
-  line-height: 1.3;
+  font-size: .59rem;
 }
 
-.subsegment-name {
-  margin-top: 2px;
+.family-tag {
+  display: inline-block;
 
-  color: #888;
+  margin-top: 5px;
+  padding: 3px 6px;
 
-  font-size: .60rem;
-  line-height: 1.3;
+  border-radius: 3px;
+
+  background: $Aztk_lightBlue;
+  color: $Aztk_deepBlue;
+
+  font-size: .53rem;
+  font-weight: 600;
 }
 
 
@@ -540,7 +496,34 @@
   color: $text;
 
   font-family: monospace;
-  font-size: .75rem;
+  font-size: .72rem;
+
+  white-space: nowrap;
+}
+
+
+/* ========================= */
+/* TARIFA                    */
+/* ========================= */
+
+.service-tariff {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+
+  min-width: 0;
+}
+
+.vlr-tag {
+  max-width: 100%;
+  white-space: normal;
+}
+
+.vlr-low {
+  color: #dc2626;
+  background-color: #fef2f2;
+  border-color: #fecaca;
 }
 
 
@@ -550,7 +533,6 @@
 
 .loading-results {
   display: flex;
-
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -591,7 +573,6 @@
 
 .table-message {
   margin: 0;
-
   padding: 20px;
 
   text-align: center;
@@ -605,8 +586,89 @@
   font-weight: 500;
 }
 
-.vlr-low {
-  color: #dc2626;
-  background-color: #fef2f2;
-  border-color: #fecaca;
+
+/* ========================= */
+/* RESPONSIVE                */
+/* ========================= */
+
+@media (max-width: 1100px) {
+  .evaluator-content {
+    padding: 14px;
+  }
+
+  .evaluator-toolbar {
+    gap: 12px;
+  }
+
+  .metrics {
+    gap: 8px;
+  }
+
+  .metric-value {
+    font-size: .82rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .services-content {
+    min-width: 1100px;
+  }
+}
+
+
+/* ========================= */
+/* BOTONES DE ORDENAMIENTO   */
+/* ========================= */
+
+.sort-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+
+  padding: 0;
+  border: none;
+  outline: none;
+
+  background: transparent;
+  color: inherit;
+
+  font: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  text-align: left;
+
+  cursor: pointer;
+
+  transition: opacity .15s ease;
+
+  &:hover {
+    opacity: .8;
+  }
+
+  &.is-active {
+    color: #fff;
+  }
+}
+
+.sort-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 auto;
+
+  font-size: .7rem;
+  line-height: 1;
+
+  opacity: .65;
+}
+
+.sort-header.is-active .sort-indicator {
+  opacity: 1;
 }

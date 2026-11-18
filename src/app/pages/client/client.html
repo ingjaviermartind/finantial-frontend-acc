@@ -92,185 +92,180 @@
           </p>
         }
         @else {
+          
           <div class="services-content">
-            <!-- CONTADOR -->
-            <!-- <div class="services-summary">
-              <span>
-                {{ clients.length }}
-                {{ clients.length === 1 ? 'cliente' : 'clientes' }}
-                ·
-                {{ services.length }}
-                {{ services.length === 1 ? 'servicio' : 'servicios' }}
-              </span>
-            </div>  -->
-            <!-- ========================= -->
-            <!-- HEADER CLIENTES            -->
-            <!-- ========================= -->
-            <div class="clients-header">
-              <div></div>
-              <div>CLIENTE</div>
-              <div>NIT</div>
-              <div>SERVICIOS</div>
-              <div>MRC ACTIVO</div>
-            </div>
-            <!-- ========================= -->
-            <!-- CLIENTES                   -->
-            <!-- ========================= -->
-            @for (client of clients; track client.nit) {
-              <div class="client-block">
-                <!-- ========================= -->
-                <!-- FILA CLIENTE               -->
-                <!-- ========================= -->
-                <div
-                  class="client-row"
-                  [class.expanded]="client.expanded"
-                  (click)="toggleClient(client)"
-                >
-                  <!-- CHEVRON -->
-                  <div class="client-expand">
-                    <button
-                      type="button"
-                      class="expand-button"
-                      (click)="
-                        $event.stopPropagation();
-                        toggleClient(client)
-                      "
-                    >
-                      {{ client.expanded ? '⌄' : '›' }}
-                    </button>
-                  </div>
-                  <!-- CLIENTE -->
-                  <div class="client-info">
-                    <div class="client-name">
-                      {{ client.razonSocial }}
-                    </div>
-                    <span class="subsegment-tag">
-                      {{ client.subsegmento || 'Sin segmentar' }}
-                    </span>
+            <div class="services-header">
+              <button type="button" class="sort-header"
+                [class.is-active]="sortColumn === 'cliente'"
+                (click)="sortBy('cliente')">
+                <span>CLIENTE</span>
+                <span class="sort-indicator">{{ getSortIndicator('cliente') }}</span>
+              </button>
 
+              <button type="button" class="sort-header"
+                [class.is-active]="sortColumn === 'mrc'"
+                (click)="sortBy('mrc')">
+                <span>MRC ACTIVO</span>
+                <span class="sort-indicator">{{ getSortIndicator('mrc') }}</span>
+              </button>
+
+              <button type="button" class="sort-header"
+                [class.is-active]="sortColumn === 'ser'"
+                (click)="sortBy('ser')">
+                <span>SER</span>
+                <span class="sort-indicator">{{ getSortIndicator('ser') }}</span>
+              </button>
+
+              <button type="button" class="sort-header"
+                [class.is-active]="sortColumn === 'ubicacion'"
+                (click)="sortBy('ubicacion')">
+                <span>UBICACIÓN</span>
+                <span class="sort-indicator">{{ getSortIndicator('ubicacion') }}</span>
+              </button>
+
+              <button type="button" class="sort-header"
+                [class.is-active]="sortColumn === 'producto'"
+                (click)="sortBy('producto')">
+                <span>PRODUCTO</span>
+                <span class="sort-indicator">{{ getSortIndicator('producto') }}</span>
+              </button>
+
+              <button type="button" class="sort-header"
+                [class.is-active]="sortColumn === 'capacidad'"
+                (click)="sortBy('capacidad')">
+                <span>CAPACIDAD</span>
+                <span class="sort-indicator">{{ getSortIndicator('capacidad') }}</span>
+              </button>
+
+              <button type="button" class="sort-header"
+                [class.is-active]="sortColumn === 'tarifa'"
+                (click)="sortBy('tarifa')">
+                <span>TARIFA</span>
+                <span class="sort-indicator">{{ getSortIndicator('tarifa') }}</span>
+              </button>
+            </div>
+
+            @for (
+              service of sortedServices;
+              track service.ser
+            ) {
+              @if (service.producto.trim().toUpperCase() !== 'IP PÚBLICA') {
+              <div class="service-row">
+
+                <!-- CLIENTE -->
+                <div class="service-client">
+                  <div class="client-name">
+                    {{ service.razon_social }}
                   </div>
-                  <!-- NIT -->
-                  <div class="client-nit">
-                    {{ client.nit }}
-                  </div>
-                  <!-- SERVICIOS -->
-                  <div>
-                    <span class="sites-badge">
-                      {{ client.serviceCount }}
-                      {{ client.serviceCount === 1
-                          ? 'Servicio'
-                          : 'Servicios'
-                      }}
+
+                  <div class="client-metadata">
+                    <span class="client-nit">{{ service.nit }}</span>
+
+                    <span class="subsegment-tag">
+                      {{ service.subsegmento || 'Sin segmentar' }}
                     </span>
                   </div>
-                  <!-- MRC -->
+                </div>
+
+                <!-- MRC ACTIVO -->
+                <div class="service-mrc">
                   <div class="money">
                     {{
-                      client.tarifaTotalCliente
+                      service.tarifa_total_cliente
                         | currency:'COP':'symbol-narrow':'1.0-0'
                     }}
                   </div>
-                </div>
-                <!-- ========================= -->
-                <!-- DETALLE SERVICIOS          -->
-                <!-- ========================= -->
-                @if (client.expanded) {
-                  <div class="client-detail">
-                    <!-- HEADER SERVICIOS -->
-                    <div class="services-header">
-                      <div>SER</div>
-                      <div>UBICACIÓN</div>
-                      <div>PRODUCTO</div>
-                      <div>CAPACIDAD</div>
-                      <div>TARIFA</div>
-                      <div>FIN PERMANENCIA</div>
-                    </div>
-                    <!-- SERVICIOS -->
-                    @for (
-                      service of client.services;
-                      track service.ser
-                    ) {
-                      <div class="service-row">
-                        <!-- SER -->
-                        <div class="service-id">
-                          <div>
-                            {{ service.ser }}
-                          </div>
-                          <span class="cycle-tag">
-                            Ciclo {{ service.ciclo_final }}
-                          </span>
-                        </div>
-                        
-                        <!-- UBICACIÓN -->
-                        <div class="service-location">
-                          <div class="location-main">
-                            {{ service.departamento }}
-                            ·
-                            {{ service.municipio }}
-                          </div>
-                          <span
-                            class="dane-tag"
-                            [class.unprofitable-dane]="service.unprofitable">
-                            DANE: {{ service.codigo_dane }}
-                          </span>
-                        </div>
-                        <!-- PRODUCTO -->
-                        <div class="service-product">
-                          <div class="product-name">
-                            {{ service.producto }}
-                            <span class="family-tag">
-                              {{ service.familia_productos }}
-                            </span>
-                          </div>
-                          <div class="plan-name">
-                            Plan: {{ service.plan }}
-                          </div>
-                          <div class="technology-name">
-                            Tecnología:
-                            {{ service.tipo_tecnologia || 'N/A' }}
-                          </div>
-                        </div>
-                        <!-- CAPACIDAD -->
-                        <div>
-                          <span class="capacity">
-                            {{ service.capacidad || 'N/A' }}
-                          </span>
-                        </div>
-                        <!-- TARIFA -->
-                        <div class="money">
-                          <div>
-                            {{
-                              service.tarifa
-                                | currency:'COP':'symbol-narrow':'1.0-0'
-                            }}
-                          </div>
-                          @if (service.tipo_producto === 'L2' || service.tipo_producto === 'L3') {
-                            <span
-                              class="dane-tag"
-                              [class.vlr-low]="Number(service.vlr_mbps) < 1500">
-                              Vlr x Mbps:
-                              {{
-                                service.vlr_mbps
-                                  | currency:'COP':'symbol-narrow':'1.0-0'
-                              }}
-                            </span>
-                        }
-                        </div>
 
-                        <!-- PERMANENCIA -->
-                        <div>
-                          {{
-                            service.fecha_fin_permanencia
-                              | date:'dd/MM/yyyy'
-                          }}
-                        </div>
-                      </div>
-                    }
+                  <span class="sites-badge">
+                    {{ getServiceCount(service.nit) }}
+                    {{ getServiceCount(service.nit) === 1 ? 'Servicio' : 'Servicios' }}
+                  </span>
+                </div>
+
+                <!-- SER -->
+                <div class="service-id">
+                  <div>{{ service.ser }}</div>
+
+                  <span class="cycle-tag">
+                    Ciclo {{ service.ciclo_final }}
+                  </span>
+                </div>
+
+                <!-- UBICACIÓN -->
+                <div class="service-location">
+                  <div class="location-main">
+                    {{ service.departamento }}
                   </div>
-                }
+
+                  <div class="location-municipality">
+                    {{ service.municipio }}
+                  </div>
+
+                  <span
+                    class="dane-tag"
+                    [class.unprofitable-dane]="service.unprofitable">
+                    DANE: {{ service.codigo_dane }}
+                  </span>
+                </div>
+
+                <!-- PRODUCTO -->
+                <div class="service-product">
+                  <div class="product-name">
+                    {{ service.producto }}
+                  </div>
+
+                  <div class="plan-name">
+                    Plan: {{ service.plan }}
+                  </div>
+
+                  <div class="technology-name">
+                    Tecnología: {{ service.tipo_tecnologia || 'N/A' }}
+                  </div>
+
+                  <span class="family-tag">
+                    {{ service.familia_productos || 'Sin familia' }}
+                  </span>
+                </div>
+
+                <!-- CAPACIDAD -->
+                <div>
+                  <span class="capacity">
+                    {{ service.capacidad || 'N/A' }}
+                  </span>
+                </div>
+
+                <!-- TARIFA -->
+                <div class="service-tariff">
+                  <div class="money">
+                    {{
+                      service.tarifa
+                        | currency:'COP':'symbol-narrow':'1.0-0'
+                    }}
+                  </div>
+
+                  @if (
+                    service.tipo_producto === 'L2' ||
+                    service.tipo_producto === 'L3'
+                  ) {
+                    <span
+                      class="dane-tag vlr-tag"
+                      [class.vlr-low]="Number(service.vlr_mbps) < 1500">
+                      Vlr x Mbps:
+                      {{
+                        service.vlr_mbps
+                          | currency:'COP':'symbol-narrow':'1.0-0'
+                      }}
+                    </span>
+                  }
+                </div>
+
               </div>
             }
+          }
           </div>
+
+            
+          
         }
       </div>
     }

@@ -23,7 +23,17 @@ import { finalize } from 'rxjs/operators';
 import { ProductCatalog } from '../../models/product-catalog';
 import { Subsegment } from '../../models/subsegment';
 
+type SortColumn =
+    | 'cliente'
+    | 'mrc'
+    | 'ser'
+    | 'ubicacion'
+    | 'producto'
+    | 'capacidad'
+    | 'tarifa';
+  type SortDirection = 'asc' | 'desc';
 
+  
 
 @Component({
   selector: 'app-evaluador-financiero',
@@ -61,7 +71,7 @@ export class Client implements OnInit {
     total_mrc: 0,
     mrc_svas: 0
   };
-  clients: ActiveClientGroup[] = [];
+  // clients: ActiveClientGroup[] = [];
 
   subsegments: string[] = [];
   capacityRanges: string[] = [];
@@ -81,6 +91,10 @@ export class Client implements OnInit {
   sidebarState: ClientsSidebarState;
 
   protected readonly Number = Number;
+
+  
+  sortColumn: SortColumn = 'cliente';
+  sortDirection: SortDirection = 'asc';
 
   constructor(
     private fb: FormBuilder,
@@ -122,10 +136,12 @@ export class Client implements OnInit {
     });
 
 
+    // this.services = [...this.clientsState.services];
+    // if (this.services.length > 0) {
+    //   this.buildClients();
+    // }
     this.services = [...this.clientsState.services];
-    if (this.services.length > 0) {
-      this.buildClients();
-    }
+    this.metrics = { ...this.clientsState.metrics };
     this.servicesSearched = this.clientsState.servicesSearched;
     this.isFiltersExpanded = this.clientsState.isFiltersExpanded;
 
@@ -181,6 +197,7 @@ export class Client implements OnInit {
         total_mrc: 0,
         mrc_svas: 0
       };
+      this.clientsState.metrics = { ...this.metrics };
       // this.form.get('product')!.setValue('');
       // this.selectedSubsegment = '';
       // this.selectedCapacityRange = '';
@@ -249,7 +266,7 @@ export class Client implements OnInit {
     // Si no hay filtros de búsqueda, limpiar resultados
     if (!hasMunicipalities && !hasClients && !hasDepartments && !hasSubsegment) {
       this.services = [];
-      this.clients = [];
+      // this.clients = [];
       this.servicesSearched = false;
       this.clientsState.services = [];
       this.clientsState.servicesSearched = false;
@@ -260,6 +277,7 @@ export class Client implements OnInit {
         total_mrc: 0,
         mrc_svas: 0
       };
+      this.clientsState.metrics = { ...this.metrics };
       return;
     }
     this.metrics = {
@@ -269,6 +287,7 @@ export class Client implements OnInit {
       total_mrc: 0,
       mrc_svas: 0
     };
+    this.clientsState.metrics = { ...this.metrics };
     this.servicesSearched = true;
     this.loadingServices = true;
     this.servicesError = null;
@@ -289,8 +308,9 @@ export class Client implements OnInit {
             // console.log(response.data);
             // console.log(response.metrics);
             this.metrics = response.metrics;
+            this.clientsState.metrics = { ...response.metrics };
             this.services = response.data;
-            this.buildClients();
+            // this.buildClients();
             this.servicesSearched = true;
             this.clientsState.services = [...response.data];
             this.clientsState.servicesSearched = true;
@@ -430,23 +450,23 @@ export class Client implements OnInit {
     this.selectedMunicipalityIds = [...state.selectedMunicipalityIds];
   }
 
-  buildClients(): void 
-  {
-    const grouped = new Map<string, ActiveService[]>();
-    for (const service of this.services) {
-      const nit = service.nit;
-      if (!grouped.has(nit)) {
-        grouped.set(nit, []);
-      }
-      grouped.get(nit)!.push(service);
-    }
-    this.clients = Array.from(grouped.values()).map(services => new ActiveClientGroup(services));
-    const expandedNits = this.clientsState.expandedClientNits;
-    for (const client of this.clients) {
-      client.expanded =
-        expandedNits.includes(client.nit);
-    }
-  }
+  // buildClients(): void 
+  // {
+  //   const grouped = new Map<string, ActiveService[]>();
+  //   for (const service of this.services) {
+  //     const nit = service.nit;
+  //     if (!grouped.has(nit)) {
+  //       grouped.set(nit, []);
+  //     }
+  //     grouped.get(nit)!.push(service);
+  //   }
+  //   this.clients = Array.from(grouped.values()).map(services => new ActiveClientGroup(services));
+  //   const expandedNits = this.clientsState.expandedClientNits;
+  //   for (const client of this.clients) {
+  //     client.expanded =
+  //       expandedNits.includes(client.nit);
+  //   }
+  // }
   
   toggleClient(client: ActiveClientGroup): void {
     client.expanded = !client.expanded;
@@ -466,6 +486,91 @@ export class Client implements OnInit {
 
   }
 
+
+  getServiceCount(nit: string): number {
+    return this.services.filter(service => service.nit === nit).length;
+  }
+
+  get sortedServices(): ActiveService[] {
+    return [...this.services].sort((a, b) => {
+      let result = 0;
+
+      switch (this.sortColumn) {
+        case 'cliente':
+          result = (a.razon_social ?? '').localeCompare(
+            b.razon_social ?? '',
+            'es',
+            { sensitivity: 'base' }
+          );
+          break;
+
+        case 'mrc':
+          result = (a.tarifa_total_cliente ?? 0) -
+                  (b.tarifa_total_cliente ?? 0);
+          break;
+
+        case 'ser':
+          result = (a.ser ?? '').localeCompare(
+            b.ser ?? '',
+            'es',
+            { numeric: true, sensitivity: 'base' }
+          );
+          break;
+
+        case 'ubicacion':
+          result = (a.departamento ?? '').localeCompare(
+            b.departamento ?? '',
+            'es',
+            { sensitivity: 'base' }
+          );
+
+          if (result === 0) {
+            result = (a.municipio ?? '').localeCompare(
+              b.municipio ?? '',
+              'es',
+              { sensitivity: 'base' }
+            );
+          }
+          break;
+
+        case 'producto':
+          result = (a.producto ?? '').localeCompare(
+            b.producto ?? '',
+            'es',
+            { sensitivity: 'base' }
+          );
+          break;
+
+        case 'capacidad':
+          result = (a.capacidadbps ?? 0) - (b.capacidadbps ?? 0);
+          break;
+
+        case 'tarifa':
+          result = (a.tarifa ?? 0) - (b.tarifa ?? 0);
+          break;
+      }
+
+      return this.sortDirection === 'asc' ? result : -result;
+    });
+  }
+
+  sortBy(column: SortColumn): void {
+    if (this.sortColumn === column) {
+      this.sortDirection =
+        this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortColumn = column;
+      this.sortDirection = 'asc';
+    }
+  }
+
+  getSortIndicator(column: SortColumn): string {
+    if (this.sortColumn !== column) {
+      return '↕';
+    }
+
+    return this.sortDirection === 'asc' ? '↑' : '↓';
+  }
   
 }
 //

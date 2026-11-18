@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActiveService } from '../models/services';
+import { ActiveService, ServicesMetrics } from '../models/services';
 import { PricingResponse, PricingRequest, EvaluationResult } from '../models/pricing';
 
 export interface ClientsSidebarState {
@@ -38,6 +38,13 @@ export class ClientsState
   expandedClientNits: string[] = [];
   services: ActiveService[] = [];
   servicesSearched = false;
+  metrics: ServicesMetrics = {
+    total_services: 0,
+    unique_clients: 0,
+    total_mbps: 0,
+    total_mrc: 0,
+    mrc_svas: 0
+  };
   isFiltersExpanded = true;
   selectedService: ActiveService | null = null;
   selectedEvaluationDepartmentId: string | null = null;
@@ -92,6 +99,13 @@ export class ClientsState
     this.expandedClientNits = [];
     this.services = [];
     this.servicesSearched = false;
+      this.metrics = {
+      total_services: 0,
+      unique_clients: 0,
+      total_mbps: 0,
+      total_mrc: 0,
+      mrc_svas: 0
+    };
     this.isFiltersExpanded = true;
     this.evaluationCapacityMbps = null;
     this.evaluationContractTime = null;
