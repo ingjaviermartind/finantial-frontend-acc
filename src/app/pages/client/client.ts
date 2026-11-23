@@ -413,34 +413,34 @@ export class Client implements OnInit {
     this.showFloor = !this.showFloor;
   }
 
-  get marketSourceLabel(): string {
-    switch (this.pricingResult?.market_source) {
-      case 'municipality':
-        return 'Municipio';
-      case 'department':
-        return 'Departamento';
-      case 'national':
-        return 'Nacional';
-      default:
-        return '-';
-    }
-  }
+  // get marketSourceLabel(): string {
+  //   switch (this.pricingResult?.market_source) {
+  //     case 'municipality':
+  //       return 'Municipio';
+  //     case 'department':
+  //       return 'Departamento';
+  //     case 'national':
+  //       return 'Nacional';
+  //     default:
+  //       return '-';
+  //   }
+  // }
 
-  get historicalReference(): string {
-    if (!this.pricingResult) {
-      return '';
-    }
-    switch (this.pricingResult.market_source) {
-      case 'municipality':
-        return `Basado en ${this.pricingResult.market_sample} servicios del municipio.`;
-      case 'department':
-        return `Basado en ${this.pricingResult.market_sample} servicios del departamento.`;
-      case 'national':
-        return `Basado en ${this.pricingResult.market_sample} servicios a nivel nacional.`;
-      default:
-        return '';
-    }
-  }
+  // get historicalReference(): string {
+  //   if (!this.pricingResult) {
+  //     return '';
+  //   }
+  //   switch (this.pricingResult.market_source) {
+  //     case 'municipality':
+  //       return `Basado en ${this.pricingResult.market_sample} servicios del municipio.`;
+  //     case 'department':
+  //       return `Basado en ${this.pricingResult.market_sample} servicios del departamento.`;
+  //     case 'national':
+  //       return `Basado en ${this.pricingResult.market_sample} servicios a nivel nacional.`;
+  //     default:
+  //       return '';
+  //   }
+  // }
 
   onSidebarStateChange(state: ClientsSidebarState): void 
   {

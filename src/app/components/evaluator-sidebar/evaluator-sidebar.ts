@@ -295,24 +295,10 @@ export class EvaluatorSidebar implements OnInit {
 
   selectService(service: ServiceOption): void {
 
-    console.log('[1] SERVICIO SELECCIONADO:', service);
-    console.log('[2] PRODUCTO RECIBIDO:', {
-      producto: service.producto,
-      subsegmento: service.nvosubsegmento,
-      ser: service.ser
-    });
     this.selectedService = service;
     // Cargar producto y subsegmento
     this.clientsState.selectedSubsegment = service.nvosubsegmento?.trim() || null;
     this.clientsState.selectedProduct = service.producto?.trim() || null;
-    console.log('[3] ESTADO DESPUÉS DE ASIGNAR:', {
-      selectedProduct: this.selectedProduct,
-      selectedSubsegment: this.selectedSubsegment,
-      productosDisponibles: this.products.map(p => p.product),
-      productoEncontrado: this.products.find(
-        p => p.product === this.selectedProduct
-      )
-    });
     // Cargar capacidad
     const capacity = service.capacidadbps !== null
       ? Number(service.capacidadbps)
@@ -380,13 +366,6 @@ export class EvaluatorSidebar implements OnInit {
     ) {
       return;
     }
-    console.log('[4] VALIDACIÓN DEL PRODUCTO:', {
-      selectedProduct: this.selectedProduct,
-      productosDisponibles: this.products.map(p => p.product),
-      productoEncontrado: this.products.find(
-        p => p.product === this.selectedProduct
-      )
-    });
     const selectedProduct = this.products.find(product => product.product === this.selectedProduct);
     const selectedSubsegment = this.subsegments.find(subsegment => subsegment.name === this.selectedSubsegment);
     if (!selectedProduct || !selectedSubsegment) 

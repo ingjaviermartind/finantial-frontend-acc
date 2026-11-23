@@ -109,7 +109,13 @@
 
                 <div
                     class="pricing-card suggested-card"
-                    [class.warning]="!pricingResult.suggested.approved">
+                    [class.warning]="!pricingResult.suggested.approved"
+                    [class.selected]="isDetailed && selectedCashFlow === 'suggested'"
+                    role="button"
+                    tabindex="0"
+                    (click)="selectCashFlow('suggested')"
+                    (keydown.enter)="selectCashFlow('suggested')"
+                    (keydown.space)="selectCashFlow('suggested')">
 
                     <div class="pricing-card-header">
                         <span class="pricing-card-title">
@@ -142,7 +148,9 @@
                         / Mbps
                     </div>
 
-                    <div class="pricing-card-metrics">
+                    <div 
+                        class="pricing-card-metrics"
+                        [class.no-separator]="!isDetailed">
 
                         @if (pricingResult.suggested.vpn != null) {
                             <div class="pricing-metric">
@@ -175,7 +183,7 @@
                             <div class="pricing-metric">
                                 <span>Payback</span>
                                 <strong>
-                                    {{ pricingResult.suggested.payback | number:'1.1-1' }} meses
+                                    {{ pricingResult.suggested.payback | number:'1.2-2' }} meses
                                 </strong>
 
                                 @if (pricingResult.suggested.payback_percent != null) {
@@ -204,7 +212,14 @@
                 <!-- PRECIO PISO               -->
                 <!-- ========================= -->
 
-                <div class="pricing-card floor-card">
+                <div 
+                    class="pricing-card floor-card"
+                    [class.selected]="isDetailed && selectedCashFlow === 'floor'"
+                    role="button"
+                    tabindex="0"
+                    (click)="selectCashFlow('floor')"
+                    (keydown.enter)="selectCashFlow('floor')"
+                    (keydown.space)="selectCashFlow('floor')">
 
                     <div class="pricing-card-header">
                         <span class="pricing-card-title">
@@ -233,7 +248,9 @@
                         / Mbps
                     </div>
 
-                    <div class="pricing-card-metrics">
+                    <div 
+                        class="pricing-card-metrics"
+                        [class.no-separator]="!isDetailed">
 
                         @if (pricingResult.floor.vpn != null) {
                             <div class="pricing-metric">
@@ -266,7 +283,7 @@
                             <div class="pricing-metric">
                                 <span>Payback</span>
                                 <strong>
-                                    {{ pricingResult.floor.payback | number:'1.1-1' }} meses
+                                    {{ pricingResult.floor.payback | number:'1.2-2' }} meses
                                 </strong>
 
                                 @if (pricingResult.floor.payback_percent != null) {
@@ -286,7 +303,11 @@
                 <!-- EVALUAR PRECIO            -->
                 <!-- ========================= -->
 
-                <div class="pricing-card evaluate-price-card">
+                <div 
+                    class="pricing-card evaluate-price-card"
+                    [class.selected]="isDetailed && selectedCashFlow === 'evaluated'"
+                    [class.disabled]="!priceEvaluationResult"
+                    (click)="priceEvaluationResult && selectCashFlow('evaluated')">
 
                     @if (!priceEvaluationResult) {
                         <div class="pricing-card-header">
@@ -357,7 +378,9 @@
                             / Mbps
                         </div>
 
-                        <div class="pricing-card-metrics">
+                        <div 
+                            class="pricing-card-metrics"
+                            [class.no-separator]="!isDetailed">
 
                             @if (priceEvaluationResult.vpn != null) {
                                 <div class="pricing-metric">
@@ -417,16 +440,61 @@
             </div>
 
             <!-- ========================= -->
-            <!-- COMPARATIVA DE PRECIOS    -->
+            <!-- FLUJO DE CAJA             -->
             <!-- ========================= -->
 
-            @if (priceMarkers.length > 0 && priceRange && 0) {
+            @if (isDetailed)
+            {
+                <section class="cashflow-chart-section">
+                    <header class="cashflow-chart-header">
+                        <div>
+                            <span class="cashflow-chart-eyebrow">
+                                ANÁLISIS FINANCIERO
+                            </span>
+                            <h3>
+                                Evolución del flujo de caja
+                            </h3>
+                        </div>
+                        <span class="cashflow-chart-model">
+                            {{
+                                selectedCashFlow === 'suggested'
+                                    ? 'Precio sugerido'
+                                    : selectedCashFlow === 'floor'
+                                        ? 'Precio piso'
+                                        : 'Precio evaluado'
+                            }}
+                        </span>
+                    </header>
+
+                    <div class="cashflow-chart-container">
+                        <canvas #cashFlowChart></canvas>
+                    </div>
+
+                </section>
+            }
+
+
+            <!-- ========================= -->
+            <!-- REFERENCIAS DE MERCADO    -->
+            <!-- ========================= -->
+
+            @if (priceMarkers.length > 0 && priceRange) {
                 <section class="price-comparison">
 
                     <header class="price-comparison-header">
                         <div>
-                            <span class="price-comparison-eyebrow">ANÁLISIS DE MERCADO</span>
-                            <h3>Comparativo de precios</h3>
+                            <span class="price-comparison-eyebrow">
+                                ANÁLISIS DE MERCADO
+                            </span>
+                            <h3>Referencias de mercado</h3>
+                            @if (marketSampleSize !== null) {
+                                <p class="price-comparison-description">
+                                    Muestra basada en
+                                    <strong>{{ marketSampleSize }}</strong>
+                                    {{ marketSampleSize === 1 ? 'servicio' : 'servicios' }}
+                                    · Cobertura: <strong>{{ marketSourceLabel }}</strong>
+                                </p>
+                            }
                         </div>
 
                         <span class="price-comparison-unit">COP / Mbps</span>
@@ -438,18 +506,29 @@
                             @for (marker of priceMarkers; track marker.key) {
                                 <div
                                     class="price-marker"
-                                    [class.align-start]="marker.alignment === 'start'"
-                                    [class.align-center]="marker.alignment === 'center'"
-                                    [class.align-end]="marker.alignment === 'end'"
+                                    [class.lane-top]="marker.lane === 'top'"
+                                    [class.lane-bottom]="marker.lane === 'bottom'"
+                                    [class.lane-below]="marker.lane === 'below'"
+                                    [attr.data-lane]="marker.lane"
                                     [style.left.%]="marker.position">
 
-                                    <div class="price-marker-value" [class]="marker.colorClass">
-                                        {{ marker.value | currency:'COP':'symbol-narrow':'1.0-0' }}
-                                    </div>
+                                    <div
+                                        class="price-marker-label"
+                                        [class.at-start]="marker.position === 0"
+                                        [class.at-end]="marker.position === 100">
 
-                                    <span class="price-marker-name" [class]="marker.colorClass">
-                                        {{ marker.label }}
-                                    </span>
+                                        <div
+                                            class="price-marker-value"
+                                            [class]="marker.colorClass">
+                                            {{ marker.value | currency:'COP':'symbol-narrow':'1.0-0' }}
+                                        </div>
+
+                                        <span
+                                            class="price-marker-name"
+                                            [class]="marker.colorClass">
+                                            {{ marker.label }}
+                                        </span>
+                                    </div>
 
                                     <span class="price-marker-line"></span>
                                 </div>
@@ -468,15 +547,14 @@
 
                     </div>
 
-                    <footer class="price-comparison-range">
+                    <!-- <footer class="price-comparison-range">
                         <span>
                             {{ priceRange.min | currency:'COP':'symbol-narrow':'1.0-0' }}
                         </span>
-
                         <span>
                             {{ priceRange.max | currency:'COP':'symbol-narrow':'1.0-0' }}
                         </span>
-                    </footer>
+                    </footer> -->
 
                 </section>
             }

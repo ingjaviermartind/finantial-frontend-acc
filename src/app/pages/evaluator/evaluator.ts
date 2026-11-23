@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
 
 import { ClientsState } from '../../services/clients-state';
 import { PricingService } from '../../services/pricing';
 import { ActiveService, SelectedDaneLocation } from '../../models/services';
-import { PricingRequest, PricingResponse, EvaluationResult} from '../../models/pricing';
+import { PricingRequest, PricingResponse, EvaluationResult, PriceComparison} from '../../models/pricing';
 
 import { EvaluatorSidebar } from '../../components/evaluator-sidebar/evaluator-sidebar';
 
@@ -13,6 +13,9 @@ import { CurrencyPipe, DecimalPipe, PercentPipe} from '@angular/common';
 
 import { municipality } from '../../models/location';
 
+import {Chart, registerables } from 'chart.js'
+
+Chart.register(...registerables);
 
 interface PriceMarker {
   key: string;
@@ -20,14 +23,13 @@ interface PriceMarker {
   value: number;
   position: number;
   colorClass: string;
-  alignment: 'start' | 'center' | 'end';
+  lane: 'top' | 'bottom' | 'below';
 }
 
 interface PriceSegment {
   colorClass: string;
   width: number;
 }
-
 
 @Component({
   selector: 'app-evaluacion-servicio',
@@ -42,7 +44,8 @@ interface PriceSegment {
   templateUrl: './evaluator.html',
   styleUrl: './evaluator.scss',
 })
-export class Evaluator {
+
+export class Evaluator implements OnDestroy {
   isFiltersExpanded = true;
   loadingCalculation = false;
   loadingPriceEvaluation = false;
@@ -54,10 +57,23 @@ export class Evaluator {
 
   selectedMunicipality: municipality | null = null;
 
+  selectedCashFlow: 'suggested' | 'floor' | 'evaluated' = 'suggested';
+
+  private cashFlowChart?: Chart;
+  private cashFlowCanvas?: HTMLCanvasElement;
+
+  private priceComparisonChart?: Chart;
+  private priceComparisonCanvas?: HTMLCanvasElement;
+
   constructor(
     private clientsState: ClientsState,
     private pricingService : PricingService
   ) {}
+
+  ngOnDestroy(): void {
+    this.cashFlowChart?.destroy();
+    this.priceComparisonChart?.destroy();
+  }
 
   ngOnInit(): void {
     this.pricingResult = this.clientsState.evaluationPricingResult;
@@ -80,9 +96,12 @@ export class Evaluator {
 
 
   evaluateService(request : PricingRequest): void {
+    this.selectedCashFlow = 'suggested';
+
     this.lastPricingRequest = {...request};
     this.clientsState.saveEvaluationRequest(request);
     this.pricingResult = undefined;
+    this.updateCashFlowChart();
     this.priceEvaluationResult = undefined;
     this.priceToEvaluate = null;
     this.clientsState.saveEvaluationPrice(null, undefined);
@@ -95,6 +114,9 @@ export class Evaluator {
       next : response => {
         this.pricingResult = response;
         this.clientsState.saveEvaluationResult(response);
+        requestAnimationFrame(() => {
+          this.detectLabelOverlaps();
+        });
         console.log(response);
       },
       error : err => {
@@ -113,6 +135,11 @@ export class Evaluator {
     }
     const request: PricingRequest = {...this.lastPricingRequest, price_per_mbps: this.priceToEvaluate};
     this.loadingPriceEvaluation = true;
+    this.priceEvaluationResult = undefined;
+    if (this.selectedCashFlow === 'evaluated') {
+      this.selectedCashFlow = 'suggested';
+    }
+    this.updateCashFlowChart();
     this.pricingService.evaluatePrice(request).pipe(
       finalize(() => {
         this.loadingPriceEvaluation = false;
@@ -120,6 +147,8 @@ export class Evaluator {
     ).subscribe({
       next: response => {
         this.priceEvaluationResult = response;
+        this.updateCashFlowChart();
+        console.log(response);
         this.clientsState.saveEvaluationPrice(this.priceToEvaluate, response);
       },
       error: err => {
@@ -131,6 +160,13 @@ export class Evaluator {
   resetPriceEvaluation(): void {
     this.priceToEvaluate = null;
     this.priceEvaluationResult = undefined;
+
+    if (this.selectedCashFlow === 'evaluated') 
+      this.selectedCashFlow = 'suggested';
+
+    if (this.isDetailed) {
+      this.updateCashFlowChart();
+    }
   }
 
   get isDetailed(): boolean {
@@ -138,99 +174,470 @@ export class Evaluator {
     return suggested?.capex != null && suggested?.opex_m != null;
   }
 
-  get priceMarkers(): PriceMarker[] {
-    const r = this.pricingResult;
-    if (!r) return [];
+  
 
+  @ViewChild('cashFlowChart')
+  set cashFlowChartCanvas(ref: ElementRef<HTMLCanvasElement> | undefined) {
+    if (!ref) {
+      this.cashFlowChart?.destroy();
+      this.cashFlowChart = undefined;
+      this.cashFlowCanvas = undefined;
+      return;
+    }
+
+    this.cashFlowCanvas = ref.nativeElement;
+    this.updateCashFlowChart();
+  }
+
+  selectCashFlow(model: 'suggested' | 'floor' | 'evaluated'): void {
+    if (!this.isDetailed) return;
+    if (model === 'evaluated' && !this.priceEvaluationResult) return;
+    this.selectedCashFlow = model;
+    this.updateCashFlowChart();
+  }
+
+  private getSelectedEvaluation(): EvaluationResult | null {
+    if (this.selectedCashFlow === 'evaluated') {
+      return this.priceEvaluationResult ?? null;
+    }
+    if (!this.pricingResult) return null;
+    return this.pricingResult[this.selectedCashFlow];
+  }
+
+  private updateCashFlowChart(): void {
+    if (!this.isDetailed) {
+      this.cashFlowChart?.destroy();
+      this.cashFlowChart = undefined;
+      return;
+    }
+    if (!this.cashFlowCanvas || !this.pricingResult) {
+      return;
+    }
+    const evaluation = this.getSelectedEvaluation();
+    if (!evaluation) return;
+    const periods = evaluation.financial_cashflow?.periods ?? [];
+    const labels = periods.map(item => `M${item.period}`);
+    const VpnValues = periods.map(item => item.vpn);
+    const FclValues = periods.map(item => item.discounted_fcl);
+
+    if (this.cashFlowChart) {
+      this.cashFlowChart.data.labels = labels;
+      // Dataset 0: barras FCL
+      this.cashFlowChart.data.datasets[0].data = FclValues;
+      // Dataset 1: línea VPN acumulado
+      this.cashFlowChart.data.datasets[1].data = VpnValues;
+      // Actualizar colores de las barras según el signo del FCL
+      this.cashFlowChart.data.datasets[0].backgroundColor = FclValues.map(value =>
+        value >= 0
+          ? 'rgba(59, 130, 246, 0.30)'
+          : 'rgba(239, 68, 68, 0.30)'
+      );
+      this.cashFlowChart.data.datasets[0].borderColor = FclValues.map(value =>
+        value >= 0 ? '#3b82f6' : '#ef4444'
+      );
+      this.cashFlowChart.update();
+      return;
+    }
+
+    this.cashFlowChart = new Chart(this.cashFlowCanvas, {
+      type: 'bar',
+
+    data: {
+      labels,
+
+      datasets: [
+        {
+          type: 'bar',
+          label: 'FCL',
+          data: FclValues,
+
+          backgroundColor: FclValues.map(value =>
+            value >= 0
+              ? 'rgba(59, 130, 246, 0.30)'
+              : 'rgba(239, 68, 68, 0.30)'
+          ),
+
+          borderColor: FclValues.map(value =>
+            value >= 0 ? '#3b82f6' : '#ef4444'
+          ),
+
+          borderWidth: 1,
+          borderRadius: 4,
+          order: 2
+        },
+        {
+          type: 'line',
+          label: 'VPN acumulado',
+          data: VpnValues,
+
+          borderColor: '#22c55e',
+          borderWidth: 2.5,
+          tension: 0.3,
+
+          pointRadius: 3,
+          pointHoverRadius: 6,
+
+          fill: {
+            target: 'origin',
+            above: 'rgba(34, 197, 94, 0.12)',
+            below: 'rgba(239, 68, 68, 0.12)'
+          },
+
+          segment: {
+            borderColor: context => {
+              const value = context.p1.parsed.y;
+              return value !== null && value >= 0
+                ? '#22c55e'
+                : '#ef4444';
+            }
+          },
+
+          order: 1
+        }
+      ]
+    },
+
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+
+        interaction: {
+          intersect: false,
+          mode: 'index'
+        },
+
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top'
+          },
+
+          tooltip: {
+            callbacks: {
+              label: context => {
+                const value = context.parsed.y;
+                if (value === null) return 'Sin información';
+                return `${context.dataset.label}: ${new Intl.NumberFormat('es-CO', {
+                  style: 'currency',
+                  currency: 'COP',
+                  maximumFractionDigits: 0
+                }).format(value)}`;
+              }
+            }
+          }
+        },
+
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Periodo'
+            }
+          },
+
+          y: {
+            title: {
+              display: true,
+              text: 'VPN acumulado (COP)'
+            },
+
+            ticks: {
+              callback: value =>
+                new Intl.NumberFormat('es-CO', {
+                  notation: 'compact',
+                  maximumFractionDigits: 1
+                }).format(Number(value))
+            }
+          }
+        }
+      }
+    });
+  }
+
+  @ViewChild('priceComparisonChart')
+  set priceComparisonChartCanvas(
+    ref: ElementRef<HTMLCanvasElement> | undefined
+  ) {
+    if (!ref) {
+      this.priceComparisonChart?.destroy();
+      this.priceComparisonChart = undefined;
+      this.priceComparisonCanvas = undefined;
+      return;
+    }
+
+    this.priceComparisonCanvas = ref.nativeElement;
+  }
+
+  get priceMarkers(): PriceMarker[] {
+    const comparison = this.pricingResult?.price_comparison;
+    if (!comparison) return [];
     const references = [
-      { key: 'floor', label: 'Piso Breakeven', value: r.floor?.price_per_mbps, colorClass: 'marker-floor' },
-      { key: 'ml', label: '★ Sugerido ML', value: r.predicted?.price_per_mbps, colorClass: 'marker-ml' },
-      { key: 'average', label: 'Promedio', value: r.mean_price_mbps, colorClass: 'marker-average' },
-      { key: 'median', label: 'Mediana', value: r.median_price_mbps, colorClass: 'marker-median' },
-      { key: 'special', label: 'T. Especial', value: r.ref_price_mbps_special, colorClass: 'marker-special' },
-      { key: 'discount', label: 'T. Descuento', value: r.ref_price_mbps_dis, colorClass: 'marker-discount' },
-      { key: 'base', label: 'Tarifa Base', value: r.ref_price_mbps, colorClass: 'marker-base' }
+      {
+        key: 'median',
+        label: 'Mediana',
+        value: comparison.market_median,
+        colorClass: 'marker-median'
+      },
+      {
+        key: 'average',
+        label: 'Promedio',
+        value: comparison.market_average,
+        colorClass: 'marker-average'
+      },
+      {
+        key: 'breakeven',
+        label: 'Breakeven',
+        value: comparison.breakeven,
+        colorClass: 'marker-floor'
+      },
+      {
+        key: 'ml',
+        label: 'Precio ML',
+        value: comparison.ml_price,
+        colorClass: 'marker-ml'
+      },
+      {
+        key: 'special',
+        label: 'Tarifa especial',
+        value: comparison.tariff_special,
+        colorClass: 'marker-special'
+      },
+      {
+        key: 'discount',
+        label: 'Tarifa descuento',
+        value: comparison.tariff_discount,
+        colorClass: 'marker-discount'
+      },
+      {
+        key: 'base',
+        label: 'Tarifa base',
+        value: comparison.tariff_base,
+        colorClass: 'marker-base'
+      }
     ];
 
     const valid = references.filter(
-      item => typeof item.value === 'number' &&
+      (item): item is typeof item & { value: number } =>
+        typeof item.value === 'number' &&
         Number.isFinite(item.value) &&
         item.value >= 0
     );
 
     if (!valid.length) return [];
 
-    const min = Math.min(...valid.map(x => x.value));
-    const max = Math.max(...valid.map(x => x.value));
+    const min = Math.min(...valid.map(item => item.value));
+    const max = Math.max(...valid.map(item => item.value));
     const range = max - min;
 
-    return valid.map(item => {
-      const position = range === 0
-        ? 50
-        : ((item.value - min) / range) * 100;
-
-      return {
+    return valid
+      .map((item, index) => ({
         ...item,
-        value: item.value,
-        position,
-        alignment: (
-          position < 8 ? 'start' :
-          position > 92 ? 'end' : 'center'
-        ) as 'start' | 'center' | 'end'
-      };
-    }).sort((a, b) => a.value - b.value);
-  }
-
-  get priceSegments(): PriceSegment[] {
-    const markers = this.priceMarkers;
-    if (!markers.length) return [];
-
-    const min = markers[0].value;
-    const max = markers[markers.length - 1].value;
-
-    if (min === max) {
-      return [{ colorClass: 'segment-red', width: 100 }];
-    }
-
-    const floor = this.pricingResult?.floor?.price_per_mbps;
-    const ml = this.pricingResult?.predicted?.price_per_mbps;
-    const discount = this.pricingResult?.ref_price_mbps_dis;
-
-    const thresholds = [floor, ml, discount]
-      .filter((v): v is number =>
-        typeof v === 'number' &&
-        Number.isFinite(v) &&
-        v > min &&
-        v < max
-      );
-
-    const boundaries = [
-      min,
-      ...new Set(thresholds),
-      max
-    ].sort((a, b) => a - b);
-
-    const colors = [
-      'segment-red',
-      'segment-orange',
-      'segment-teal',
-      'segment-gray'
-    ];
-
-    return boundaries.slice(1).map((value, i) => ({
-      colorClass: colors[Math.min(i, 3)],
-      width: ((value - boundaries[i]) / (max - min)) * 100
-    }));
+        value: item.value!,
+        position: range === 0
+          ? 50
+          : ((item.value - min) / range) * 100,
+        lane: item.key === 'breakeven'
+          ? 'below'
+          : (index % 2 === 0 ? 'top' : 'bottom') as 'top' | 'bottom' | 'below'
+      }))
+      .sort((a, b) => a.value - b.value);
   }
 
   get priceRange(): { min: number; max: number } | null {
     const markers = this.priceMarkers;
 
-    return markers.length
-      ? {
-          min: markers[0].value,
-          max: markers[markers.length - 1].value
+    if (!markers.length) return null;
+    
+    return {
+      min: markers[0].value,
+      max: markers[markers.length - 1].value
+    };
+  }
+
+  get priceSegments(): PriceSegment[] {
+    const markers = this.priceMarkers;
+    const range = this.priceRange;
+
+    if (!range || !markers.length) return [];
+
+    const { min, max } = range;
+
+    if (min === max) {
+      return [{ colorClass: 'segment-gray', width: 100 }];
+    }
+
+    const comparison = this.pricingResult!.price_comparison;
+
+    const boundaries = [
+      min,
+      comparison.breakeven,
+      comparison.ml_price,
+      comparison.tariff_discount,
+      max
+    ]
+      .filter((value): value is number =>
+        typeof value === 'number' &&
+        Number.isFinite(value) &&
+        value >= min &&
+        value <= max
+      );
+
+    const unique = [...new Set(boundaries)].sort((a, b) => a - b);
+
+    const colors = unique.slice(1).map((value, index) => {
+      const midpoint = (unique[index] + value) / 2;
+
+      if (comparison.breakeven != null && midpoint <= comparison.breakeven) {
+        return 'segment-red';
+      }
+
+      if (comparison.ml_price != null && midpoint <= comparison.ml_price) {
+        return 'segment-orange';
+      }
+
+      if (
+        comparison.tariff_discount != null &&
+        midpoint <= comparison.tariff_discount
+      ) {
+        return 'segment-teal';
+      }
+
+      return 'segment-gray';
+    });
+
+    return unique.slice(1).map((value, index) => ({
+      colorClass: colors[index],
+      width: ((value - unique[index]) / (max - min)) * 100
+    }));
+  }
+
+  detectLabelOverlaps(): void {
+    const markers = Array.from(
+      document.querySelectorAll<HTMLElement>('.price-marker')
+    );
+
+    const labels = markers.map(marker => {
+      const label = marker.querySelector<HTMLElement>(
+        '.price-marker-label'
+      )!;
+
+      return {
+        marker,
+        label,
+        originalLane: marker.dataset['lane'] ?? 'top',
+        rect: label.getBoundingClientRect()
+      };
+    });
+
+    // Carriles disponibles y sus intervalos ocupados
+    const lanes = new Map<string, Array<{ left: number; right: number }>>();
+
+    const rowGap = 46;
+    const belowBase = 228;
+
+    let maxBelowRow = -1;
+
+    const fits = (
+      lane: string,
+      left: number,
+      right: number
+    ): boolean => {
+      const occupied = lanes.get(lane) ?? [];
+
+      return occupied.every(interval =>
+        right <= interval.left || left >= interval.right
+      );
+    };
+
+    const occupy = (
+      lane: string,
+      left: number,
+      right: number
+    ): void => {
+      if (!lanes.has(lane)) {
+        lanes.set(lane, []);
+      }
+
+      lanes.get(lane)!.push({ left, right });
+    };
+
+    labels.forEach(({ marker, label, originalLane, rect }) => {
+      const left = rect.left;
+      const right = rect.right;
+
+      // Priorizar el carril original y después el alternativo
+      const preferred = originalLane === 'bottom'
+        ? ['bottom', 'top']
+        : originalLane === 'below'
+          ? []
+          : ['top', 'bottom'];
+
+      let assignedLane: string | null = null;
+
+      // 1. Intentar arriba o abajo
+      for (const lane of preferred) {
+        if (fits(lane, left, right)) {
+          assignedLane = lane;
+          break;
         }
-      : null;
+      }
+
+      // 2. Si no cabe, buscar una fila below disponible
+      if (!assignedLane) {
+        let row = 0;
+
+        while (!fits(`below-${row}`, left, right)) {
+          row++;
+        }
+
+        assignedLane = `below-${row}`;
+        maxBelowRow = Math.max(maxBelowRow, row);
+
+        label.style.top = `${belowBase + row * rowGap}px`;
+      } else {
+        label.style.top = '';
+      }
+
+      occupy(assignedLane, left, right);
+
+      // Aplicar carril visual
+      marker.classList.remove(
+        'lane-top',
+        'lane-bottom',
+        'lane-below'
+      );
+
+      if (assignedLane.startsWith('below-')) {
+        marker.classList.add('lane-below');
+      } else {
+        marker.classList.add(`lane-${assignedLane}`);
+      }
+
+    });
+  }
+
+  get marketSourceLabel(): string {
+    const source = this.pricingResult?.price_comparison?.source;
+
+    switch (source?.toLowerCase()) {
+      case 'dept':
+      case 'department':
+        return 'Departamental';
+
+      case 'mun':
+      case 'municipality':
+        return 'Municipal';
+
+      case 'national':
+      case 'country':
+        return 'Nacional';
+
+      default:
+        return 'Sin cobertura definida';
+    }
+  }
+
+  get marketSampleSize(): number | null {
+    return this.pricingResult?.price_comparison?.sample_size ?? null;
   }
 }

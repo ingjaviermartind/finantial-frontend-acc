@@ -1,6 +1,6 @@
 
-// @use 'tokens' as *;
 @use '../../../styles/tokens' as *;
+
 /* =========================
    CONTENEDOR PRINCIPAL
 ========================= */
@@ -92,13 +92,20 @@
   font-size: .62rem;
   font-weight: 700;
   cursor: default;
-}
 
-.dane-pill:hover,
-.dane-pill:focus {
-  background: $Aztk_lightBlue;
-  border-color: #cbd9de;
-  outline: none;
+  &:hover,
+  &:focus {
+    background: $Aztk_lightBlue;
+    border-color: #cbd9de;
+    outline: none;
+  }
+
+  &:hover .dane-tooltip,
+  &:focus .dane-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
 }
 
 .dane-pill-dot {
@@ -107,10 +114,10 @@
   flex: 0 0 6px;
   border-radius: 50%;
   background: #6f8791;
-}
 
-.dane-pill-dot.unprofitable {
-  background: $warning-text;
+  &.unprofitable {
+    background: $warning-text;
+  }
 }
 
 /* =========================
@@ -138,13 +145,6 @@
   pointer-events: none;
 }
 
-.dane-pill:hover .dane-tooltip,
-.dane-pill:focus .dane-tooltip {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
 .dane-tooltip-title {
   margin-bottom: 8px;
   color: $Aztk_deepBlue;
@@ -159,16 +159,16 @@
   gap: 10px;
   margin-top: 4px;
   font-size: .60rem;
-}
 
-.dane-tooltip-row span {
-  color: $muted;
-}
+  span {
+    color: $muted;
+  }
 
-.dane-tooltip-row strong {
-  color: $text;
-  font-weight: 600;
-  text-align: right;
+  strong {
+    color: $text;
+    font-weight: 600;
+    text-align: right;
+  }
 }
 
 .dane-tooltip-warning {
@@ -186,12 +186,11 @@
 ========================= */
 
 .financial-summary-cards {
-  margin-top: 20px;
   display: flex;
   flex-wrap: wrap;
   align-items: stretch;
   gap: 8px;
-  margin-bottom: 10px;
+  margin: 20px 0 10px;
 }
 
 .financial-summary-card {
@@ -252,6 +251,20 @@
   border-radius: 7px;
   background: #fff;
   box-shadow: 0 2px 7px rgba(0, 0, 0, .035);
+  cursor: pointer;
+  transition:
+    border-color .2s ease,
+    box-shadow .2s ease,
+    transform .2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  &.selected {
+    border-color: var(--color-primary, $Aztk_deepBlue);
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, .15);
+  }
 }
 
 /* =========================
@@ -279,16 +292,16 @@
   border-radius: 4px;
   font-size: .53rem;
   font-weight: 700;
-}
 
-.pricing-card-status.approved {
-  background: #edf7ef;
-  color: #347345;
-}
+  &.approved {
+    background: #edf7ef;
+    color: #347345;
+  }
 
-.pricing-card-status.warning {
-  background: $warning-bg;
-  color: $warning-text;
+  &.warning {
+    background: $warning-bg;
+    color: $warning-text;
+  }
 }
 
 /* =========================
@@ -320,6 +333,11 @@
   margin-top: 8px;
   padding-top: 9px;
   border-top: 1px solid #edf0f2;
+
+  &.no-separator {
+    border-top: none;
+    padding-top: 0;
+  }
 }
 
 .pricing-metric {
@@ -327,26 +345,26 @@
   flex-direction: column;
   min-width: 0;
   gap: 3px;
-}
 
-.pricing-metric span {
-  color: $muted;
-  font-size: .56rem;
-  font-weight: 500;
-}
+  span {
+    color: $muted;
+    font-size: .56rem;
+    font-weight: 500;
+  }
 
-.pricing-metric strong {
-  color: $text;
-  font-size: .68rem;
-  font-weight: 700;
-  overflow-wrap: anywhere;
-  font-variant-numeric: tabular-nums;
-}
+  strong {
+    color: $text;
+    font-size: .68rem;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+    font-variant-numeric: tabular-nums;
+  }
 
-.pricing-metric small {
-  color: $muted;
-  font-size: .50rem;
-  font-weight: 500;
+  small {
+    color: $muted;
+    font-size: .50rem;
+    font-weight: 500;
+  }
 }
 
 /* =========================
@@ -359,11 +377,11 @@
   border-top: 1px solid #edf0f2;
   color: $muted;
   font-size: .59rem;
-}
 
-.pricing-card-detail strong {
-  color: $text;
-  font-weight: 700;
+  strong {
+    color: $text;
+    font-weight: 700;
+  }
 }
 
 .pricing-card-warning {
@@ -380,20 +398,14 @@
    IDENTIFICACIÓN DE TARJETAS
 ========================= */
 
-.suggested-card {
-  border-top: 3px solid $Aztk_deepBlue;
+.suggested-card,
+.floor-card,
+.evaluate-price-card {
+  border-top: 3px solid #9aa9af;
 }
 
 .suggested-card.warning {
   border-top-color: $warning-text;
-}
-
-.floor-card {
-  border-top: 3px solid #9aa9af;
-}
-
-.evaluate-price-card {
-  border-top: 3px solid #cbd9de;
 }
 
 /* =========================
@@ -402,36 +414,36 @@
 
 .evaluate-price-input {
   margin-top: 7px;
-}
 
-.evaluate-price-input label {
-  display: block;
-  margin-bottom: 6px;
-  color: $text;
-  font-size: .64rem;
-  font-weight: 600;
-}
+  label {
+    display: block;
+    margin-bottom: 6px;
+    color: $text;
+    font-size: .64rem;
+    font-weight: 600;
+  }
 
-.evaluate-price-input input {
-  width: 100%;
-  height: 34px;
-  box-sizing: border-box;
-  padding: 0 9px;
-  border: 1px solid #d8dfe3;
-  border-radius: 5px;
-  background: #fff;
-  color: $text;
-  font-size: .68rem;
-  outline: none;
-}
+  input {
+    width: 100%;
+    height: 34px;
+    box-sizing: border-box;
+    padding: 0 9px;
+    border: 1px solid #d8dfe3;
+    border-radius: 5px;
+    background: #fff;
+    color: $text;
+    font-size: .68rem;
+    outline: none;
 
-.evaluate-price-input input::placeholder {
-  color: #aaa;
-}
+    &::placeholder {
+      color: #aaa;
+    }
 
-.evaluate-price-input input:focus {
-  border-color: $Aztk_deepBlue;
-  box-shadow: 0 0 0 2px rgba(7, 64, 87, .08);
+    &:focus {
+      border-color: $Aztk_deepBlue;
+      box-shadow: 0 0 0 2px rgba(7, 64, 87, .08);
+    }
+  }
 }
 
 /* =========================
@@ -453,19 +465,19 @@
   font-weight: 700;
   cursor: pointer;
   transition: background .15s ease, transform .1s ease;
-}
 
-.evaluate-price-button:hover:not(:disabled) {
-  background: #07516d;
-}
+  &:hover:not(:disabled) {
+    background: #07516d;
+  }
 
-.evaluate-price-button:active:not(:disabled) {
-  transform: scale(.98);
-}
+  &:active:not(:disabled) {
+    transform: scale(.98);
+  }
 
-.evaluate-price-button:disabled {
-  opacity: .55;
-  cursor: not-allowed;
+  &:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+  }
 }
 
 .button-loading {
@@ -507,11 +519,11 @@
   font-size: .58rem;
   font-weight: 600;
   cursor: pointer;
-}
 
-.reset-price-button:hover {
-  color: $Aztk_deepBlue;
-  text-decoration: underline;
+  &:hover {
+    color: $Aztk_deepBlue;
+    text-decoration: underline;
+  }
 }
 
 /* =========================
@@ -547,58 +559,88 @@
 }
 
 /* =========================
-   RESPONSIVE
+   FLUJO DE CAJA
 ========================= */
 
-@media (max-width: 900px) {
-  .evaluacion-servicio-content {
-    padding: 14px;
-  }
+.cashflow-chart-section {
+  margin-top: 24px;
+  padding: 24px;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 12px;
+  background: var(--surface-color, #fff);
+}
 
-  .pricing-result-cards {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+.cashflow-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+
+  h3 {
+    margin: 0;
+    line-height: 1.3;
+    font-size: 18px;
+    font-weight: 600;
   }
 }
 
-@media (max-width: 600px) {
-  .financial-summary-cards {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+.cashflow-chart-eyebrow {
+  display: block;
+  margin-bottom: 8px;
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
 
-  .financial-summary-card {
-    min-width: 0;
-  }
+.cashflow-chart-model {
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: $Aztk_lightBlue;
+  color: $Aztk_deepBlue;
+  font-size: 12px;
+  font-weight: 600;
+}
 
-  .pricing-result-cards {
-    grid-template-columns: 1fr;
-  }
-
-  .price-comparison {
+.cashflow-chart-container {
+  position: relative;
   width: 100%;
-  margin: 8px 0 24px;
+  height: 400px;
+}
+
+/* =========================
+   REFERENCIAS DE MERCADO
+========================= */
+
+.price-comparison {
+  width: 100%;
+  margin: 24px 0;
   padding: 20px 22px;
+  box-sizing: border-box;
   background: $surface;
   border: 1px solid $border;
   border-radius: 12px;
-  overflow: hidden;
 }
 
 .price-comparison-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
   margin-bottom: 12px;
 
   h3 {
-    margin: 4px 0 0;
+    margin: 5px 0 0;
     color: $text-primary;
     font-size: 16px;
     font-weight: 700;
+    line-height: 1.3;
   }
 }
 
 .price-comparison-eyebrow {
+  display: block;
   color: $text-muted;
   font-size: 10px;
   font-weight: 700;
@@ -606,41 +648,88 @@
 }
 
 .price-comparison-unit {
+  flex-shrink: 0;
   color: $text-muted;
   font-size: 11px;
   font-weight: 600;
 }
 
+/* El eje de los marcadores y el track comparten
+   exactamente el mismo ancho y punto de origen. */
+
 .price-chart {
   position: relative;
-  height: 145px;
-  margin: 0 2px;
+  width: 100%;
+  height: 260px;
+  margin: 0;
 }
 
 .price-marker-layer {
   position: absolute;
   inset: 0;
+  width: 100%;
 }
 
 .price-marker {
   position: absolute;
   top: 0;
   display: flex;
-  flex-direction: column;
-  width: max-content;
   align-items: center;
+  width: 0;
+  height: 100%;
   z-index: 2;
 
-  &.align-start {
+  &.lane-top {
+    .price-marker-label {
+      top: 50px;
+    }
+
+    .price-marker-line {
+      top: 52px;
+    }
+  }
+
+  &.lane-bottom {
+    .price-marker-label {
+      top: 122px;
+    }
+
+    .price-marker-line {
+      top: 142px;
+    }
+  }
+  &.lane-below {
+    .price-marker-label {
+      top: 228px;
+    }
+
+    .price-marker-line {
+      top: 196px;
+      bottom: 34px;
+    }
+  }
+}
+
+
+/* Las etiquetas se desplazan independientemente
+   de la línea que marca el precio. */
+
+.price-marker-label {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: max-content;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  z-index: 2;
+
+  &.at-start {
     transform: translateX(0);
     align-items: flex-start;
   }
 
-  &.align-center {
-    transform: translateX(-50%);
-  }
-
-  &.align-end {
+  &.at-end {
     transform: translateX(-100%);
     align-items: flex-end;
   }
@@ -663,28 +752,36 @@
 }
 
 .price-marker-line {
-  height: 42px;
+  position: absolute;
   width: 1px;
-  margin-top: 5px;
+  height: auto;
+  bottom: 64px;
+  margin: 0;
   background: #94a3b8;
-  opacity: 0.85;
+  opacity: .85;
+  z-index: 1;
 }
+
+/* =========================
+   BARRA SEGMENTADA
+========================= */
 
 .price-track {
   position: absolute;
-  bottom: 4px;
-  left: 0;
   right: 0;
-  height: 16px;
+  bottom: 64px;
+  left: 0;
   display: flex;
+  width: 100%;
+  height: 16px;
   overflow: hidden;
   border-radius: 4px;
   background: #e2e8f0;
 }
 
 .price-track-segment {
+  flex: 0 0 auto;
   height: 100%;
-  flex-shrink: 0;
   transition: width 250ms ease;
 }
 
@@ -703,6 +800,10 @@
 .segment-gray {
   background: #475569;
 }
+
+/* =========================
+   COLORES DE REFERENCIAS
+========================= */
 
 .marker-floor {
   background: #fff0d9;
@@ -746,6 +847,10 @@
   border-color: #cbd5e1;
 }
 
+/* =========================
+   EXTREMOS DEL RANGO
+========================= */
+
 .price-comparison-range {
   display: flex;
   justify-content: space-between;
@@ -755,13 +860,59 @@
   font-weight: 600;
 }
 
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 900px) {
+  .evaluacion-servicio-content {
+    padding: 14px;
+  }
+
+  .pricing-result-cards {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
 @media (max-width: 700px) {
   .price-comparison {
     overflow-x: auto;
   }
 
-  .price-chart {
+  .price-chart,
+  .price-comparison-range {
     min-width: 650px;
   }
 }
+
+@media (max-width: 600px) {
+  .financial-summary-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .financial-summary-card {
+    min-width: 0;
+  }
+
+  .pricing-result-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .cashflow-chart-section {
+    padding: 16px;
+  }
+
+  .cashflow-chart-header {
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .cashflow-chart-container {
+    height: 320px;
+  }
+
+  .price-comparison {
+    padding: 16px;
+  }
 }
