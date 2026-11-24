@@ -2,18 +2,21 @@ import { Component, ElementRef, ViewChild, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
 
-import { ClientsState } from '../../services/clients-state';
-import { PricingService } from '../../services/pricing';
-import { ActiveService, SelectedDaneLocation } from '../../models/services';
-import { PricingRequest, PricingResponse, EvaluationResult, PriceComparison} from '../../models/pricing';
+import { ClientsState } from '../../../services/clients-state';
+import { PricingService } from '../../../services/pricing';
+import { ActiveService, SelectedDaneLocation } from '../../../models/services';
+import { PricingRequest, PricingResponse, EvaluationResult, PriceComparison} from '../../../models/pricing';
 
-import { EvaluatorSidebar } from '../../components/evaluator-sidebar/evaluator-sidebar';
+import { EvaluatorSidebar } from '../../../components/evaluator-sidebar/evaluator-sidebar';
 
 import { CurrencyPipe, DecimalPipe, PercentPipe} from '@angular/common';
 
-import { municipality } from '../../models/location';
+import { municipality } from '../../../models/location';
 
 import {Chart, registerables } from 'chart.js'
+import { PageWithSidebar } from '../../../layouts/page-with-sidebar/page-with-sidebar';
+
+import { CashFlowDetail } from '../components/cashflow-detail/cashflow-detail';
 
 Chart.register(...registerables);
 
@@ -34,12 +37,15 @@ interface PriceSegment {
 @Component({
   selector: 'app-evaluacion-servicio',
   imports: [
+    PageWithSidebar,
     EvaluatorSidebar,
     FormsModule,
     CurrencyPipe,
     DecimalPipe,
-    PercentPipe
-  ],
+    PercentPipe,
+    PageWithSidebar,
+    CashFlowDetail
+],
   standalone: true,
   templateUrl: './evaluator.html',
   styleUrl: './evaluator.scss',
@@ -64,6 +70,9 @@ export class Evaluator implements OnDestroy {
 
   private priceComparisonChart?: Chart;
   private priceComparisonCanvas?: HTMLCanvasElement;
+
+  showCashFlowDetail = false;
+  selectedCashFlowDetail: 'suggested' | 'floor' | 'evaluated' = 'suggested';
 
   constructor(
     private clientsState: ClientsState,
@@ -639,5 +648,28 @@ export class Evaluator implements OnDestroy {
 
   get marketSampleSize(): number | null {
     return this.pricingResult?.price_comparison?.sample_size ?? null;
+  }
+
+  openCashFlowDetail(model: 'suggested' | 'floor' | 'evaluated'): void {
+    const evaluation = model === 'evaluated'
+      ? this.priceEvaluationResult
+      : this.pricingResult?.[model];
+
+    if (!evaluation?.financial_cashflow?.periods) return;
+
+    this.selectedCashFlowDetail = model;
+    this.showCashFlowDetail = true;
+  }
+
+  closeCashFlowDetail(): void {
+    this.showCashFlowDetail = false;
+  }
+
+  getSelectedCashFlow(): EvaluationResult | null {
+    if (this.selectedCashFlowDetail === 'evaluated') {
+      return this.priceEvaluationResult ?? null;
+    }
+    if (!this.pricingResult) return null;
+    return this.pricingResult[this.selectedCashFlowDetail];
   }
 }

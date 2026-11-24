@@ -1,0 +1,118 @@
+@use 'tokens' as *;
+
+:host {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.page-layout {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.page-layout > [sidebar] {
+    flex: 0 0 auto;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.page-content {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 18px 20px;
+    box-sizing: border-box;
+}
+
+.filter-toggle-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex: 0 0 auto;
+    height: 30px;
+    padding: 0 9px;
+    border: 1px solid $border;
+    border-radius: 5px;
+    background: $background-1;
+    color: $Aztk_deepBlue;
+    font-size: .65rem;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover {
+        background: $Aztk_lightBlue;
+        border-color: $border-color;
+    }
+}
+
+.filters-toggle-icon {
+    font-size: 16px;
+    line-height: 1;
+}
+
+@media (max-width: 900px) {
+    .page-content {
+        padding: 14px;
+    }
+}
+// @use 'tokens' as *;
+
+// .page-layout {
+//     display: flex;
+//     width: 100%;
+//     height: 100%;
+//     min-height: 0;
+//     overflow: hidden;
+// }
+
+// .page-content {
+//     flex: 1;
+//     min-width: 0;
+//     height: 100%;
+//     overflow: auto;
+//     padding: 18px 20px;
+//     box-sizing: border-box;
+// }
+
+// .filter-toggle-button {
+//     display: inline-flex;
+//     align-items: center;
+//     gap: 6px;
+//     height: 30px;
+//     padding: 0 9px;
+//     border: 1px solid $border;
+//     border-radius: 5px;
+//     background: #fff;
+//     color: $Aztk_deepBlue;
+//     font-size: .65rem;
+//     font-weight: 600;
+//     cursor: pointer;
+
+//     &:hover {
+//         background: $Aztk_lightBlue;
+//         border-color: #cbd9de;
+//     }
+// }
+
+// .filters-toggle-icon {
+//     font-size: 16px;
+//     line-height: 1;
+// }
+
+// @media (max-width: 900px) {
+//     .page-content {
+//         padding: 14px;
+//     }
+// }

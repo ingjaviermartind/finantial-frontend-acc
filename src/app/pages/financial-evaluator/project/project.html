@@ -1,0 +1,45 @@
+<!-- <div class="evaluacion-servicio-container">
+
+    <app-evaluator-sidebar
+        [isExpanded]="isFiltersExpanded"
+        (evaluate)="addService($event)"
+        (selectedDaneChange)="onSelectedDaneChange($event)"
+        buttonText="Evaluar proyecto">
+    </app-evaluator-sidebar>
+
+    <div class="evaluacion-servicio-content">
+
+        <button
+            type="button"
+            class="filter-toggle-button"
+            (click)="toggleFilters()">
+
+            <span class="filters-toggle-icon">
+                {{ isFiltersExpanded ? '‹' : '›' }}
+            </span>
+
+            {{ isFiltersExpanded ? 'Ocultar filtros' : 'Mostrar filtros' }}
+
+        </button>
+
+        <p>Project works!</p>
+
+    </div>
+
+</div> -->
+
+
+<app-page-with-sidebar
+    [(isExpanded)]="isFiltersExpanded">
+
+    <app-evaluator-sidebar
+        sidebar
+        [isExpanded]="isFiltersExpanded"
+        buttonText="Evaluar proyecto"
+        (evaluate)="addService($event)"
+        (selectedDaneChange)="onSelectedDaneChange($event)">
+    </app-evaluator-sidebar>
+
+    <p>Contenido de Project</p>
+
+</app-page-with-sidebar>

@@ -1,0 +1,48 @@
+@use 'tokens' as *;
+
+// Fuente Manrope
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap');
+
+// Configuración tipográfica global
+html {
+    font-size: 100% * $font-scale;
+}
+
+body {
+    font-family: $font-family-base;
+    font-weight: $font-weight-regular;
+}
+
+// =====================================================
+// JERARQUÍA TIPOGRÁFICA
+// =====================================================
+
+.type-page-title {
+    font-size: $type-page-title;
+    font-weight: $font-weight-bold;
+    line-height: 1.3;
+}
+
+.type-section-title {
+    font-size: $type-xl;
+    font-weight: $font-weight-semibold;
+    line-height: 1.4;
+}
+
+.type-body {
+    font-size: $type-lg;
+    font-weight: $font-weight-regular;
+    line-height: 1.5;
+}
+
+.type-caption {
+    font-size: $type-sm;
+    font-weight: $font-weight-regular;
+    line-height: 1.4;
+}
+
+.type-label {
+    font-size: $type-md;
+    font-weight: $font-weight-semibold;
+    line-height: 1.4;
+}

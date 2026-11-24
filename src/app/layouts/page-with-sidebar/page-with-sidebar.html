@@ -1,0 +1,23 @@
+
+<!-- page-with-sidebar.html -->
+
+<div class="page-layout">
+
+    <ng-content select="[sidebar]"></ng-content>
+
+    <main class="page-content">
+
+        <button
+            type="button"
+            class="filter-toggle-button"
+            (click)="toggleSidebar()">
+            <span class="filters-toggle-icon">
+                {{ isExpanded ? '‹' : '›' }}
+            </span>
+            {{ isExpanded ? 'Ocultar filtros' : 'Mostrar filtros' }}
+        </button>
+        <ng-content></ng-content>
+
+    </main>
+
+</div>

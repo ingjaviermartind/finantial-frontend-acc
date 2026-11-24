@@ -14,11 +14,13 @@ import { PricingSites } from './pages/pricing-sites/pricing-sites';
 import { ChangePassword } from './pages/change-password/change-password';
 
 
-import { Evaluator } from './pages/evaluator/evaluator';
+import { Evaluator } from './pages/financial-evaluator/evaluator/evaluator';
 
 
 import { MainFunnelTracker } from './pages/funnel-tracker/main-funnel-tracker/main-funnel-tracker';
 import { LocationTracker } from './pages/funnel-tracker/location-tracker/location-tracker';
+import { MainFinancialEvaluator } from './pages/financial-evaluator/main-financial-evaluator/main-financial-evaluator';
+import { Project } from './pages/financial-evaluator/project/project';
 
 export const routes: Routes = [
   {
@@ -61,10 +63,25 @@ export const routes: Routes = [
         ]
       },
       {
-        path: 'evaluator',
-        component: Evaluator,
+        path: 'financial-evaluator',
+        component: MainFinancialEvaluator,
         canActivate: [
           areaGuard('pricing', 'ventas', 'retencion')
+        ],
+        children: [
+          {
+            path: '',
+            redirectTo: 'fast-evaluation',
+            pathMatch: 'full'
+          },
+          {
+            path: 'fast-evaluation',
+            component: Evaluator
+          },
+          {
+            path: 'project-evaluation',
+            component: Project
+          }
         ]
       },
       {

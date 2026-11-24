@@ -7,20 +7,15 @@
 .navbar {
   position: relative;
   z-index: 100;
-
   display: flex;
   align-items: center;
   gap: 20px;
-
   width: 100%;
   min-height: 68px;
   padding: 0 26px;
-
   box-sizing: border-box;
-
   background: $Aztk_deepBlue;
   color: #fff;
-
   border-bottom: 1px solid rgba(255, 255, 255, 0.09);
   box-shadow: 0 3px 12px rgba(7, 64, 87, 0.12);
 }
@@ -33,12 +28,9 @@
   display: inline-flex;
   align-items: center;
   gap: 11px;
-
   flex-shrink: 0;
-
   color: #fff;
   text-decoration: none;
-
   &:focus-visible {
     outline: 2px solid #91dfff;
     outline-offset: 5px;
@@ -49,21 +41,15 @@
 .brand-mark {
   display: grid;
   place-items: center;
-
   width: 38px;
   height: 38px;
-
   flex-shrink: 0;
-
   color: $Aztk_deepBlue;
   background: #fff;
-
   border-radius: 9px;
-
   transition:
     background 160ms ease,
     transform 160ms ease;
-
   svg {
     display: block;
     width: 29px;
@@ -80,13 +66,11 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-
   line-height: 1;
 }
 
 .brand-name {
   color: #fff;
-
   font-size: 1rem;
   font-weight: 800;
   letter-spacing: 0.13em;
@@ -94,7 +78,6 @@
 
 .brand-caption {
   color: rgba(255, 255, 255, 0.65);
-
   font-size: 0.57rem;
   font-weight: 600;
   letter-spacing: 0.15em;
@@ -106,12 +89,9 @@
 
 .navbar-divider {
   display: block;
-
   width: 1px;
   height: 29px;
-
   flex-shrink: 0;
-
   background: rgba(255, 255, 255, 0.17);
 }
 
@@ -128,39 +108,30 @@
   display: flex;
   align-items: center;
   gap: 5px;
-
   min-width: 0;
 }
 
 .navbar-link {
   position: relative;
-
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 9px;
-
   min-height: 40px;
   padding: 0 13px;
-
   box-sizing: border-box;
-
   color: rgba(255, 255, 255, 0.76);
   background: transparent;
-
   border: 1px solid transparent;
   border-radius: 7px;
-
   font-size: 0.76rem;
   font-weight: 600;
   text-decoration: none;
   white-space: nowrap;
-
   transition:
     color 160ms ease,
     background 160ms ease,
     border-color 160ms ease;
-
   &:hover {
     color: #fff;
     background: rgba(255, 255, 255, 0.08);
@@ -175,18 +146,14 @@
     color: #fff;
     background: rgba(145, 223, 255, 0.12);
     border-color: rgba(145, 223, 255, 0.13);
-
     &::after {
       position: absolute;
       right: 12px;
       bottom: -1px;
       left: 12px;
-
       height: 3px;
-
       content: '';
       background: #91dfff;
-
       border-radius: 3px 3px 0 0;
     }
 
@@ -200,12 +167,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
   width: 17px;
   flex-shrink: 0;
-
   color: rgba(255, 255, 255, 0.65);
-
   font-size: 1.08rem;
   line-height: 1;
 }
@@ -218,11 +182,8 @@
   display: inline-flex;
   align-items: center;
   gap: 9px;
-
   flex-shrink: 0;
-
   color: rgba(255, 255, 255, 0.75);
-
   font-size: 0.68rem;
   font-weight: 500;
   white-space: nowrap;
@@ -231,12 +192,9 @@
 .status-dot {
   width: 7px;
   height: 7px;
-
   flex-shrink: 0;
-
   background: #91dfff;
   border-radius: 50%;
-
   box-shadow: 0 0 0 3px rgba(145, 223, 255, 0.12);
 }
 
@@ -253,26 +211,20 @@
   display: flex;
   align-items: center;
   gap: 10px;
-
   padding: 5px 0 5px 2px;
-
   color: #fff;
   background: transparent;
   border: 0;
   border-radius: 7px;
-
   cursor: pointer;
   text-align: left;
-
   &:hover .user-avatar {
     color: $Aztk_deepBlue;
     background: #91dfff;
   }
-
   &:hover .user-chevron {
     color: #fff;
   }
-
   &:focus-visible {
     outline: 2px solid #91dfff;
     outline-offset: 4px;
@@ -283,21 +235,15 @@
 .dropdown-avatar {
   display: grid;
   place-items: center;
-
   width: 36px;
   height: 36px;
-
   flex-shrink: 0;
-
   color: #fff;
   background: rgba(255, 255, 255, 0.13);
-
   border: 1px solid rgba(255, 255, 255, 0.17);
   border-radius: 50%;
-
   font-size: 0.72rem;
   font-weight: 800;
-
   transition:
     color 160ms ease,
     background 160ms ease;
@@ -307,15 +253,12 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-
   max-width: 130px;
 }
 
 .user-name {
   overflow: hidden;
-
   color: #fff;
-
   font-size: 0.73rem;
   font-weight: 700;
   text-overflow: ellipsis;
@@ -324,53 +267,39 @@
 
 .user-role {
   color: rgba(255, 255, 255, 0.58);
-
   font-size: 0.62rem;
   white-space: nowrap;
 }
 
 .user-chevron {
   display: inline-block;
-
   margin-left: 2px;
-
   color: rgba(255, 255, 255, 0.7);
-
   font-size: 1.05rem;
   line-height: 1;
-
   transition:
     color 160ms ease,
     transform 160ms ease;
-
   &.rotated {
     transform: rotate(180deg);
   }
 }
-
 // =====================================================
 // MENÚ DESPLEGABLE
 // =====================================================
-
 .user-dropdown {
   position: absolute;
   top: calc(100% + 12px);
   right: 0;
   z-index: 200;
-
   width: 250px;
   padding: 7px;
-
   box-sizing: border-box;
-
   background: #fff;
   color: #304b5b;
-
   border: 1px solid #e3ebef;
   border-radius: 10px;
-
   box-shadow: 0 12px 32px rgba(7, 38, 53, 0.18);
-
   animation: dropdown-enter 140ms ease-out;
 }
 
@@ -378,14 +307,12 @@
   display: flex;
   align-items: center;
   gap: 11px;
-
   padding: 11px 9px;
 }
 
 .dropdown-avatar {
   width: 38px;
   height: 38px;
-
   color: #fff;
   background: $Aztk_deepBlue;
   border: none;
@@ -395,15 +322,12 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
-
   min-width: 0;
 }
 
 .dropdown-user-name {
   overflow: hidden;
-
   color: $Aztk_deepBlue;
-
   font-size: 0.78rem;
   font-weight: 700;
   text-overflow: ellipsis;
@@ -412,9 +336,7 @@
 
 .dropdown-user-email {
   overflow: hidden;
-
   color: #748692;
-
   font-size: 0.67rem;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -423,7 +345,6 @@
 .dropdown-divider {
   height: 1px;
   margin: 4px 0;
-
   background: #e8eef1;
 }
 
@@ -431,34 +352,26 @@
   display: flex;
   align-items: center;
   gap: 10px;
-
   width: 100%;
   min-height: 40px;
   padding: 0 11px;
-
   box-sizing: border-box;
-
   color: #405866;
   background: transparent;
   border: 0;
   border-radius: 6px;
-
   font-family: inherit;
   font-size: 0.76rem;
   font-weight: 600;
   text-align: left;
-
   cursor: pointer;
-
   transition:
     color 150ms ease,
     background 150ms ease;
-
   &:hover {
     color: $Aztk_deepBlue;
     background: #edf7fb;
   }
-
   &:focus-visible {
     outline: 2px solid #91dfff;
     outline-offset: -2px;
@@ -469,9 +382,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
   width: 18px;
-
   font-size: 1.05rem;
 }
 
@@ -485,7 +396,6 @@
     opacity: 0;
     transform: translateY(-4px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -501,17 +411,14 @@
     gap: 13px;
     padding: 0 17px;
   }
-
   .navbar-links {
     gap: 3px;
   }
-
   .navbar-link {
     gap: 6px;
     padding: 0 9px;
     font-size: 0.71rem;
   }
-
   .navbar-status {
     display: none;
   }
@@ -521,38 +428,28 @@
   .navbar {
     flex-wrap: wrap;
     gap: 10px;
-
     padding: 12px 16px;
   }
-
   .navbar-divider {
     display: none;
   }
-
   .navbar-spacer {
     flex: 1;
   }
-
   .navbar-links {
     order: 3;
-
     width: 100%;
     overflow-x: auto;
-
     padding-bottom: 3px;
-
     scrollbar-width: thin;
     scrollbar-color: rgba(145, 223, 255, 0.4) transparent;
   }
-
   .navbar-link {
     min-height: 38px;
   }
-
   .navbar-link.active::after {
     bottom: -1px;
   }
-
   .user-role {
     display: none;
   }
@@ -562,39 +459,31 @@
   .navbar {
     padding: 11px 12px;
   }
-
   .brand-mark {
     width: 34px;
     height: 34px;
-
     svg {
       width: 26px;
       height: 26px;
     }
   }
-
   .brand-name {
     font-size: 0.9rem;
   }
-
   .brand-caption {
     font-size: 0.51rem;
   }
-
   .user-info {
     max-width: 85px;
   }
-
   .user-avatar {
     width: 32px;
     height: 32px;
   }
-
   .navbar-link {
     padding: 0 9px;
     font-size: 0.68rem;
   }
-
   .user-dropdown {
     right: 0;
     width: min(250px, calc(100vw - 24px));

@@ -1,21 +1,22 @@
+@if (showCashFlowDetail)
+{
+    @if (getSelectedCashFlow(); as evaluation) {
+        <app-cash-flow-detail
+        [cashFlow]="evaluation.financial_cashflow"
+        (back)="closeCashFlowDetail()">
+        </app-cash-flow-detail>
+    }
+} @else {
+<app-page-with-sidebar
+    [(isExpanded)]="isFiltersExpanded">
 
-<div class="evaluacion-servicio-container">
     <app-evaluator-sidebar
+        sidebar
         [isExpanded]="isFiltersExpanded"
         (evaluate)="evaluateService($event)"
-        (selectedDaneChange)="onSelectedDaneChange($event)">
+        (selectedDaneChange)="onSelectedDaneChange($event)"
+        buttonText="Evaluar Servicio">
     </app-evaluator-sidebar>
-
-    <div class="evaluacion-servicio-content">
-        <button
-            type="button"
-            class="filter-toggle-button"
-            (click)="toggleFilters()">
-            <span class="filters-toggle-icon">
-                {{ isFiltersExpanded ? '‹' : '›' }}
-            </span>
-            {{ isFiltersExpanded ? 'Ocultar filtros' : 'Mostrar filtros' }}
-        </button>
 
         @if (selectedMunicipality) {
             <div class="dane-bar">
@@ -194,6 +195,15 @@
                                 }
                             </div>
                         }
+                        @if(pricingResult.suggested.financial_cashflow != null)
+                        {
+                            <button
+                            type="button"
+                            class="reset-price-button"
+                            (click)="openCashFlowDetail('suggested')">
+                            Ver flujo de caja completo
+                            </button>
+                        }
 
                     </div>
 
@@ -293,6 +303,16 @@
                                     </small>
                                 }
                             </div>
+                        }
+
+                        @if(pricingResult.floor.financial_cashflow != null)
+                        {
+                            <button
+                            type="button"
+                            class="reset-price-button"
+                            (click)="openCashFlowDetail('floor')">
+                            Ver flujo de caja completo
+                            </button>
                         }
 
                     </div>
@@ -427,18 +447,25 @@
 
                         </div>
 
-                        <button
-                            type="button"
-                            class="reset-price-button"
-                            (click)="resetPriceEvaluation()">
-                            Evaluar nuevo precio
-                        </button>
+                        <div class="pricing-card-actions">
+                            <button
+                                type="button"
+                                class="reset-price-button"
+                                (click)="resetPriceEvaluation()">
+                                Evaluar nuevo precio
+                            </button>
+                            @if (priceEvaluationResult.financial_cashflow != null) {
+                                <button
+                                    type="button"
+                                    class="reset-price-button"
+                                    (click)="openCashFlowDetail('evaluated')">
+                                    Ver flujo de caja completo
+                                </button>
+                            }
+                        </div>
                     }
-
                 </div>
-
             </div>
-
             <!-- ========================= -->
             <!-- FLUJO DE CAJA             -->
             <!-- ========================= -->
@@ -559,5 +586,7 @@
                 </section>
             }
         }
-    </div>
-</div>
+</app-page-with-sidebar>
+
+
+}

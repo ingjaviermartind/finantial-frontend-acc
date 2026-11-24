@@ -1,0 +1,62 @@
+
+<div class="cash-flow-detail">
+
+  <div class="cash-flow-header">
+     <button
+        type="button"
+        class="back-button"
+        (click)="goBack()">
+        ← Volver a evaluación
+    </button>
+
+    <h2>Flujo de caja detallado</h2>
+    <p>Desglose financiero por periodo</p>
+
+  </div>
+
+  <div class="cash-flow-table-container">
+    <table class="cash-flow-table">
+
+      <thead>
+        <tr>
+          <th class="sticky-column">Concepto</th>
+
+          @for (period of periods; track period.period) {
+            <th>Mes {{ period.period }}</th>
+          }
+        </tr>
+      </thead>
+
+      <tbody>
+        @for (section of sections; track section) {
+
+          <tr class="section-row">
+            <td [attr.colspan]="periods.length + 1">
+                {{ section }}
+            </td>
+        </tr>
+
+          @for (row of getRows(section); track row.key) {
+            <tr>
+              <td class="sticky-column concept-cell">
+                {{ row.label }}
+              </td>
+
+              @for (period of periods; track period.period) {
+                <td class="value-cell">
+                    @if (row.key === 'discount_factor') {
+                        {{ getValue(period, row.key) | number:'1.4-4' }}
+                    } @else {
+                        {{ getValue(period, row.key) | currency:'COP':'symbol-narrow':'1.0-0' }}
+                    }
+                </td>
+              }
+            </tr>
+          }
+        }
+
+      </tbody>
+    </table>
+  </div>
+
+</div>

@@ -39,6 +39,7 @@ import {
 export class EvaluatorSidebar implements OnInit {
 
   @Input() isExpanded = true;
+  @Input() buttonText = 'Evaluar';
   @Output() evaluate = new EventEmitter<PricingRequest>();
   @Output() selectedDaneChange = new EventEmitter<municipality | null>();
 

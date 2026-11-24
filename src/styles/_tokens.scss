@@ -7,7 +7,9 @@
 // sombras
 $Aztk_deepBlue: #074057;
 $Aztk_lightBlue: #e8f1f4;
+
 $border: #e1e6e9;
+$border-color: #cbd9de;
 $text: #555;
 $muted: #7a7a7a;
 $warning-bg: #fff4d6;
@@ -15,7 +17,7 @@ $warning-text: #9a6b00;
 $unprofitable-tag: #8a6508;
 $unprofitable-tag-background: #fff2cc;
 $background: #FCFDFD; // el mismo fondo que usas en login
-
+$background-1: #fff;
 
 
 
@@ -54,3 +56,44 @@ $surface:	#ffffff;
 $text-primary:	#1e293b;
 $text-muted:	#64748b;
 $text-secondary:	#475569;
+
+
+
+
+
+
+
+
+
+
+/* ========================= */
+/* TOKENS DE TIPOGRAFÍA      */
+/* ========================= */
+
+// Familias
+$font-family-base: 'Manrope', 'Segoe UI', Roboto, Arial, sans-serif !default;
+$font-family-mono: 'Cascadia Code', Consolas, 'Courier New', monospace !default;
+
+// Escala global
+$font-scale: 1 !default;
+
+// Tamaños
+$type-2xs: 0.52rem !default;
+$type-xs: 0.57rem !default;
+$type-sm: 0.62rem !default;
+$type-md: 0.66rem !default;
+$type-lg: 0.72rem !default;
+$type-xl: 0.80rem !default;
+$type-2xl: 1rem !default;
+
+$type-page-title: 1.15rem !default;
+$type-kpi-value: 1.55rem !default;
+
+// Pesos
+$font-weight-regular: 400 !default;
+
+// Se conserva el valor anterior para no alterar componentes existentes.
+$font-weight-medium: 600 !default;
+
+$font-weight-semibold: 600 !default;
+$font-weight-bold: 700 !default;

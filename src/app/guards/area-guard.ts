@@ -15,8 +15,8 @@ export const areaGuard = (...areas: string[]): CanActivateFn => {
 
     const routes: Record<string, string> = {
       ventas: '/clients',
-      pricing: '/evaluator',
-      retencion: '/clients'
+      pricing: '/financial-evaluator',
+      retencion: '/financial-evaluator'
     };
 
     const user = userService.getUser();
