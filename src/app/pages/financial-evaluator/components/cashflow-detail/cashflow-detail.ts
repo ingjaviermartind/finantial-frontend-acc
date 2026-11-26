@@ -56,7 +56,8 @@ export class CashFlowDetail {
     { key: 'accumulated_fcl', label: 'FCL acumulado', section: 'Flujo de caja' },
     { key: 'discount_factor', label: 'Factor de descuento', section: 'Flujo de caja' },
     { key: 'discounted_fcl', label: 'FCL descontado', section: 'Flujo de caja' },
-    { key: 'vpn', label: 'VPN', section: 'Flujo de caja' }
+    { key: 'vpn', label: 'VPN', section: 'Flujo de caja' },
+    { key: 'income_vpn', label: 'VPN del ingreso', section : 'Flujo de caja'}
   ];
 
   get periods(): CashFlowPeriod[] {
