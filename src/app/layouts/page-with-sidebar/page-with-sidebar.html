@@ -1,9 +1,8 @@
+<div class="page-layout" [class.sidebar-collapsed]="!isExpanded">
 
-<!-- page-with-sidebar.html -->
-
-<div class="page-layout">
-
-    <ng-content select="[sidebar]"></ng-content>
+    <aside class="sidebar-shell">
+        <ng-content select="[sidebar]"></ng-content>
+    </aside>
 
     <main class="page-content">
 
@@ -11,11 +10,15 @@
             type="button"
             class="filter-toggle-button"
             (click)="toggleSidebar()">
+
             <span class="filters-toggle-icon">
                 {{ isExpanded ? '‹' : '›' }}
             </span>
+
             {{ isExpanded ? 'Ocultar filtros' : 'Mostrar filtros' }}
+
         </button>
+
         <ng-content></ng-content>
 
     </main>

@@ -41,6 +41,7 @@ export class EvaluatorSidebar implements OnInit {
   @Input() isExpanded = true;
   @Input() buttonText = 'Evaluar';
   @Output() evaluate = new EventEmitter<PricingRequest>();
+  @Output() aggregate = new EventEmitter<any>();
   @Output() selectedDaneChange = new EventEmitter<municipality | null>();
 
   serviceSearch = '';
@@ -224,78 +225,7 @@ export class EvaluatorSidebar implements OnInit {
       .slice(0, 30);
   }
 
-  // get filteredServices(): ServiceOption[] {
-  //   const search = this.serviceSearch.trim().toLowerCase();
-  //   if (!search) {
-  //     return this.serviceOptions;
-  //   }
-  //   return this.serviceOptions.filter(service =>
-  //     service.ser.toLowerCase().includes(search) ||
-  //     (service.razon_social ?? '').toLowerCase().includes(search) ||
-  //     (service.producto ?? '').toLowerCase().includes(search)
-  //   );
-  // }
-
-  // get filteredServices(): ActiveService[] {
-  //   const search = this.serviceSearch.trim().toLowerCase();
-  //   if (!search) 
-  //     return this.services;
-  //   return this.services.filter(service =>
-  //     service.SER.toLowerCase().includes(search) ||
-  //     service['Razón Social']
-  //       .toLowerCase()
-  //       .includes(search) ||
-  //     service.Producto
-  //       .toLowerCase()
-  //       .includes(search) ||
-  //     service.Municipio
-  //       .toLowerCase()
-  //       .includes(search)
-  //   );
-  // }
-
-
-  // selectService(service: ActiveService): void {
-  //   this.clientsState.selectedService = service;
-  //   this.clientsState.selectedSubsegment = service.Subsegmento?.trim() || null;
-  //   this.clientsState.selectedProduct = service.Producto?.trim() || null;
-  //   this.capacityMbps = service.CAPACIDADBPS ?? null;
-  //   const department = this.departments.find(
-  //     d => d.name === service.Departamento
-  //   );
-  //   if (!department) {
-  //     this.selectedDepartmentId = null;
-  //     this.selectedMunicipalityId = null;
-  //     this.municipalities = [];
-  //     this.clientsState.selectedEvaluationDepartmentId = null;
-  //     this.clientsState.selectedEvaluationMunicipalityId = null;
-  //     this.selectedDaneChange.emit(null);
-  //     return;
-  //   }
-  //   this.selectedDepartmentId = department.id;
-  //   this.selectedMunicipalityId = null;
-  //   this.clientsState.selectedEvaluationDepartmentId = department.id;
-  //   this.clientsState.selectedEvaluationMunicipalityId = null;
-  //   this.loadMunicipalities(department.id).subscribe(municipalities => {
-  //     const serviceDane = this.normalizeDane(service['Codigo DANE']);
-  //     const municipality = municipalities.find(
-  //       m => this.normalizeDane(m.dane) === serviceDane
-  //     );
-  //     if (!municipality) {
-  //       this.selectedMunicipalityId = null;
-  //       this.clientsState.selectedEvaluationMunicipalityId = null;
-  //       this.selectedDaneChange.emit(null);
-  //       console.warn(`No se encontró el municipio con DANE ${serviceDane}`);
-  //       return;
-  //     }
-  //     this.selectedMunicipalityId = municipality.id;
-  //     this.clientsState.selectedEvaluationMunicipalityId = municipality.id;
-  //     this.emitSelectedDaneMunicipality();
-  //   });
-  // }
-
   selectService(service: ServiceOption): void {
-
     this.selectedService = service;
     // Cargar producto y subsegmento
     this.clientsState.selectedSubsegment = service.nvosubsegmento?.trim() || null;
@@ -355,23 +285,16 @@ export class EvaluatorSidebar implements OnInit {
   }
 
   evaluateService(): void {
-    if (!this.canEvaluate) {
+    if (!this.canEvaluate) 
       return;
-    }
-    if (
-      !this.selectedMunicipalityId ||
-      !this.selectedProduct ||
-      !this.selectedSubsegment ||
-      !this.capacityMbps ||
-      !this.contractTime
-    ) {
+    if (!this.selectedMunicipalityId || !this.selectedProduct || !this.selectedSubsegment || !this.capacityMbps || !this.contractTime) 
       return;
-    }
     const selectedProduct = this.products.find(product => product.product === this.selectedProduct);
     const selectedSubsegment = this.subsegments.find(subsegment => subsegment.name === this.selectedSubsegment);
-    if (!selectedProduct || !selectedSubsegment) 
+    const selectedDepartment = this.departments.find(department => department.id === this.selectedDepartmentId);
+    const selectedMunicipality = this.municipalities.find(municipality => municipality.id === this.selectedMunicipalityId);
+    if (!selectedProduct || !selectedSubsegment || !selectedDepartment || !selectedMunicipality) 
       return;
-    
     const request: PricingRequest = {
       municipality_id: this.selectedMunicipalityId,
       product_id: selectedProduct.id,
@@ -382,6 +305,13 @@ export class EvaluatorSidebar implements OnInit {
       initial_income: 0
     };
     this.evaluate.emit(request);
+    this.aggregate.emit({
+      request,
+      department: selectedDepartment,
+      municipality : selectedMunicipality,
+      product : selectedProduct,
+      subsegment : selectedSubsegment
+    })
   }
 
   clearSelection(): void {

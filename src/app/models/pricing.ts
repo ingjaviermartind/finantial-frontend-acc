@@ -1,4 +1,8 @@
 
+import { municipality, department } from './location';
+import { ProductCatalog } from './product-catalog';
+import { Subsegment } from './subsegment';
+
 export interface PricingRequest { 
     municipality_id: string;
     product_id: string;
@@ -83,10 +87,44 @@ export interface PricingResponse {
     discounted_fcl: number;
     accumulated_fcl: number;
     vpn : number;
+    income_vpn : number;
 }
 
 export interface FinancialCashFlow {
     project_snapshot: Record<string, unknown>;
     variables_snapshot: Record<string, unknown>;
     periods: CashFlowPeriod[];
+}
+
+export interface ProjectServiceDetails {
+  department: department;
+  municipality: municipality;
+  product: ProductCatalog;
+  subsegment: Subsegment;
+}
+
+export interface DetailedPricingRequest {
+    request: PricingRequest;
+    department: department;
+    municipality: municipality;
+    product: ProductCatalog;
+    subsegment: Subsegment;
+}
+
+
+export interface ProjectServiceRow {
+  id: number;
+  request: PricingRequest;
+  selected: boolean;
+
+  loading: boolean;
+  result?: PricingResponse;
+  error?: string;
+
+  pricePerMbps: number | null;
+  loadingPrice: boolean;
+  priceResult?: EvaluationResult;
+
+  location?: municipality;
+  details: ProjectServiceDetails;
 }

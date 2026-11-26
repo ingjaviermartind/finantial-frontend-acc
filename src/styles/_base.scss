@@ -20,3 +20,30 @@ select,
 textarea {
     font-family: inherit;
 }
+
+// =====================================================
+// SCROLLBARS GLOBALES
+// =====================================================
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #b9cbd3 #f5f8f9;
+
+    &::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: #f5f8f9;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #b9cbd3;
+        border-radius: 8px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+        background: #91aab6;
+    }
+}

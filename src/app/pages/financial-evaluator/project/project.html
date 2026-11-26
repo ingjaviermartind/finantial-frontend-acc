@@ -1,45 +1,378 @@
-<!-- <div class="evaluacion-servicio-container">
-
-    <app-evaluator-sidebar
-        [isExpanded]="isFiltersExpanded"
-        (evaluate)="addService($event)"
-        (selectedDaneChange)="onSelectedDaneChange($event)"
-        buttonText="Evaluar proyecto">
-    </app-evaluator-sidebar>
-
-    <div class="evaluacion-servicio-content">
-
-        <button
-            type="button"
-            class="filter-toggle-button"
-            (click)="toggleFilters()">
-
-            <span class="filters-toggle-icon">
-                {{ isFiltersExpanded ? '‹' : '›' }}
-            </span>
-
-            {{ isFiltersExpanded ? 'Ocultar filtros' : 'Mostrar filtros' }}
-
-        </button>
-
-        <p>Project works!</p>
-
-    </div>
-
-</div> -->
-
-
 <app-page-with-sidebar
     [(isExpanded)]="isFiltersExpanded">
 
     <app-evaluator-sidebar
         sidebar
         [isExpanded]="isFiltersExpanded"
-        buttonText="Evaluar proyecto"
-        (evaluate)="addService($event)"
+        buttonText="Agregar servicio"
+        (aggregate)="addService($event)"
         (selectedDaneChange)="onSelectedDaneChange($event)">
     </app-evaluator-sidebar>
 
-    <p>Contenido de Project</p>
+    <main class="evaluacion-servicio-content">
+
+        <section class="project-services-card">
+
+            <!-- ENCABEZADO -->
+            <header class="project-services-header">
+
+                <div class="project-services-title">
+
+                    <h2>Servicios agregados al proyecto</h2>
+
+                    <span class="project-services-count">
+                        {{ selectedServices.length }}
+                        {{ selectedServices.length === 1 ? 'servicio activo' : 'servicios activos' }}
+                    </span>
+                </div>
+
+                <div class="project-services-capacity">
+                    <span class="capacity-icon">◉</span>
+                    <span>Capacidad agregada:</span>
+                    <strong>
+                    {{ totalCapacity | number:'1.0-2' }} Mbps
+                    </strong>
+                </div>
+
+            </header>
+
+            <!-- TABLA -->
+            <div class="project-services-table-wrapper">
+
+                <table class="project-services-table">
+
+                    <thead>
+                        <tr>
+                            <th class="col-selection">
+                                <input
+                                    type="checkbox"
+                                    aria-label="Seleccionar todos los servicios"
+                                    disabled>
+                            </th>
+                            <th>Servicio</th>
+                            <th>Ubicación</th>
+                            <th>Producto / segmento</th>
+                            <th class="text-right">Capacidad</th>
+                            <th class="text-center">Plazo</th>
+                            <th class="text-right">Precio predecido</th>
+                            <th class="text-right">Precio piso</th>
+                            <th class="text-right">Tarifa asignada</th>
+                            <th class="col-actions">Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @if (services.length === 0) {
+                            <tr>
+                                <td colspan="10" class="project-services-empty">
+                                    <div class="empty-state-content">
+                                        <span class="empty-state-icon">▤</span>
+                                        <strong>Aún no hay servicios agregados</strong>
+                                        <span>
+                                            Ingresa una sede para comenzar la evaluación
+                                            financiera del proyecto.
+                                        </span>
+                                    </div>
+                                </td>
+                            </tr>
+                        } @else {
+                            @for (row of services; track row.id) {
+                                <tr>
+                                    <td class="col-selection">
+                                        <input
+                                            type="checkbox"
+                                            [checked]="row.selected"
+                                            (change)="toggleServiceSelection(row)"
+                                            [attr.aria-label]="'Seleccionar servicio ' + row.id">
+                                    </td>
+
+                                    <td>
+                                        <strong>#{{ row.id }}</strong>
+                                        @if (row.loading) {
+                                            <span class="row-status">Evaluando...</span>
+                                        } @else if (row.error) {
+                                            <span class="row-status error">Error</span>
+                                        }
+                                    </td>
+
+                                    <td>
+                                        <div class="service-location">
+                                            <div class="location-main">
+                                            {{ row.details.department.name }}
+                                            </div>
+
+                                            <div class="location-municipality">
+                                            {{ row.details.municipality.name }}
+                                            </div>
+
+                                            <span
+                                            class="dane-tag"
+                                            [class.unprofitable-dane]="row.details.municipality.unprofitable">
+                                            DANE: {{ row.details.municipality.dane }}
+                                            </span>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <div class="service-product">
+                                            <div class="product-name">
+                                            {{ row.details.product.product }}
+                                            </div>
+
+                                            <div class="plan-name">
+                                            Subsegmento: {{ row.details.subsegment.name }}
+                                            </div>
+
+                                            <span class="family-tag">
+                                            Tipo: {{ row.details.product.product_type }}
+                                            </span>
+                                        </div>
+                                    </td>
+
+                                    <td class="text-right">
+                                        {{ row.request.capacity_mbps | number:'1.0-2' }} Mbps
+                                    </td>
+
+                                    <td class="text-center">
+                                        {{ row.request.contract_time }}
+                                    </td>
+
+                                    <!-- PRECIO PREDECIDO -->
+                                    <td class="text-right">
+                                        @if (row.loading) {
+                                            <span class="price-muted">Calculando...</span>
+                                        } @else if (row.result) {
+                                            <div class="price-cell">
+                                                <span class="price-value">
+                                                    {{ row.result.predicted.price_monthly
+                                                        | currency:'COP':'symbol-narrow':'1.0-0' }}
+                                                </span>
+
+                                                <span
+                                                    class="price-tag"
+                                                    [class.price-tag-low]="row.result.predicted.price_per_mbps < 1500">
+                                                    {{ row.result.predicted.price_per_mbps
+                                                        | currency:'COP':'symbol-narrow':'1.0-0' }}/Mbps
+                                                </span>
+                                                @if (!row.result.predicted.approved) {
+                                                    <span class="viability-warning">No viable</span>
+                                                }
+                                            </div>
+                                        } @else {
+                                            <span class="price-muted">—</span>
+                                        }
+                                    </td>
+
+                                    <!-- PRECIO PISO -->
+                                    <td class="text-right">
+                                        @if (row.loading) {
+                                            <span class="price-muted">Calculando...</span>
+                                        } @else if (row.result) {
+                                            <div class="price-cell">
+                                                <span class="price-value">
+                                                    {{ row.result.floor.price_monthly
+                                                        | currency:'COP':'symbol-narrow':'1.0-0' }}
+                                                </span>
+
+                                                <span
+                                                    class="price-tag"
+                                                    [class.price-tag-low]="row.result.floor.price_per_mbps < 1500">
+                                                    {{ row.result.floor.price_per_mbps
+                                                        | currency:'COP':'symbol-narrow':'1.0-0' }}/Mbps
+                                                </span>
+                                                @if (!row.result.floor.approved) {
+                                                    <span class="viability-warning">No viable</span>
+                                                }
+                                            </div>
+                                        } @else {
+                                            <span class="price-muted">—</span>
+                                        }
+                                    </td>
+
+                                    <td class="text-right">
+                                        @if (row.priceResult) {
+                                            <div class="price-cell">
+                                                <span class="price-value">
+                                                    {{ row.priceResult.price_monthly
+                                                        | currency:'COP':'symbol-narrow':'1.0-0' }}
+                                                </span>
+
+                                                <span
+                                                    class="price-tag"
+                                                    [class.price-tag-low]="row.priceResult.price_per_mbps < 1500">
+                                                    {{ row.priceResult.price_per_mbps
+                                                        | currency:'COP':'symbol-narrow':'1.0-0' }}/Mbps
+                                                </span>
+
+                                                @if (!row.priceResult.approved) {
+                                                    <span class="viability-warning">No viable</span>
+                                                }
+
+                                                <button
+                                                    type="button"
+                                                    class="change-price-link"
+                                                    (click)="enablePriceEditing(row)">
+                                                    Cambiar
+                                                </button>
+                                            </div>
+                                        } @else {
+                                            <span class="price-muted">Sin evaluar</span>
+
+                                            <div class="assigned-price">
+                                                <label>COP/Mbps</label>
+
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    [value]="row.pricePerMbps ?? ''"
+                                                    (input)="updatePrice(
+                                                        row,
+                                                        $any($event.target).value === ''
+                                                            ? null
+                                                            : +$any($event.target).value
+                                                    )"
+                                                    [disabled]="row.loadingPrice || row.loading">
+
+                                                <button
+                                                    type="button"
+                                                    (click)="evaluateServicePrice(row)"
+                                                    [disabled]="
+                                                        row.loadingPrice ||
+                                                        row.loading ||
+                                                        row.pricePerMbps === null ||
+                                                        row.pricePerMbps < 0
+                                                    ">
+                                                    {{ row.loadingPrice ? 'Evaluando...' : 'Aplicar' }}
+                                                </button>
+                                            </div>
+                                        }
+                                    </td>
+
+                                    <td class="text-center">
+                                        <button
+                                            type="button"
+                                            class="remove-service-btn"
+                                            title="Eliminar servicio"
+                                            (click)="removeService(row)">
+                                            ×
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+        <!-- ================================================= -->
+        <!-- RESULTADO DE EVALUACIÓN DEL PROYECTO              -->
+        <!-- ================================================= -->
+
+        <section class="project-evaluation-panel">
+
+            @if (consolidatedResult) {
+
+                <!-- RESULTADO DISPONIBLE -->
+                <div class="consolidated-result">
+                    <!-- Aquí construiremos las métricas consolidadas -->
+                    <h2>Resultados de la evaluación financiera</h2>
+                </div>
+
+            } @else {
+
+                <!-- ESTADO PREVIO A LA EVALUACIÓN -->
+                <div class="evaluation-empty-state">
+
+                    <!-- Decoración de fondo -->
+                    <div class="evaluation-network"></div>
+
+                    <!-- Ícono -->
+                    <div class="evaluation-icon">
+                        <svg viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.7"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="4" y="2" width="16" height="20" rx="2"/>
+                            <line x1="8" y1="6" x2="16" y2="6"/>
+                            <line x1="8" y1="10" x2="8.01" y2="10"/>
+                            <line x1="12" y1="10" x2="12.01" y2="10"/>
+                            <line x1="16" y1="10" x2="16.01" y2="10"/>
+                            <line x1="8" y1="14" x2="8.01" y2="14"/>
+                            <line x1="12" y1="14" x2="12.01" y2="14"/>
+                            <line x1="16" y1="14" x2="16.01" y2="14"/>
+                            <line x1="8" y1="18" x2="8.01" y2="18"/>
+                            <line x1="12" y1="18" x2="12.01" y2="18"/>
+                        </svg>
+
+                        <span class="evaluation-icon-count">
+                            {{ selectedServices.length }}
+                        </span>
+                    </div>
+
+                    <!-- Etapa -->
+                    <span class="evaluation-stage">
+                        ETAPA DE PRE-EVALUACIÓN COMPLETA
+                    </span>
+
+                    <!-- Título -->
+                    <h2>Proyecto Listo para Evaluación Financiera</h2>
+
+                    <!-- Descripción -->
+                    <p class="evaluation-description">
+                        Los servicios seleccionados están listos para consolidarse.
+                        Ejecuta el modelo financiero para calcular el flujo de caja
+                        descontado, VPN consolidado, TIR ponderada, período de
+                        recuperación y dictamen de gobernanza tarifaria.
+                    </p>
+
+                    <!-- Error -->
+                    @if (consolidationError) {
+                        <div class="evaluation-error">
+                            {{ consolidationError }}
+                        </div>
+                    }
+
+                    <!-- Acciones -->
+                    <div class="evaluation-actions">
+
+                        <button
+                            type="button"
+                            class="evaluate-project-btn"
+                            [disabled]="selectedServices.length === 0 || loadingConsolidation"
+                            (click)="evaluateConsolidation()">
+
+                            @if (loadingConsolidation) {
+                                <span class="loading-spinner"></span>
+                                Evaluando proyecto...
+                            } @else {
+                                <span class="evaluate-icon">ϟ</span>
+                                Ejecutar Modelo Financiero Consolidado
+                            }
+
+                        </button>
+
+                        <!-- <button
+                            type="button"
+                            class="assumptions-btn">
+                            <span>ⓘ</span>
+                            Ver supuestos macroeconómicos
+                        </button> -->
+
+                    </div>
+
+                    <span class="evaluation-footnote">
+                        {{ selectedServices.length }} servicios incluidos
+                        · {{ totalCapacity | number:'1.0-2' }} Mbps de capacidad total
+                    </span>
+
+                </div>
+            }
+
+        </section>
+
+    </main>
 
 </app-page-with-sidebar>
