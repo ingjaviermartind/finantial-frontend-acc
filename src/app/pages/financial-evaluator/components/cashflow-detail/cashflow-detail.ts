@@ -5,9 +5,10 @@ import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import { FinancialCashFlow, CashFlowPeriod } from '../../../../models/pricing';
 
 interface CashFlowRow {
-  key: keyof CashFlowPeriod;
+  key: string;
   label: string;
   section: string;
+  source: 'direct' | 'opex' | 'capex';
 }
 
 @Component({
@@ -24,40 +25,39 @@ export class CashFlowDetail {
 
   readonly rows: CashFlowRow[] = [
     // Ingresos
-    { key: 'income', label: 'Ingresos', section: 'Ingresos' },
+    { key: 'income', label: 'Ingresos', section: 'Ingresos', source: 'direct' },
 
     // Desglose OPEX
-    { key: 'eth_output', label: 'ETH Output', section: 'Desglose OPEX' },
-    { key: 'oym', label: 'Operación y mantenimiento', section: 'Desglose OPEX' },
-    { key: 'poles', label: 'Postes', section: 'Desglose OPEX' },
-    { key: 'ducts', label: 'Ductos', section: 'Desglose OPEX' },
-    { key: 'call_center', label: 'Call Center', section: 'Desglose OPEX' },
-    { key: 'distribution', label: 'Distribución', section: 'Desglose OPEX' },
-    { key: 'collection', label: 'Recaudo', section: 'Desglose OPEX' },
-    { key: 'opex', label: 'OPEX total', section: 'Desglose OPEX' },
+    { key: 'eth_output', label: 'ETH Output', section: 'Desglose OPEX', source: 'opex' },
+    { key: 'oym', label: 'Operación y mantenimiento', section: 'Desglose OPEX', source: 'opex' },
+    { key: 'poles', label: 'Postes', section: 'Desglose OPEX', source: 'opex' },
+    { key: 'ducts', label: 'Ductos', section: 'Desglose OPEX', source: 'opex' },
+    { key: 'call_center', label: 'Call Center', section: 'Desglose OPEX', source: 'opex' },
+    { key: 'distribution', label: 'Distribución', section: 'Desglose OPEX', source: 'opex' },
+    { key: 'collection', label: 'Recaudo', section: 'Desglose OPEX', source: 'opex' },
+    { key: 'opex', label: 'OPEX total', section: 'Desglose OPEX', source: 'direct' },
 
     // Cargos
-    { key: 'gmf', label: 'GMF', section: 'Cargos' },
-    { key: 'fontic', label: 'FONTIC', section: 'Cargos' },
-    { key: 'ica', label: 'ICA', section: 'Cargos' },
-    { key: 'cartera', label: 'Cartera', section: 'Cargos' },
+    { key: 'gmf', label: 'GMF', section: 'Cargos', source: 'direct' },
+    { key: 'fontic', label: 'FONTIC', section: 'Cargos', source: 'direct' },
+    { key: 'ica', label: 'ICA', section: 'Cargos', source: 'direct' },
+    { key: 'cartera', label: 'Cartera', section: 'Cargos', source: 'direct' },
 
     // Resultados
-    { key: 'ebitda', label: 'EBITDA', section: 'Resultados' },
-    { key: 'ebitda_ajustado', label: 'EBITDA ajustado', section: 'Resultados' },
+    { key: 'ebitda', label: 'EBITDA', section: 'Resultados', source: 'direct' },
+    { key: 'ebitda_ajustado', label: 'EBITDA ajustado', section: 'Resultados', source: 'direct' },
 
     // CAPEX
-
-    { key: 'initial_capex', label: 'CAPEX de red', section: 'Desglose CAPEX' },
+    { key: 'web_capex', label: 'CAPEX de red', section: 'Desglose CAPEX', source: 'capex' },
+    { key: 'initial_capex', label: 'CAPEX inicial', section: 'Desglose CAPEX', source: 'capex' },
 
     // Flujo de caja
-    
-    { key: 'fcl', label: 'Flujo de caja libre', section: 'Flujo de caja' },
-    { key: 'accumulated_fcl', label: 'FCL acumulado', section: 'Flujo de caja' },
-    { key: 'discount_factor', label: 'Factor de descuento', section: 'Flujo de caja' },
-    { key: 'discounted_fcl', label: 'FCL descontado', section: 'Flujo de caja' },
-    { key: 'vpn', label: 'VPN', section: 'Flujo de caja' },
-    { key: 'income_vpn', label: 'VPN del ingreso', section : 'Flujo de caja'}
+    { key: 'fcl', label: 'Flujo de caja libre', section: 'Flujo de caja', source: 'direct' },
+    { key: 'accumulated_fcl', label: 'FCL acumulado', section: 'Flujo de caja', source: 'direct' },
+    { key: 'discount_factor', label: 'Factor de descuento', section: 'Flujo de caja', source: 'direct' },
+    { key: 'discounted_fcl', label: 'FCL descontado', section: 'Flujo de caja', source: 'direct' },
+    { key: 'vpn', label: 'VPN', section: 'Flujo de caja', source: 'direct' },
+    { key: 'income_vpn', label: 'VPN del ingreso', section: 'Flujo de caja', source: 'direct' }
   ];
 
   get periods(): CashFlowPeriod[] {
@@ -72,9 +72,27 @@ export class CashFlowDetail {
     return this.rows.filter(row => row.section === section);
   }
 
-  getValue(period: CashFlowPeriod, key: keyof CashFlowPeriod): number {
-    return period[key] as number;
+  getValue(period: CashFlowPeriod, key: string, source: CashFlowRow['source']): number {
+    let value: number | string | null | undefined;
+
+    switch (source) {
+      case 'opex':
+        value = period.opex_breakdown?.[key];
+        break;
+
+      case 'capex':
+        value = period.capex_breakdown?.[key];
+        break;
+
+      default:
+        value = period[key as keyof CashFlowPeriod] as number | string | null | undefined;
+    }
+
+    const numericValue = Number(value ?? 0);
+
+    return Number.isFinite(numericValue) ? numericValue : 0;
   }
+
   goBack(): void {
     this.back.emit();
   }

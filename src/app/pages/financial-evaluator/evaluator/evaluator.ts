@@ -226,8 +226,8 @@ export class Evaluator implements OnDestroy {
     if (!evaluation) return;
     const periods = evaluation.financial_cashflow?.periods ?? [];
     const labels = periods.map(item => `M${item.period}`);
-    const VpnValues = periods.map(item => item.vpn);
-    const FclValues = periods.map(item => item.discounted_fcl);
+    const VpnValues = periods.map(item => Number(item.vpn));
+    const FclValues = periods.map(item => Number(item.discounted_fcl));
 
     if (this.cashFlowChart) {
       this.cashFlowChart.data.labels = labels;
@@ -425,9 +425,14 @@ export class Evaluator implements OnDestroy {
       }
     ];
 
-    const valid = references.filter(
+    const valid = references
+    .map(item => ({
+      ...item,
+      value: item.value == null ? null : Number(item.value)
+    }))
+    .filter(
       (item): item is typeof item & { value: number } =>
-        typeof item.value === 'number' &&
+        item.value !== null &&
         Number.isFinite(item.value) &&
         item.value >= 0
     );
@@ -477,15 +482,28 @@ export class Evaluator implements OnDestroy {
 
     const comparison = this.pricingResult!.price_comparison;
 
+    // Normalizar valores recibidos como string o number
+    const breakeven = comparison.breakeven == null
+      ? null
+      : Number(comparison.breakeven);
+
+    const mlPrice = comparison.ml_price == null
+      ? null
+      : Number(comparison.ml_price);
+
+    const tariffDiscount = comparison.tariff_discount == null
+      ? null
+      : Number(comparison.tariff_discount);
+
     const boundaries = [
       min,
-      comparison.breakeven,
-      comparison.ml_price,
-      comparison.tariff_discount,
+      breakeven,
+      mlPrice,
+      tariffDiscount,
       max
     ]
       .filter((value): value is number =>
-        typeof value === 'number' &&
+        value !== null &&
         Number.isFinite(value) &&
         value >= min &&
         value <= max
@@ -493,31 +511,28 @@ export class Evaluator implements OnDestroy {
 
     const unique = [...new Set(boundaries)].sort((a, b) => a - b);
 
-    const colors = unique.slice(1).map((value, index) => {
+    return unique.slice(1).map((value, index) => {
       const midpoint = (unique[index] + value) / 2;
 
-      if (comparison.breakeven != null && midpoint <= comparison.breakeven) {
-        return 'segment-red';
-      }
+      let colorClass = 'segment-gray';
 
-      if (comparison.ml_price != null && midpoint <= comparison.ml_price) {
-        return 'segment-orange';
-      }
-
-      if (
-        comparison.tariff_discount != null &&
-        midpoint <= comparison.tariff_discount
+      if (breakeven !== null && Number.isFinite(breakeven) && midpoint <= breakeven) {
+        colorClass = 'segment-red';
+      } else if (mlPrice !== null && Number.isFinite(mlPrice) && midpoint <= mlPrice) {
+        colorClass = 'segment-orange';
+      } else if (
+        tariffDiscount !== null &&
+        Number.isFinite(tariffDiscount) &&
+        midpoint <= tariffDiscount
       ) {
-        return 'segment-teal';
+        colorClass = 'segment-teal';
       }
 
-      return 'segment-gray';
+      return {
+        colorClass,
+        width: ((value - unique[index]) / (max - min)) * 100
+      };
     });
-
-    return unique.slice(1).map((value, index) => ({
-      colorClass: colors[index],
-      width: ((value - unique[index]) / (max - min)) * 100
-    }));
   }
 
   detectLabelOverlaps(): void {

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { EvaluatorSidebar } from '../../../components/evaluator-sidebar/evaluator-sidebar';
 import { municipality } from '../../../models/location';
-import { PricingRequest, ProjectServiceRow, DetailedPricingRequest } from '../../../models/pricing';
+import { PricingRequest, ProjectServiceRow, DetailedPricingRequest, MultiProjectPricingRequest, GroupEvaluationResult} from '../../../models/pricing';
 import { PageWithSidebar } from '../../../layouts/page-with-sidebar/page-with-sidebar';
 import { PricingService } from '../../../services/pricing';
 import { finalize } from 'rxjs';
@@ -22,7 +22,7 @@ export class Project {
   private nextServiceId = 0;
 
   loadingConsolidation = false;
-  consolidatedResult: unknown;
+  consolidatedResult: GroupEvaluationResult | null = null;
   consolidationError: string | null = null;
 
   constructor(
@@ -77,7 +77,7 @@ export class Project {
             product: { ...data.product },
             subsegment: { ...data.subsegment }
         },
-        selected: true,
+        selected: false,
         loading: true,
         pricePerMbps: data.request.price_per_mbps ?? null,
         loadingPrice: false
@@ -104,15 +104,12 @@ export class Project {
 
   toggleServiceSelection(row: ProjectServiceRow): void {
     row.selected = !row.selected;
-    this.invalidateConsolidation();
   }
 
   toggleAllServices(selected: boolean): void {
     this.services.forEach(row => {
       row.selected = selected;
     });
-
-    this.invalidateConsolidation();
   }
 
   updatePrice(row: ProjectServiceRow, price: number | null): void {
@@ -165,14 +162,14 @@ export class Project {
   }
 
   get totalCapacity(): number {
-    return this.selectedServices.reduce(
+    return this.services.reduce(
       (total, row) => total + row.request.capacity_mbps,
       0
     );
   }
 
   private invalidateConsolidation(): void {
-    this.consolidatedResult = undefined;
+    this.consolidatedResult = null;
     this.consolidationError = null;
   }
 
@@ -191,7 +188,75 @@ export class Project {
     this.invalidateConsolidation();
   }
 
-  evaluateConsolidation() {
-    
+  evaluateConsolidation(): void {
+    // 1. Validar que existan servicios
+    if (this.services.length === 0 || this.loadingConsolidation) {
+      return;
+    }
+    // 2. Evitar consolidar mientras haya evaluaciones individuales en curso
+    const pendingServices = this.services.some(row =>
+      row.loading || row.loadingPrice
+    );
+    if (pendingServices) {
+      this.consolidationError =
+        'Espera a que terminen las evaluaciones pendientes antes de consolidar.';
+      return;
+    }
+    // 3. Tomar el plazo contractual común
+    const firstService = this.services[0];
+
+    // 4. Construir solicitud multiproyecto
+    const request: MultiProjectPricingRequest = {
+      contract_time: firstService.request.contract_time,
+      initial_capex: 0,
+      initial_income: 0,
+
+      products: this.services.map(row => ({
+        capacity_mbps: row.request.capacity_mbps,
+        product_type: row.details.product.product_type,
+        product: row.details.product.product,
+        subsegment: row.details.subsegment.name,
+
+        // Si no hay tarifa, se utiliza el factor de margen normal
+        sensitivity: 1,
+
+        // Si hay tarifa diligenciada, se utiliza directamente
+        price_per_mbps: row.pricePerMbps
+      }))
+    };
+
+    // 5. Ejecutar evaluación consolidada
+    this.loadingConsolidation = true;
+    this.consolidationError = null;
+    this.consolidatedResult = null;
+    console.log(
+        'PRECIOS ENVIADOS:',
+        request.products.map(p => ({
+            product: p.product,
+            price_per_mbps: p.price_per_mbps
+        }))
+    );
+    this.pricingService.evaluateGroup(request).pipe(
+      finalize(() => {
+        this.loadingConsolidation = false;
+      })
+    ).subscribe({
+      next: response => {
+        this.consolidatedResult = response;
+        console.log('Evaluación multiproyecto:', response);
+      },
+      error: err => {
+        this.consolidationError =
+          err.error?.detail ??
+          'No fue posible realizar la evaluación financiera del proyecto.';
+
+        console.error('Error evaluando proyecto consolidado:', err);
+      }
+    });
+  }
+
+  clearConsolidatedResult(): void {
+    this.consolidatedResult = null;
+    this.consolidationError = null;
   }
 }

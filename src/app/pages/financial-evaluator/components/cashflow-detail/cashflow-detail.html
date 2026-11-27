@@ -2,16 +2,15 @@
 <div class="cash-flow-detail">
 
   <div class="cash-flow-header">
-     <button
-        type="button"
-        class="back-button"
-        (click)="goBack()">
-        ← Volver a evaluación
+    <button
+      type="button"
+      class="back-button"
+      (click)="goBack()">
+      ← Volver a evaluación
     </button>
 
     <h2>Flujo de caja detallado</h2>
     <p>Desglose financiero por periodo</p>
-
   </div>
 
   <div class="cash-flow-table-container">
@@ -32,9 +31,9 @@
 
           <tr class="section-row">
             <td [attr.colspan]="periods.length + 1">
-                {{ section }}
+              {{ section }}
             </td>
-        </tr>
+          </tr>
 
           @for (row of getRows(section); track row.key) {
             <tr>
@@ -44,18 +43,18 @@
 
               @for (period of periods; track period.period) {
                 <td class="value-cell">
-                    @if (row.key === 'discount_factor') {
-                        {{ getValue(period, row.key) | number:'1.4-4' }}
-                    } @else {
-                        {{ getValue(period, row.key) | currency:'COP':'symbol-narrow':'1.0-0' }}
-                    }
+                  @if (row.key === 'discount_factor') {
+                    {{ getValue(period, row.key, row.source) | number:'1.4-4' }}
+                  } @else {
+                    {{ getValue(period, row.key, row.source) | currency:'COP':'symbol-narrow':'1.0-0' }}
+                  }
                 </td>
               }
             </tr>
           }
         }
-
       </tbody>
+
     </table>
   </div>
 

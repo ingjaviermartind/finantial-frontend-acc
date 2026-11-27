@@ -21,8 +21,8 @@
                     <h2>Servicios agregados al proyecto</h2>
 
                     <span class="project-services-count">
-                        {{ selectedServices.length }}
-                        {{ selectedServices.length === 1 ? 'servicio activo' : 'servicios activos' }}
+                        {{ services.length }}
+                        {{ services.length === 1 ? 'servicio activo' : 'servicios activos' }}
                     </span>
                 </div>
 
@@ -47,7 +47,9 @@
                                 <input
                                     type="checkbox"
                                     aria-label="Seleccionar todos los servicios"
-                                    disabled>
+                                    [checked]="allServicesSelected"
+                                    (change)="toggleAllServices($any($event.target).checked)"
+                                    [disabled]="services.length === 0">>
                             </th>
                             <th>Servicio</th>
                             <th>Ubicación</th>
@@ -276,10 +278,269 @@
 
             @if (consolidatedResult) {
 
-                <!-- RESULTADO DISPONIBLE -->
                 <div class="consolidated-result">
-                    <!-- Aquí construiremos las métricas consolidadas -->
-                    <h2>Resultados de la evaluación financiera</h2>
+
+                    <!-- ENCABEZADO DEL RESULTADO -->
+                    <header class="consolidated-result-header">
+
+                        <div class="result-heading">
+                            <span class="result-eyebrow">ANÁLISIS FINANCIERO</span>
+                            <h2>Resultados de la evaluación</h2>
+                            <p>Desempeño financiero consolidado y detalle por producto.</p>
+                        </div>
+
+                        <div class="result-actions">
+
+                            <button
+                                type="button"
+                                class="result-action-link"
+                                (click)="evaluateConsolidation()"
+                                [disabled]="loadingConsolidation || services.length === 0">
+
+                                @if (loadingConsolidation) {
+                                    <span class="loading-spinner"></span>
+                                    Recalculando...
+                                } @else {
+                                    <span class="action-icon">↻</span>
+                                    Recalcular
+                                }
+
+                            </button>
+
+                            <button
+                                type="button"
+                                class="result-action-link result-action-danger"
+                                (click)="clearConsolidatedResult()"
+                                [disabled]="loadingConsolidation">
+
+                                <span class="action-icon">×</span>
+                                Limpiar resultado
+
+                            </button>
+
+                        </div>
+
+                    </header>
+
+                    <!-- RESULTADO GLOBAL -->
+                    <section class="consolidated-summary">
+
+                        <div class="summary-header">
+                            <div>
+                                <h3>Evaluación consolidada</h3>
+                                <span class="summary-description">
+                                    Resultado financiero del conjunto de servicios
+                                </span>
+                            </div>
+
+                            <span
+                                class="status-indicator"
+                                [class.status-approved]="consolidatedResult.approved"
+                                [class.status-rejected]="!consolidatedResult.approved">
+
+                                <span class="status-dot"></span>
+                                {{ consolidatedResult.approved ? 'VIABLE' : 'NO VIABLE' }}
+
+                            </span>
+                        </div>
+
+                        <div class="summary-grid">
+
+                            <article class="summary-metric metric-highlight">
+                                <span class="metric-label">VPN</span>
+                                <strong>
+                                    {{ consolidatedResult.vpn
+                                        | currency:'COP':'symbol-narrow':'1.0-0' }}
+                                </strong>
+                                <small>Valor presente neto</small>
+                            </article>
+
+                            <article class="summary-metric">
+                                <span class="metric-label">TIR</span>
+                                <strong>
+                                    {{ consolidatedResult.tir !== null
+                                        ? ((consolidatedResult.tir * 100) | number:'1.2-2') + '%'
+                                        : 'N/A' }}
+                                </strong>
+                                <small>Tasa interna de retorno</small>
+                            </article>
+
+                            <article class="summary-metric">
+                                <span class="metric-label">Payback</span>
+                                <strong>
+                                    {{ consolidatedResult.payback !== null
+                                        ? (consolidatedResult.payback | number:'1.0-2') + ' meses'
+                                        : 'N/A' }}
+                                </strong>
+                                <small>Tiempo de recuperación</small>
+                            </article>
+
+                            <article class="summary-metric">
+                                <span class="metric-label">CAPEX</span>
+                                <strong>
+                                    {{ consolidatedResult.capex
+                                        | currency:'COP':'symbol-narrow':'1.0-0' }}
+                                </strong>
+                                <small>Inversión inicial</small>
+                            </article>
+
+                            <article class="summary-metric">
+                                <span class="metric-label">OPEX mensual</span>
+                                <strong>
+                                    {{ consolidatedResult.opex_m
+                                        | currency:'COP':'symbol-narrow':'1.0-0' }}
+                                </strong>
+                                <small>Costos operativos</small>
+                            </article>
+
+                            <article class="summary-metric">
+                                <span class="metric-label">Ingreso mensual</span>
+                                <strong>
+                                    {{ consolidatedResult.monthly_income
+                                        | currency:'COP':'symbol-narrow':'1.0-0' }}
+                                </strong>
+                                <small>Ingreso recurrente total</small>
+                            </article>
+
+                            <article class="summary-metric">
+                                <span class="metric-label">Margen</span>
+                                <strong>
+                                    {{ (consolidatedResult.margin * 100) | number:'1.2-2' }}%
+                                </strong>
+                                <small>Margen del proyecto</small>
+                            </article>
+
+                            <article class="summary-metric">
+                                <span class="metric-label">Recuperación</span>
+                                <strong>
+                                    {{ (consolidatedResult.payback_percent * 100) | number:'1.2-2' }}%
+                                </strong>
+                                <small>Porcentaje de recuperación</small>
+                            </article>
+
+                        </div>
+
+                    </section>
+
+                    <!-- RESULTADOS INDIVIDUALES -->
+                    <section class="individual-results">
+
+                        <div class="individual-results-header">
+                            <div>
+                                <h3>Evaluación individual de productos</h3>
+                                <p>Desglose financiero de cada servicio incluido en el proyecto.</p>
+                            </div>
+
+                            <span class="individual-results-count">
+                                {{ consolidatedResult.products.length }}
+                                productos
+                            </span>
+                        </div>
+
+                        <div class="individual-results-table-wrapper">
+
+                            <table class="individual-results-table">
+
+                                <thead>
+                                    <tr>
+                                        <th>Producto / segmento</th>
+                                        <th class="text-right">Capacidad</th>
+                                        <th class="text-right">Ingreso mensual</th>
+                                        <th class="text-right">CAPEX</th>
+                                        <th class="text-right">OPEX mensual</th>
+                                        <th class="text-right">VPN</th>
+                                        <th class="text-right">TIR</th>
+                                        <th class="text-right">Payback</th>
+                                        <th class="text-center">Viabilidad</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+
+                                    @for (result of consolidatedResult.products; track $index) {
+
+                                        <tr>
+
+                                            <td>
+                                                <div class="result-product-cell">
+                                                    <strong>
+                                                        {{ services[$index].details.product.product }}
+                                                    </strong>
+                                                    <small>
+                                                        {{ services[$index].details.subsegment.name }}
+                                                    </small>
+                                                    <span>
+                                                        Servicio #{{ services[$index].id }}
+                                                    </span>
+                                                </div>
+                                            </td>
+
+                                            <td class="text-right">
+                                                <strong class="table-number">
+                                                    {{ services[$index].request.capacity_mbps
+                                                        | number:'1.0-2' }}
+                                                </strong>
+                                                <small class="table-unit">Mbps</small>
+                                            </td>
+
+                                            <td class="text-right">
+                                                {{ result.monthly_income
+                                                    | currency:'COP':'symbol-narrow':'1.0-0' }}
+                                            </td>
+
+                                            <td class="text-right">
+                                                {{ result.capex
+                                                    | currency:'COP':'symbol-narrow':'1.0-0' }}
+                                            </td>
+
+                                            <td class="text-right">
+                                                {{ result.opex_m
+                                                    | currency:'COP':'symbol-narrow':'1.0-0' }}
+                                            </td>
+
+                                            <td class="text-right">
+                                                <strong class="table-number">
+                                                    {{ result.vpn
+                                                        | currency:'COP':'symbol-narrow':'1.0-0' }}
+                                                </strong>
+                                            </td>
+
+                                            <td class="text-right">
+                                                {{ result.tir !== null
+                                                    ? ((result.tir * 100) | number:'1.2-2') + '%'
+                                                    : 'N/A' }}
+                                            </td>
+
+                                            <td class="text-right">
+                                                {{ result.payback !== null
+                                                    ? (result.payback | number:'1.0-2') + ' meses'
+                                                    : 'N/A' }}
+                                            </td>
+
+                                            <td class="text-center">
+                                                <span
+                                                    class="status-indicator status-table"
+                                                    [class.status-approved]="result.approved"
+                                                    [class.status-rejected]="!result.approved">
+
+                                                    <span class="status-dot"></span>
+                                                    {{ result.approved ? 'VIABLE' : 'NO VIABLE' }}
+
+                                                </span>
+                                            </td>
+
+                                        </tr>
+
+                                    }
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </section>
+
                 </div>
 
             } @else {
@@ -308,7 +569,7 @@
                         </svg>
 
                         <span class="evaluation-icon-count">
-                            {{ selectedServices.length }}
+                            {{ services.length }}
                         </span>
                     </div>
 
@@ -322,10 +583,9 @@
 
                     <!-- Descripción -->
                     <p class="evaluation-description">
-                        Los servicios seleccionados están listos para consolidarse.
-                        Ejecuta el modelo financiero para calcular el flujo de caja
-                        descontado, VPN consolidado, TIR ponderada, período de
-                        recuperación y dictamen de gobernanza tarifaria.
+                        Todos los servicios agregados están listos para ser evaluados como un solo proyecto.
+                        Ejecuta el modelo para conocer cuánto cuesta implementarlo, cuánto puede generar,
+                        en cuánto tiempo se recupera la inversión y si el proyecto es financieramente viable.
                     </p>
 
                     <!-- Error -->
@@ -341,7 +601,7 @@
                         <button
                             type="button"
                             class="evaluate-project-btn"
-                            [disabled]="selectedServices.length === 0 || loadingConsolidation"
+                            [disabled]="services.length === 0 || loadingConsolidation"
                             (click)="evaluateConsolidation()">
 
                             @if (loadingConsolidation) {
@@ -364,7 +624,7 @@
                     </div>
 
                     <span class="evaluation-footnote">
-                        {{ selectedServices.length }} servicios incluidos
+                        {{ services.length }} servicios incluidos
                         · {{ totalCapacity | number:'1.0-2' }} Mbps de capacidad total
                     </span>
 
